@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-map-selector',
-  imports: [],
   templateUrl: './map-selector.component.html',
-  styleUrl: './map-selector.component.css'
+  styleUrls: ['./map-selector.component.css'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class MapSelectorComponent {
 

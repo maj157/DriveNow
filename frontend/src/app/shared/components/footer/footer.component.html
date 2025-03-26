@@ -1,1 +1,64 @@
-<p>footer works!</p>
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-content">
+      <!-- Company Info -->
+      <div class="footer-section">
+        <h3 class="footer-title">DriveNow</h3>
+        <p class="footer-description">
+          Your premier car rental service providing quality vehicles and exceptional
+          service at competitive prices.
+        </p>
+        <div class="social-links">
+          <a *ngFor="let social of socialLinks" 
+             [href]="social.url" 
+             class="social-link" 
+             target="_blank" 
+             [attr.aria-label]="social.name">
+            <i [class]="social.icon"></i>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Quick Links -->
+      <div class="footer-section">
+        <h3 class="footer-title">Quick Links</h3>
+        <ul class="footer-links">
+          <li><a routerLink="/">Home</a></li>
+          <li><a routerLink="/vehicles/groups">Vehicles</a></li>
+          <li><a routerLink="/about">About Us</a></li>
+          <li><a routerLink="/contact">Contact</a></li>
+        </ul>
+      </div>
+      
+      <!-- Vehicle Categories -->
+      <div class="footer-section">
+        <h3 class="footer-title">Vehicle Categories</h3>
+        <ul class="footer-links">
+          <li><a routerLink="/vehicles/groups">Family Cars</a></li>
+          <li><a routerLink="/vehicles/groups">SUVs</a></li>
+          <li><a routerLink="/vehicles/groups">Luxury Cars</a></li>
+          <li><a routerLink="/vehicles/groups">Electric & Hybrid</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact Info -->
+      <div class="footer-section">
+        <h3 class="footer-title">Contact Us</h3>
+        <address class="footer-contact">
+          <p><i class="fas fa-map-marker-alt"></i> 123 Rental Street, City, Country</p>
+          <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+          <p><i class="fas fa-envelope"></i> info&#64;drivenow.com</p>
+        </address>
+      </div>
+    </div>
+    
+    <!-- Copyright -->
+    <div class="footer-bottom">
+      <p>&copy; {{ currentYear }} DriveNow Car Rental. All rights reserved.</p>
+      <div class="footer-legal">
+        <a routerLink="/terms">Terms of Service</a>
+        <a routerLink="/privacy">Privacy Policy</a>
+      </div>
+    </div>
+  </div>
+</footer>

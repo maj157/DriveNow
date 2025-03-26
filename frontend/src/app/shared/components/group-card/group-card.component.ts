@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-group-card',
-  imports: [],
   templateUrl: './group-card.component.html',
-  styleUrl: './group-card.component.css'
+  styleUrls: ['./group-card.component.css'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class GroupCardComponent {
 

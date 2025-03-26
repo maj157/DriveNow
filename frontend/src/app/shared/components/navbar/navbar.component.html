@@ -1,1 +1,58 @@
-<p>navbar works!</p>
+<nav class="navbar">
+  <div class="navbar-container">
+    <!-- Logo and Site Name -->
+    <a routerLink="/" class="navbar-brand">
+      <img src="assets/images/logo.png" alt="DriveNow Logo" class="navbar-logo">
+      <span class="navbar-title">DriveNow</span>
+    </a>
+
+    <!-- Mobile Toggle Button -->
+    <button type="button" class="navbar-toggle" (click)="toggleMenu()" aria-label="Toggle navigation">
+      <span class="toggle-icon"></span>
+    </button>
+
+    <!-- Navigation Links -->
+    <div class="navbar-menu" [class.active]="isMenuOpen">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Home</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/vehicles/groups" routerLinkActive="active" class="nav-link">Vehicles</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/vehicles/filter" routerLinkActive="active" class="nav-link">Find a Car</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/about" routerLinkActive="active" class="nav-link">About</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/contact" routerLinkActive="active" class="nav-link">Contact</a>
+        </li>
+      </ul>
+
+      <!-- Auth Buttons -->
+      <div class="navbar-auth">
+        <ng-container *ngIf="(currentUser$ | async) as user; else loggedOut">
+          <div class="user-menu">
+            <span class="user-greeting">Hello, {{ user.name }}</span>
+            <div class="dropdown">
+              <button class="dropdown-toggle">My Account</button>
+              <div class="dropdown-menu">
+                <a routerLink="/history" class="dropdown-item">My Rentals</a>
+                <a routerLink="/reservation" class="dropdown-item">New Reservation</a>
+                <a routerLink="/feedback" class="dropdown-item">Submit Review</a>
+                <a routerLink="/chat" class="dropdown-item">Support Chat</a>
+                <a (click)="logout()" class="dropdown-item">Logout</a>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+        <ng-template #loggedOut>
+          <a routerLink="/login" class="btn btn-login">Login</a>
+          <a routerLink="/signup" class="btn btn-signup">Sign Up</a>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</nav>

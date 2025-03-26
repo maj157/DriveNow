@@ -1,1 +1,96 @@
-<p>signup works!</p>
+<div class="auth-container">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Create an Account</h2>
+      <p>Join DriveNow and start renting vehicles today</p>
+    </div>
+
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input 
+          type="text" 
+          formControlName="name" 
+          id="name" 
+          class="form-control" 
+          [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
+          placeholder="Enter your full name"
+        />
+        <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
+          <div *ngIf="f['name'].errors['required']">Name is required</div>
+          <div *ngIf="f['name'].errors['minlength']">Name must be at least 3 characters</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          formControlName="email" 
+          id="email" 
+          class="form-control" 
+          [ngClass]="{ 'is-invalid': submitted && f['email'].errors }"
+          placeholder="Enter your email address"
+        />
+        <div *ngIf="submitted && f['email'].errors" class="invalid-feedback">
+          <div *ngIf="f['email'].errors['required']">Email is required</div>
+          <div *ngIf="f['email'].errors['email']">Please enter a valid email address</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input 
+          type="password" 
+          formControlName="password" 
+          id="password" 
+          class="form-control" 
+          [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
+          placeholder="Create a password"
+        />
+        <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
+          <div *ngIf="f['password'].errors['required']">Password is required</div>
+          <div *ngIf="f['password'].errors['minlength']">Password must be at least 6 characters</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input 
+          type="password" 
+          formControlName="confirmPassword" 
+          id="confirmPassword" 
+          class="form-control" 
+          [ngClass]="{ 'is-invalid': submitted && (f['confirmPassword'].errors || signupForm.errors?.['passwordMismatch']) }"
+          placeholder="Confirm your password"
+        />
+        <div *ngIf="submitted && (f['confirmPassword'].errors || signupForm.errors?.['passwordMismatch'])" class="invalid-feedback">
+          <div *ngIf="f['confirmPassword'].errors?.['required']">Please confirm your password</div>
+          <div *ngIf="signupForm.errors?.['passwordMismatch']">Passwords do not match</div>
+        </div>
+      </div>
+
+      <div class="form-group form-check terms">
+        <input type="checkbox" class="form-check-input" id="termsAgreed">
+        <label class="form-check-label" for="termsAgreed">
+          I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+        </label>
+      </div>
+
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="loading">
+          <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+          Create Account
+        </button>
+      </div>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a routerLink="/login">Sign in</a></p>
+    </div>
+  </div>
+</div>
