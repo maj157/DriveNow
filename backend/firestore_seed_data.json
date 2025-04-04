@@ -1,0 +1,817 @@
+{
+  "users": [
+    {
+      "name": "Ali Ramoukhi",
+      "email": "mark31@gmail.com",
+      "profilePic": "https://www.lorempixel.com/52/421",
+      "points": 244,
+      "createdAt": "1999-08-03T04:46:58"
+    },
+    {
+      "name": "Angela Hill",
+      "email": "avasquez@berg-jones.info",
+      "profilePic": "https://www.lorempixel.com/973/311",
+      "points": 98,
+      "createdAt": "2020-11-30T22:17:35"
+    },
+    {
+      "name": "Jennifer Garcia",
+      "email": "nathansmith@miller.biz",
+      "profilePic": "https://placeimg.com/980/462/any",
+      "points": 78,
+      "createdAt": "1977-10-20T00:19:57"
+    },
+    {
+      "name": "Karen Mechaka",
+      "email": "farrellwilliam@cummings.com",
+      "profilePic": "https://placekitten.com/598/278",
+      "points": 348,
+      "createdAt": "2015-02-18T14:13:41"
+    },
+    {
+      "name": "Saeed Mahfouz",
+      "email": "gscott@yahoo.com",
+      "profilePic": "https://placeimg.com/576/991/any",
+      "points": 112,
+      "createdAt": "1975-02-20T18:50:34"
+    },
+    {
+      "name": "Jad Mraytbe",
+      "email": "courtney30@gmail.com",
+      "profilePic": "https://dummyimage.com/95x830",
+      "points": 149,
+      "createdAt": "1992-06-09T04:30:35"
+    },
+    {
+      "name": "Dani Robinson",
+      "email": "jameschen@hotmail.com",
+      "profilePic": "https://www.lorempixel.com/157/64",
+      "points": 144,
+      "createdAt": "1982-08-26T11:15:32"
+    },
+    {
+      "name": "Maryana Smith",
+      "email": "brownjordan@gmail.com",
+      "profilePic": "https://dummyimage.com/774x230",
+      "points": 189,
+      "createdAt": "1995-05-15T17:13:42"
+    },
+    {
+      "name": "Harry Potter",
+      "email": "cmorrison@hotmail.com",
+      "profilePic": "https://placekitten.com/325/124",
+      "points": 410,
+      "createdAt": "1972-04-19T14:42:57"
+    },
+    {
+      "name": "Paul Walker",
+      "email": "matthewblake@anderson-williams.net",
+      "profilePic": "https://placekitten.com/950/910",
+      "points": 306,
+      "createdAt": "2014-08-14T04:31:07"
+    },
+    {
+      "name": "Brian Oconner",
+      "email": "anna68@hotmail.com",
+      "profilePic": "https://placeimg.com/102/128/any",
+      "points": 100,
+      "createdAt": "1989-08-05T04:59:33"
+    },
+    {
+      "name": "Vin Diesel",
+      "email": "jasonavery@ramirez.com",
+      "profilePic": "https://www.lorempixel.com/218/794",
+      "points": 423,
+      "createdAt": "1976-03-03T10:19:02"
+    },
+    {
+      "name": "Ron Weasley",
+      "email": "richard04@kelley.com",
+      "profilePic": "https://www.lorempixel.com/731/970",
+      "points": 401,
+      "createdAt": "1981-03-13T05:29:46"
+    },
+    {
+      "name": "Nour Flayfle",
+      "email": "santosroberta@boyd-coleman.org",
+      "profilePic": "https://placekitten.com/660/702",
+      "points": 265,
+      "createdAt": "1978-10-12T17:16:59"
+    },
+    {
+      "name": "Sara Mcdowell",
+      "email": "lpage@castro-lowe.info",
+      "profilePic": "https://placeimg.com/358/153/any",
+      "points": 413,
+      "createdAt": "2024-12-23T21:28:30"
+    },
+    {
+      "name": "Amanda Joseph",
+      "email": "pholmes@castillo.com",
+      "profilePic": "https://dummyimage.com/333x450",
+      "points": 154,
+      "createdAt": "2005-10-09T13:52:20"
+    },
+    {
+      "name": "Katelyn Middleton",
+      "email": "coffeyrachel@hotmail.com",
+      "profilePic": "https://placekitten.com/276/752",
+      "points": 151,
+      "createdAt": "1997-01-03T11:29:15"
+    },
+    {
+      "name": "Andrew Frederick MD",
+      "email": "avargas@yahoo.com",
+      "profilePic": "https://dummyimage.com/429x971",
+      "points": 96,
+      "createdAt": "2018-10-24T21:04:39"
+    },
+    {
+      "name": "Melissa Henderson",
+      "email": "joshuabrown@hotmail.com",
+      "profilePic": "https://placekitten.com/506/915",
+      "points": 69,
+      "createdAt": "1982-11-06T10:27:03"
+    },
+    {
+      "name": "Kimberly Hart",
+      "email": "brian43@yahoo.com",
+      "profilePic": "https://www.lorempixel.com/793/655",
+      "points": 444,
+      "createdAt": "2002-11-15T13:46:30"
+    }
+  ],
+  "branches": [
+    {
+      "name": "Beirut Downtown",
+      "address": "Martyrs' Square, Beirut",
+      "phone": "01-123456",
+      "open": "08:00",
+      "close": "18:00",
+      "location": {
+        "lat": 33.8938,
+        "lng": 35.5018
+      }
+    },
+    {
+      "name": "Tripoli",
+      "address": "El Mina, Tripoli",
+      "phone": "06-789012",
+      "open": "09:00",
+      "close": "17:00",
+      "location": {
+        "lat": 34.433,
+        "lng": 35.8442
+      }
+    },
+    {
+      "name": "Jounieh",
+      "address": "Main Highway, Jounieh",
+      "phone": "09-456789",
+      "open": "08:00",
+      "close": "19:00",
+      "location": {
+        "lat": 33.9808,
+        "lng": 35.6178
+      }
+    }
+  ],
+  "carGroups": [
+    {
+      "groupName": "SUV",
+      "engineSize": "2000-3000cc",
+      "doors": 5,
+      "passengers": 7,
+      "fuel": "Gasoline/Diesel", 
+      "gearbox": "Automatic",
+      "ac": true,
+      "electricWindows": true
+    },
+    {
+      "groupName": "Electric",
+      "engineSize": "N/A",
+      "doors": 4,
+      "passengers": 5,
+      "fuel": "Electric",
+      "gearbox": "Automatic",
+      "ac": true,
+      "electricWindows": true
+    },
+    {
+      "groupName": "Hybrid",
+      "engineSize": "1800-2500cc",
+      "doors": 4,
+      "passengers": 5,
+      "fuel": "Hybrid",
+      "gearbox": "Automatic",
+      "ac": true,
+      "electricWindows": true
+    },
+    {
+      "groupName": "Convertible", 
+      "engineSize": "2000-4000cc",
+      "doors": 2,
+      "passengers": 4,
+      "fuel": "Gasoline",
+      "gearbox": "Automatic",
+      "ac": true,
+      "electricWindows": true
+    },
+    {
+      "groupName": "Sedan",
+      "engineSize": "1600-2500cc",
+      "doors": 4,
+      "passengers": 5,
+      "fuel": "Gasoline",
+      "gearbox": "Automatic",
+      "ac": true,
+      "electricWindows": true
+    }
+  ],
+  "cars": [
+    {
+      "brand": "BMW",
+      "model": "X5",
+      "group": "SUV",
+      "pricePerDay": 150,
+      "imageURL": "https://images.unsplash.com/photo-1555215695-3004980ad54e"
+    },
+    {
+      "brand": "Tesla",
+      "model": "Model 3", 
+      "group": "Electric",
+      "pricePerDay": 180,
+      "imageURL": "https://images.unsplash.com/photo-1561580125-028ee3bd62eb"
+    },
+    {
+      "brand": "Tesla",
+      "model": "Model Y",
+      "group": "Electric", 
+      "pricePerDay": 200,
+      "imageURL": "https://images.unsplash.com/photo-1617788138017-80ad40c6ff70"
+    },
+    {
+      "brand": "Toyota",
+      "model": "Prius",
+      "group": "Hybrid",
+      "pricePerDay": 110,
+      "imageURL": "https://images.unsplash.com/photo-1619767886558-efdd3f4a9a3f"
+    },
+    {
+      "brand": "Honda",
+      "model": "Insight",
+      "group": "Hybrid",
+      "pricePerDay": 100,
+      "imageURL": "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb"
+    },
+    {
+      "brand": "BMW",
+      "model": "4 Series",
+      "group": "Convertible",
+      "pricePerDay": 190,
+      "imageURL": "https://images.unsplash.com/photo-1523983388277-336a66bf9bcd"
+    },
+    {
+      "brand": "Ford",
+      "model": "Mustang",
+      "group": "Convertible",
+      "pricePerDay": 200,
+      "imageURL": "https://images.unsplash.com/photo-1584345604325-f5090725a415"
+    },
+    {
+      "brand": "Toyota",
+      "model": "Camry",
+      "group": "Sedan",
+      "pricePerDay": 90,
+      "imageURL": "https://images.unsplash.com/photo-1621007947382-bb3c3994e3fb"
+    },
+    {
+      "brand": "Honda", 
+      "model": "Accord",
+      "group": "Sedan",
+      "pricePerDay": 95,
+      "imageURL": "https://images.unsplash.com/photo-1606152421802-db97b9c7a11b"
+    },
+    {
+      "brand": "Honda",
+      "model": "CR-V",
+      "group": "SUV", 
+      "pricePerDay": 120,
+      "imageURL": "https://images.unsplash.com/photo-1568844293986-8d0400bd4745"
+    }
+  ],
+  "reviews": [
+    {
+      "userName": "Ali Ramoukhi",
+      "profilePic": "https://placekitten.com/869/677",
+      "date": "2025-02-22",
+      "stars": 5,
+      "comment": "Excellent service! The BMW X5 was in perfect condition and pickup was seamless."
+    },
+    {
+      "userName": "Angela Hill",
+      "profilePic": "https://placeimg.com/327/612/any",
+      "date": "2025-02-20",
+      "stars": 2,
+      "comment": "Car was not as clean as expected. Pickup process took longer than promised."
+    },
+    {
+      "userName": "Jennifer Garcia",
+      "profilePic": "https://www.lorempixel.com/41/562",
+      "date": "2025-03-30",
+      "stars": 5,
+      "comment": "The Tesla Model 3 was amazing! Will definitely rent again."
+    },
+    {
+      "userName": "Karen Mechaka",
+      "profilePic": "https://placekitten.com/650/61",
+      "date": "2025-02-14",
+      "stars": 5,
+      "comment": "Very professional staff and the car was in great condition."
+    },
+    {
+      "userName": "Saeed Mahfouz",
+      "profilePic": "https://www.lorempixel.com/12/277",
+      "date": "2025-01-01",
+      "stars": 4,
+      "comment": "Good experience overall. The GPS system was very helpful."
+    },
+    {
+      "userName": "Jad Mraytbe",
+      "profilePic": "https://www.lorempixel.com/658/279",
+      "date": "2025-01-01",
+      "stars": 3,
+      "comment": "Decent service but prices are a bit high compared to competitors."
+    },
+    {
+      "userName": "Dani Robinson",
+      "profilePic": "https://www.lorempixel.com/114/1003",
+      "date": "2025-02-18",
+      "stars": 5,
+      "comment": "The Convertible BMW was perfect for our coastal trip!"
+    },
+    {
+      "userName": "Maryana Smith",
+      "profilePic": "https://placeimg.com/402/312/any",
+      "date": "2025-02-13",
+      "stars": 2,
+      "comment": "Had issues with the car's AC system during rental."
+    },
+    {
+      "userName": "Harry Potter",
+      "profilePic": "https://placeimg.com/283/855/any",
+      "date": "2025-02-01",
+      "stars": 3,
+      "comment": "Average experience. Car was okay but pickup location was hard to find."
+    },
+    {
+      "userName": "Paul Walker",
+      "profilePic": "https://www.lorempixel.com/924/197",
+      "date": "2025-03-14",
+      "stars": 3,
+      "comment": "The Honda CR-V performed well but fuel consumption was high."
+    }
+  ],
+  "reservations": [
+    {
+      "userEmail": "joseph59@gmail.com",
+      "driverName": "Karina Mason",
+      "driverAge": 55,
+      "pickupLocation": "Jounieh",
+      "dropLocation": "Jounieh",
+      "pickupDate": "2025-04-01T10:01:21",
+      "dropDate": "2025-04-01T06:34:51",
+      "cars": [
+        "Tesla Model 3"
+      ],
+      "services": {
+        "chauffeur": true,
+        "babySeat": false,
+        "navigator": true,
+        "insurance": "Full",
+        "fuelOption": "Pay on Return",
+        "gps": false
+      },
+      "status": "finalized",
+      "totalPrice": 121
+    },
+    {
+      "userEmail": "stephanie81@pittman.org",
+      "driverName": "Paula Pierce",
+      "driverAge": 44,
+      "pickupLocation": "Tripoli",
+      "dropLocation": "Jounieh",
+      "pickupDate": "2025-04-01T01:44:32",
+      "dropDate": "2025-04-01T15:10:19",
+      "cars": [
+        "Toyota Corolla"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": true,
+        "navigator": false,
+        "insurance": "Tires & Windscreen",
+        "fuelOption": "Prepaid",
+        "gps": false
+      },
+      "status": "cancelled",
+      "totalPrice": 424
+    },
+    {
+      "userEmail": "danielturner@hotmail.com",
+      "driverName": "Jonathan Robinson",
+      "driverAge": 75,
+      "pickupLocation": "Tripoli",
+      "dropLocation": "Tripoli",
+      "pickupDate": "2025-04-01T03:21:58",
+      "dropDate": "2025-04-01T09:52:01",
+      "cars": [
+        "Toyota Corolla"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": true,
+        "navigator": true,
+        "insurance": "Full",
+        "fuelOption": "Prepaid",
+        "gps": true
+      },
+      "status": "finalized",
+      "totalPrice": 310
+    },
+    {
+      "userEmail": "jasminebush@coleman-sanchez.com",
+      "driverName": "Jeffrey Taylor",
+      "driverAge": 75,
+      "pickupLocation": "Beirut Downtown",
+      "dropLocation": "Tripoli",
+      "pickupDate": "2025-04-01T10:50:12",
+      "dropDate": "2025-04-01T09:56:56",
+      "cars": [
+        "Tesla Model 3"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": true,
+        "navigator": false,
+        "insurance": "Tires & Windscreen",
+        "fuelOption": "Prepaid",
+        "gps": true
+      },
+      "status": "finalized",
+      "totalPrice": 154
+    },
+    {
+      "userEmail": "csullivan@yahoo.com",
+      "driverName": "Joseph Edwards",
+      "driverAge": 63,
+      "pickupLocation": "Jounieh",
+      "dropLocation": "Jounieh",
+      "pickupDate": "2025-04-01T14:37:22",
+      "dropDate": "2025-04-01T12:24:57",
+      "cars": [
+        "BMW X5"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": true,
+        "navigator": true,
+        "insurance": "Full",
+        "fuelOption": "Prepaid",
+        "gps": true
+      },
+      "status": "saved",
+      "totalPrice": 327
+    },
+    {
+      "userEmail": "angela01@hotmail.com",
+      "driverName": "Michael Dunn",
+      "driverAge": 47,
+      "pickupLocation": "Jounieh",
+      "dropLocation": "Tripoli",
+      "pickupDate": "2025-04-01T02:29:28",
+      "dropDate": "2025-04-01T10:53:25",
+      "cars": [
+        "BMW X5"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": false,
+        "navigator": true,
+        "insurance": "Full",
+        "fuelOption": "Pay on Return",
+        "gps": true
+      },
+      "status": "finalized",
+      "totalPrice": 486
+    },
+    {
+      "userEmail": "xweaver@hahn.com",
+      "driverName": "Gregory Russo",
+      "driverAge": 47,
+      "pickupLocation": "Beirut Downtown",
+      "dropLocation": "Beirut Downtown",
+      "pickupDate": "2025-04-01T03:09:00",
+      "dropDate": "2025-04-01T14:46:36",
+      "cars": [
+        "Toyota Corolla"
+      ],
+      "services": {
+        "chauffeur": true,
+        "babySeat": false,
+        "navigator": true,
+        "insurance": "Full",
+        "fuelOption": "Pay on Return",
+        "gps": false
+      },
+      "status": "saved",
+      "totalPrice": 300
+    },
+    {
+      "userEmail": "xmiller@gmail.com",
+      "driverName": "Bradley Solis",
+      "driverAge": 26,
+      "pickupLocation": "Tripoli",
+      "dropLocation": "Tripoli",
+      "pickupDate": "2025-04-01T14:19:53",
+      "dropDate": "2025-04-01T03:43:18",
+      "cars": [
+        "BMW X5"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": true,
+        "navigator": false,
+        "insurance": "Tires & Windscreen",
+        "fuelOption": "Prepaid",
+        "gps": false
+      },
+      "status": "saved",
+      "totalPrice": 433
+    },
+    {
+      "userEmail": "carlbrown@valdez.com",
+      "driverName": "Katrina Cobb MD",
+      "driverAge": 72,
+      "pickupLocation": "Jounieh",
+      "dropLocation": "Beirut Downtown",
+      "pickupDate": "2025-04-01T01:08:10",
+      "dropDate": "2025-04-01T15:27:41",
+      "cars": [
+        "BMW X5"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": true,
+        "navigator": false,
+        "insurance": "Additional Driver",
+        "fuelOption": "Prepaid",
+        "gps": false
+      },
+      "status": "finalized",
+      "totalPrice": 298
+    },
+    {
+      "userEmail": "desireecooper@jennings.com",
+      "driverName": "Megan Jones",
+      "driverAge": 40,
+      "pickupLocation": "Tripoli",
+      "dropLocation": "Jounieh",
+      "pickupDate": "2025-04-01T13:59:05",
+      "dropDate": "2025-04-01T03:39:35",
+      "cars": [
+        "Toyota Corolla"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": false,
+        "navigator": true,
+        "insurance": "Tires & Windscreen",
+        "fuelOption": "Prepaid",
+        "gps": false
+      },
+      "status": "saved",
+      "totalPrice": 424
+    },
+    {
+      "userEmail": "bortega@hotmail.com",
+      "driverName": "Albert Gilbert",
+      "driverAge": 46,
+      "pickupLocation": "Tripoli",
+      "dropLocation": "Beirut Downtown",
+      "pickupDate": "2025-04-01T08:58:02",
+      "dropDate": "2025-04-01T08:03:07",
+      "cars": [
+        "BMW X5"
+      ],
+      "services": {
+        "chauffeur": true,
+        "babySeat": false,
+        "navigator": false,
+        "insurance": "Full",
+        "fuelOption": "Prepaid",
+        "gps": true
+      },
+      "status": "cancelled",
+      "totalPrice": 367
+    },
+    {
+      "userEmail": "paige74@obrien.com",
+      "driverName": "Jason French",
+      "driverAge": 44,
+      "pickupLocation": "Jounieh",
+      "dropLocation": "Jounieh",
+      "pickupDate": "2025-04-01T02:34:30",
+      "dropDate": "2025-04-01T13:44:03",
+      "cars": [
+        "Tesla Model 3"
+      ],
+      "services": {
+        "chauffeur": true,
+        "babySeat": true,
+        "navigator": true,
+        "insurance": "Tires & Windscreen",
+        "fuelOption": "Pay on Return",
+        "gps": false
+      },
+      "status": "saved",
+      "totalPrice": 486
+    },
+    {
+      "userEmail": "livingstonsabrina@jefferson.com",
+      "driverName": "Justin Turner",
+      "driverAge": 35,
+      "pickupLocation": "Jounieh",
+      "dropLocation": "Tripoli",
+      "pickupDate": "2025-04-01T05:22:58",
+      "dropDate": "2025-04-01T01:20:45",
+      "cars": [
+        "BMW X5"
+      ],
+      "services": {
+        "chauffeur": true,
+        "babySeat": true,
+        "navigator": false,
+        "insurance": "Additional Driver",
+        "fuelOption": "Pay on Return",
+        "gps": true
+      },
+      "status": "finalized",
+      "totalPrice": 417
+    },
+    {
+      "userEmail": "gthompson@mcclain-williams.info",
+      "driverName": "Phillip Clark",
+      "driverAge": 72,
+      "pickupLocation": "Beirut Downtown",
+      "dropLocation": "Beirut Downtown",
+      "pickupDate": "2025-04-01T15:03:35",
+      "dropDate": "2025-04-01T04:47:50",
+      "cars": [
+        "BMW X5"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": false,
+        "navigator": false,
+        "insurance": "Full",
+        "fuelOption": "Pay on Return",
+        "gps": false
+      },
+      "status": "cancelled",
+      "totalPrice": 463
+    },
+    {
+      "userEmail": "smithashley@martin.com",
+      "driverName": "Jennifer Baird",
+      "driverAge": 66,
+      "pickupLocation": "Jounieh",
+      "dropLocation": "Beirut Downtown",
+      "pickupDate": "2025-04-01T15:17:29",
+      "dropDate": "2025-04-01T00:10:04",
+      "cars": [
+        "Toyota Corolla"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": false,
+        "navigator": true,
+        "insurance": "Tires & Windscreen",
+        "fuelOption": "Prepaid",
+        "gps": true
+      },
+      "status": "cancelled",
+      "totalPrice": 123
+    },
+    {
+      "userEmail": "yunderwood@weiss-knight.com",
+      "driverName": "Tyler Perez",
+      "driverAge": 38,
+      "pickupLocation": "Tripoli",
+      "dropLocation": "Beirut Downtown",
+      "pickupDate": "2025-04-01T06:34:56",
+      "dropDate": "2025-04-01T02:29:47",
+      "cars": [
+        "Toyota Corolla"
+      ],
+      "services": {
+        "chauffeur": false,
+        "babySeat": true,
+        "navigator": true,
+        "insurance": "Tires & Windscreen",
+        "fuelOption": "Prepaid",
+        "gps": true
+      },
+      "status": "finalized",
+      "totalPrice": 466
+    },
+    {
+      "userEmail": "anita27@gmail.com",
+      "driverName": "April Arnold",
+      "driverAge": 75,
+      "pickupLocation": "Jounieh",
+      "dropLocation": "Jounieh",
+      "pickupDate": "2025-04-01T14:02:23",
+      "dropDate": "2025-04-01T11:58:04",
+      "cars": [
+        "Toyota Corolla"
+      ],
+      "services": {
+        "chauffeur": true,
+        "babySeat": true,
+        "navigator": false,
+        "insurance": "Full",
+        "fuelOption": "Prepaid",
+        "gps": true
+      },
+      "status": "cancelled",
+      "totalPrice": 470
+    },
+    {
+      "userEmail": "kathryndiaz@hall.net",
+      "driverName": "Willie Foster",
+      "driverAge": 45,
+      "pickupLocation": "Tripoli",
+      "dropLocation": "Beirut Downtown",
+      "pickupDate": "2025-04-01T07:50:28",
+      "dropDate": "2025-04-01T06:08:03",
+      "cars": [
+        "Tesla Model 3"
+      ],
+      "services": {
+        "chauffeur": true,
+        "babySeat": false,
+        "navigator": true,
+        "insurance": "Tires & Windscreen",
+        "fuelOption": "Prepaid",
+        "gps": true
+      },
+      "status": "cancelled",
+      "totalPrice": 378
+    },
+    {
+      "userEmail": "sgray@yahoo.com",
+      "driverName": "John Baker",
+      "driverAge": 43,
+      "pickupLocation": "Beirut Downtown",
+      "dropLocation": "Beirut Downtown",
+      "pickupDate": "2025-04-01T14:38:02",
+      "dropDate": "2025-04-01T14:18:47",
+      "cars": [
+        "Toyota Corolla"
+      ],
+      "services": {
+        "chauffeur": true,
+        "babySeat": false,
+        "navigator": false,
+        "insurance": "Tires & Windscreen",
+        "fuelOption": "Prepaid",
+        "gps": true
+      },
+      "status": "saved",
+      "totalPrice": 127
+    },
+    {
+      "userEmail": "dakotabrown@thompson-garcia.net",
+      "driverName": "Cole Williams",
+      "driverAge": 45,
+      "pickupLocation": "Tripoli",
+      "dropLocation": "Jounieh",
+      "pickupDate": "2025-04-01T15:25:05",
+      "dropDate": "2025-04-01T04:35:27",
+      "cars": [
+        "Toyota Corolla"
+      ],
+      "services": {
+        "chauffeur": true,
+        "babySeat": false,
+        "navigator": false,
+        "insurance": "Additional Driver",
+        "fuelOption": "Prepaid",
+        "gps": true
+      },
+      "status": "saved",
+      "totalPrice": 342
+    }
+  ]
+}
