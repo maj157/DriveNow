@@ -7,6 +7,13 @@ export const routes: Routes = [
   { path: 'home', loadComponent: () => import('./pages/home/home.component').then(c => c.HomeComponent) },
   { path: 'login', loadChildren: () => import('./core/auth/login/login.module').then(m => m.LoginModule) },
   { path: 'signup', loadChildren: () => import('./core/auth/signup/signup.module').then(m => m.SignupModule) },
+  { path: 'locations', loadChildren: () => import('./features/locations/locations.module').then(m => m.LocationsModule) },
+  
+  // Reservation flow
+  { 
+    path: 'reservation', 
+    loadChildren: () => import('./pages/reservation/reservation.module').then(m => m.ReservationModule)
+  },
   
   // Fallback route
   { path: '**', redirectTo: '/home' }

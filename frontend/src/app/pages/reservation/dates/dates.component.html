@@ -1,0 +1,88 @@
+<div class="dates-container">
+  <div class="dates-header">
+    <h1>Choose Your Rental Period</h1>
+    <p>Select your pickup and return dates and times</p>
+  </div>
+
+  <div class="dates-content">
+    <form [formGroup]="dateForm" (ngSubmit)="onSubmit()">
+      <div class="date-section">
+        <h3>Pickup Details</h3>
+        
+        <div class="date-inputs">
+          <div class="form-group">
+            <label for="pickupDate">Pickup Date</label>
+            <input 
+              type="date" 
+              id="pickupDate" 
+              formControlName="pickupDate" 
+              [min]="minDate"
+              class="form-control"
+              [class.is-invalid]="dateForm.get('pickupDate')?.invalid && (dateForm.get('pickupDate')?.dirty || dateForm.get('pickupDate')?.touched)"
+            >
+            <div class="invalid-feedback" *ngIf="dateForm.get('pickupDate')?.invalid && (dateForm.get('pickupDate')?.dirty || dateForm.get('pickupDate')?.touched)">
+              Please select a pickup date
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="pickupTime">Pickup Time</label>
+            <input 
+              type="time" 
+              id="pickupTime" 
+              formControlName="pickupTime" 
+              class="form-control"
+              [class.is-invalid]="dateForm.get('pickupTime')?.invalid && (dateForm.get('pickupTime')?.dirty || dateForm.get('pickupTime')?.touched)"
+            >
+            <div class="invalid-feedback" *ngIf="dateForm.get('pickupTime')?.invalid && (dateForm.get('pickupTime')?.dirty || dateForm.get('pickupTime')?.touched)">
+              Please select a pickup time
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="date-section">
+        <h3>Return Details</h3>
+        
+        <div class="date-inputs">
+          <div class="form-group">
+            <label for="returnDate">Return Date</label>
+            <input 
+              type="date" 
+              id="returnDate" 
+              formControlName="returnDate" 
+              [min]="dateForm.get('pickupDate')?.value || minDate"
+              class="form-control"
+              [class.is-invalid]="(dateForm.get('returnDate')?.invalid || dateForm.hasError('dateRange')) && (dateForm.get('returnDate')?.dirty || dateForm.get('returnDate')?.touched)"
+            >
+            <div class="invalid-feedback" *ngIf="dateForm.get('returnDate')?.invalid && (dateForm.get('returnDate')?.dirty || dateForm.get('returnDate')?.touched)">
+              Please select a return date
+            </div>
+            <div class="invalid-feedback" *ngIf="dateForm.hasError('dateRange') && !dateForm.get('returnDate')?.hasError('required')">
+              Return date must be after pickup date
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="returnTime">Return Time</label>
+            <input 
+              type="time" 
+              id="returnTime" 
+              formControlName="returnTime" 
+              class="form-control"
+              [class.is-invalid]="dateForm.get('returnTime')?.invalid && (dateForm.get('returnTime')?.dirty || dateForm.get('returnTime')?.touched)"
+            >
+            <div class="invalid-feedback" *ngIf="dateForm.get('returnTime')?.invalid && (dateForm.get('returnTime')?.dirty || dateForm.get('returnTime')?.touched)">
+              Please select a return time
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="date-actions">
+        <button type="button" class="btn btn-secondary" routerLink="/reservation/locations">Back</button>
+        <button type="submit" class="btn btn-primary" [disabled]="dateForm.invalid">Continue</button>
+      </div>
+    </form>
+  </div>
+</div> 

@@ -1,34 +1,31 @@
-import { NgModule } from '@angular/core';
+import { NgModule, Injectable } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule, HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
-
-// Services
 import { AuthService } from './services/auth.service';
-import { CarService } from './services/car.service';
-import { UserService } from './services/user.service';
+import { ExtraService } from './services/extra.service';
 import { ReservationService } from './services/reservation.service';
+import { UserService } from './services/user.service';
+import { CarService } from './services/car.service';
 import { ReviewService } from './services/review.service';
 import { ChatService } from './services/chat.service';
 
-// Auth Module
-import { AuthModule } from './auth/auth.module';
+// Token interceptor to handle authentication
+@Injectable()
+export class TokenInterceptor implements HttpInterceptor {
+  constructor(private authService: AuthService) {}
 
-// HTTP Interceptor for JWT tokens
-class HttpTokenInterceptor implements HttpInterceptor {
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const headersConfig: { [key: string]: string } = {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    };
-
-    const token = localStorage.getItem('auth_token');
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    const token = this.authService.getToken();
+    
     if (token) {
-      headersConfig['Authorization'] = `Bearer ${token}`;
+      const cloned = request.clone({
+        headers: request.headers.set('Authorization', `Bearer ${token}`)
+      });
+      return next.handle(cloned);
     }
-
-    const request = req.clone({ setHeaders: headersConfig });
+    
     return next.handle(request);
   }
 }
@@ -38,27 +35,22 @@ class HttpTokenInterceptor implements HttpInterceptor {
   imports: [
     CommonModule,
     HttpClientModule,
-    RouterModule,
-    AuthModule
+    RouterModule
   ],
   providers: [
-    // Services
     AuthService,
-    CarService,
-    UserService,
+    ExtraService,
     ReservationService,
+    UserService,
+    CarService,
     ReviewService,
     ChatService,
-    
-    // Interceptors
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: HttpTokenInterceptor,
+      useClass: TokenInterceptor,
       multi: true
     }
   ],
-  exports: [
-    AuthModule
-  ]
+  exports: []
 })
 export class CoreModule { }
