@@ -1,1 +1,31 @@
-<p>groups works!</p>
+<div class="groups-container">
+  <h2>Car Categories</h2>
+  
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading categories...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+    <button (click)="loadCarGroups()">Try Again</button>
+  </div>
+
+  <div *ngIf="!loading && !error" class="groups-grid">
+    <div *ngFor="let group of carGroups" class="group-card">
+      <div class="group-image">
+        <img [src]="group.image" [alt]="group.name">
+      </div>
+      <div class="group-info">
+        <h3>{{ group.name }}</h3>
+        <p>{{ group.description }}</p>
+        <div class="group-footer">
+          <span class="car-count">{{ group.carCount }} cars available</span>
+          <a [routerLink]="['/vehicles/gallery']" [queryParams]="{ group: group.id }" class="view-cars">
+            View Cars
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

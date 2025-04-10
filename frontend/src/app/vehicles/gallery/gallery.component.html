@@ -1,1 +1,32 @@
-<p>gallery works!</p>
+<div class="gallery-container">
+  <div class="filter-section">
+    <app-filter (filterChange)="onFilterChange($event)"></app-filter>
+  </div>
+
+  <div class="cars-section">
+    <div *ngIf="loading" class="loading">
+      <div class="spinner"></div>
+      <p>Loading cars...</p>
+    </div>
+
+    <div *ngIf="error" class="error">
+      <p>{{ error }}</p>
+      <button (click)="loadCars()">Try Again</button>
+    </div>
+
+    <div *ngIf="!loading && !error" class="cars-grid">
+      <div *ngFor="let car of filteredCars" class="car-item">
+        <app-car-card 
+          [car]="car"
+          [showActions]="true"
+          (select)="onCarSelect($event)"
+          (viewDetails)="onViewDetails($event)">
+        </app-car-card>
+      </div>
+    </div>
+
+    <div *ngIf="!loading && !error && filteredCars.length === 0" class="no-cars">
+      <p>No cars match your filters. Try adjusting your search criteria.</p>
+    </div>
+  </div>
+</div>

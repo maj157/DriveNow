@@ -2,9 +2,14 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const carsRouter = require('./routes/cars');
+
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Routes
+app.use('/api/cars', carsRouter);
 
 // Sample route
 app.get('/', (req, res) => {

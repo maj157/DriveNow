@@ -1,1 +1,59 @@
-<p>filter works!</p>
+<div class="filter-container">
+  <h3>Filter Cars</h3>
+  
+  <div class="filter-group">
+    <label>Number of Seats</label>
+    <select [(ngModel)]="filters.seats">
+      <option [ngValue]="null">Any</option>
+      <option *ngFor="let seats of seatOptions" [value]="seats">{{ seats }} seats</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>Transmission</label>
+    <select [(ngModel)]="filters.gearbox">
+      <option [ngValue]="null">Any</option>
+      <option *ngFor="let gearbox of gearboxOptions" [value]="gearbox">{{ gearbox }}</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>Fuel Type</label>
+    <select [(ngModel)]="filters.fuelType">
+      <option [ngValue]="null">Any</option>
+      <option *ngFor="let fuelType of fuelTypeOptions" [value]="fuelType">{{ fuelType }}</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>Air Conditioning</label>
+    <select [(ngModel)]="filters.ac">
+      <option [ngValue]="null">Any</option>
+      <option [value]="true">Yes</option>
+      <option [value]="false">No</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>Electric Windows</label>
+    <select [(ngModel)]="filters.electricWindows">
+      <option [ngValue]="null">Any</option>
+      <option [value]="true">Yes</option>
+      <option [value]="false">No</option>
+    </select>
+  </div>
+
+  <div class="filter-group">
+    <label>Price Range</label>
+    <div class="price-range">
+      <input type="number" [(ngModel)]="filters.minPrice" placeholder="Min Price">
+      <span>to</span>
+      <input type="number" [(ngModel)]="filters.maxPrice" placeholder="Max Price">
+    </div>
+  </div>
+
+  <div class="filter-actions">
+    <button (click)="applyFilters()" class="apply-btn">Apply Filters</button>
+    <button (click)="resetFilters()" class="reset-btn">Reset</button>
+  </div>
+</div>
