@@ -1,0 +1,30 @@
+<div class="profile-container">
+  <div class="profile-sidebar">
+    <div class="user-info">
+      <div class="avatar">
+        <!-- We'll replace with actual user avatar later -->
+        <span>J</span>
+      </div>
+      <h3>John Doe</h3>
+      <p>john.doe&#64;example.com</p>
+    </div>
+    
+    <nav class="sidebar-nav">
+      <ul>
+        <li *ngFor="let tab of tabs">
+          <a 
+            [routerLink]="[tab.route]" 
+            routerLinkActive="active"
+            class="nav-link">
+            <span class="icon">{{ tab.icon }}</span>
+            {{ tab.label }}
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  
+  <div class="profile-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

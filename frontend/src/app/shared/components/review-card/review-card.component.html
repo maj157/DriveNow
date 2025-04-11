@@ -1,1 +1,31 @@
-<p>review-card works!</p>
+<div class="review-card">
+  <div class="review-header">
+    <div class="user-info">
+      <div class="avatar" [style.backgroundImage]="review.profileImage ? 'url(' + review.profileImage + ')' : 'none'">
+        <span *ngIf="!review.profileImage">{{ review.name.charAt(0) }}</span>
+      </div>
+      <div class="user-details">
+        <h3 class="user-name">{{ review.name }}</h3>
+        <span class="review-date">{{ formatDate(review.date) }}</span>
+      </div>
+    </div>
+    
+    <div class="rating">
+      <span class="star" *ngFor="let star of getStarsArray(review.stars)">
+        <i [class]="star === 1 ? 'filled' : 'empty'">★</i>
+      </span>
+    </div>
+  </div>
+  
+  <div class="review-content">
+    <p>{{ review.comment }}</p>
+  </div>
+  
+  <div class="review-car" *ngIf="review.carId">
+    <a [routerLink]="['/cars', review.carId]">View Vehicle</a>
+  </div>
+  
+  <div class="review-actions" *ngIf="canEdit">
+    <button class="delete-btn" (click)="onDelete()">Delete Review</button>
+  </div>
+</div>

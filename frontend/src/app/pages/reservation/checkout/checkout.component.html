@@ -1,0 +1,229 @@
+<div class="checkout-container">
+  <div class="checkout-header">
+    <h1>Checkout</h1>
+    <p>Review your reservation and complete your booking</p>
+  </div>
+
+  <div class="checkout-content">
+    <div class="row">
+      <!-- Reservation Summary -->
+      <div class="col-md-8">
+        <div class="summary-section">
+          <h3>Reservation Summary</h3>
+          
+          <div class="summary-card">
+            <!-- Car Details -->
+            <div class="summary-item" *ngIf="reservation.car">
+              <h4>Vehicle</h4>
+              <div class="car-summary">
+                <div class="car-image" *ngIf="reservation.car.image">
+                  <img [src]="typeof reservation.car.image === 'string' ? reservation.car.image : reservation.car.image[0]" 
+                      alt="{{ reservation.car.brand }} {{ reservation.car.model }}">
+                </div>
+                <div class="car-details">
+                  <h5>{{ reservation.car.brand }} {{ reservation.car.model }}</h5>
+                  <div class="car-specs">
+                    <span><i class="fas fa-car"></i> {{ reservation.car.specs.fuelType }}</span>
+                    <span><i class="fas fa-cog"></i> {{ reservation.car.specs.gearbox }}</span>
+                    <span><i class="fas fa-user"></i> {{ reservation.car.specs.seats }} seats</span>
+                  </div>
+                  <div class="car-price">
+                    <span>${{ reservation.car.price }}/day</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Location Details -->
+            <div class="summary-item">
+              <h4>Locations</h4>
+              <div class="location-summary">
+                <div class="location-item">
+                  <div class="location-label">Pickup:</div>
+                  <div class="location-details" *ngIf="reservation.pickupLocation">
+                    <strong>{{ reservation.pickupLocation.name }}</strong>
+                    <span>{{ reservation.pickupLocation.address }}</span>
+                  </div>
+                </div>
+                <div class="location-item">
+                  <div class="location-label">Return:</div>
+                  <div class="location-details" *ngIf="reservation.returnLocation">
+                    <strong>{{ reservation.returnLocation.name }}</strong>
+                    <span>{{ reservation.returnLocation.address }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Date Details -->
+            <div class="summary-item">
+              <h4>Rental Period</h4>
+              <div class="date-summary">
+                <div class="date-item">
+                  <div class="date-label">Pickup:</div>
+                  <div class="date-details" *ngIf="reservation.pickupDate">
+                    <strong>{{ reservation.pickupDate | date:'medium' }}</strong>
+                  </div>
+                </div>
+                <div class="date-item">
+                  <div class="date-label">Return:</div>
+                  <div class="date-details" *ngIf="reservation.returnDate">
+                    <strong>{{ reservation.returnDate | date:'medium' }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Extra Services -->
+            <div class="summary-item" *ngIf="reservation.extraServices && reservation.extraServices.length">
+              <h4>Extra Services</h4>
+              <div class="extras-summary">
+                <div class="extra-item" *ngFor="let service of reservation.extraServices">
+                  <div class="extra-name">{{ service.name }}</div>
+                  <div class="extra-price">${{ service.price }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Customer Details -->
+            <div class="summary-item" *ngIf="reservation.customerDetails">
+              <h4>Driver Information</h4>
+              <div class="customer-summary">
+                <div class="customer-item">
+                  <div class="customer-label">Name:</div>
+                  <div class="customer-detail">{{ reservation.customerDetails.name }}</div>
+                </div>
+                <div class="customer-item">
+                  <div class="customer-label">Age:</div>
+                  <div class="customer-detail">{{ reservation.customerDetails.age }}</div>
+                </div>
+                <div class="customer-item">
+                  <div class="customer-label">Email:</div>
+                  <div class="customer-detail">{{ reservation.customerDetails.email }}</div>
+                </div>
+                <div class="customer-item" *ngIf="reservation.customerDetails.phone">
+                  <div class="customer-label">Phone:</div>
+                  <div class="customer-detail">{{ reservation.customerDetails.phone }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payment Section -->
+      <div class="col-md-4">
+        <div class="payment-section">
+          <h3>Payment Details</h3>
+          
+          <div class="price-summary" *ngIf="reservation.totalPrice">
+            <div class="price-item">
+              <span>Rental Fee</span>
+              <span>${{ reservation.totalPrice }}</span>
+            </div>
+            
+            <div class="price-item discount" *ngIf="discountApplied">
+              <span>Discount</span>
+              <span>-${{ discountAmount }}</span>
+            </div>
+            
+            <div class="total-price">
+              <span>Total</span>
+              <span>${{ reservation.totalPrice && reservation.appliedDiscount ? (reservation.totalPrice - reservation.appliedDiscount.amount) : (reservation.totalPrice || 0) }}</span>
+            </div>
+          </div>
+          
+          <!-- Discount Coupon -->
+          <div class="discount-section" *ngIf="!discountApplied">
+            <h4>Apply Discount</h4>
+            
+            <form [formGroup]="discountForm" (ngSubmit)="applyDiscount()" class="discount-form">
+              <div class="form-group">
+                <input 
+                  type="text" 
+                  formControlName="code" 
+                  placeholder="Enter discount code" 
+                  class="form-control"
+                  [ngClass]="{'is-invalid': discountForm.get('code')?.invalid && discountForm.get('code')?.touched}"
+                >
+                <div class="invalid-feedback" *ngIf="discountForm.get('code')?.errors?.['invalid']">
+                  Invalid discount code
+                </div>
+                <div class="invalid-feedback" *ngIf="discountForm.get('code')?.errors?.['error']">
+                  Error applying discount
+                </div>
+              </div>
+              <button type="submit" class="btn btn-outline">Apply</button>
+            </form>
+            
+            <!-- Use Points -->
+            <div class="points-section" *ngIf="userPoints > 0">
+              <p>You have {{ userPoints }} points available</p>
+              <button type="button" class="btn btn-outline" (click)="usePoints()">
+                Use Points for Discount
+              </button>
+            </div>
+          </div>
+          
+          <!-- Payment Method -->
+          <form [formGroup]="paymentForm" class="payment-form">
+            <h4>Payment Method</h4>
+            
+            <div class="form-group" *ngFor="let method of paymentMethods">
+              <div class="form-check">
+                <input 
+                  type="radio" 
+                  [id]="method.id" 
+                  [value]="method.id" 
+                  formControlName="paymentMethod" 
+                  class="form-check-input"
+                >
+                <label [for]="method.id" class="form-check-label">{{ method.name }}</label>
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <div class="form-check">
+                <input 
+                  type="checkbox" 
+                  id="saveTransaction" 
+                  formControlName="saveTransaction" 
+                  class="form-check-input"
+                >
+                <label for="saveTransaction" class="form-check-label">
+                  Save this transaction for later
+                </label>
+              </div>
+            </div>
+          </form>
+          
+          <!-- Action Buttons -->
+          <div class="checkout-actions">
+            <div class="action-buttons">
+              <button type="button" class="btn btn-primary" (click)="completeReservation()" [disabled]="processingPayment">
+                <span class="spinner-border spinner-border-sm" *ngIf="processingPayment"></span>
+                {{ processingPayment ? 'Processing...' : 'Complete Reservation' }}
+              </button>
+              
+              <button type="button" class="btn btn-outline" (click)="saveReservation()">
+                Save for Later
+              </button>
+              
+              <button type="button" class="btn btn-outline" (click)="requestQuotation()">
+                Request Quotation
+              </button>
+              
+              <button type="button" class="btn btn-cancel" (click)="cancelReservation()">
+                Cancel
+              </button>
+            </div>
+            
+            <button type="button" class="btn btn-secondary" (click)="goBack()">
+              Back
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

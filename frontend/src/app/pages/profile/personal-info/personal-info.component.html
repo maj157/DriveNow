@@ -1,0 +1,109 @@
+<div class="section-container">
+  <div class="section-header">
+    <h2>Personal Information</h2>
+    <button 
+      class="action-button" 
+      [class.edit]="!isEditing"
+      [class.cancel]="isEditing"
+      (click)="toggleEdit()">
+      {{ isEditing ? 'Cancel' : 'Edit' }}
+    </button>
+  </div>
+
+  <div *ngIf="saveSuccess" class="success-message">
+    Your information has been updated successfully!
+  </div>
+
+  <form [formGroup]="personalInfoForm" (ngSubmit)="saveChanges()">
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="firstName">First Name*</label>
+        <input 
+          type="text" 
+          id="firstName" 
+          formControlName="firstName"
+          [class.invalid]="personalInfoForm.get('firstName')?.invalid && personalInfoForm.get('firstName')?.touched">
+        <div class="error-message" *ngIf="personalInfoForm.get('firstName')?.invalid && personalInfoForm.get('firstName')?.touched">
+          First name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="lastName">Last Name*</label>
+        <input 
+          type="text" 
+          id="lastName" 
+          formControlName="lastName"
+          [class.invalid]="personalInfoForm.get('lastName')?.invalid && personalInfoForm.get('lastName')?.touched">
+        <div class="error-message" *ngIf="personalInfoForm.get('lastName')?.invalid && personalInfoForm.get('lastName')?.touched">
+          Last name is required
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address*</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email"
+          [class.invalid]="personalInfoForm.get('email')?.invalid && personalInfoForm.get('email')?.touched">
+        <div class="error-message" *ngIf="personalInfoForm.get('email')?.invalid && personalInfoForm.get('email')?.touched">
+          Please enter a valid email address
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input 
+          type="tel" 
+          id="phone" 
+          formControlName="phone"
+          [class.invalid]="personalInfoForm.get('phone')?.invalid && personalInfoForm.get('phone')?.touched">
+        <div class="error-message" *ngIf="personalInfoForm.get('phone')?.invalid && personalInfoForm.get('phone')?.touched">
+          Please enter a valid phone number
+        </div>
+      </div>
+
+      <div class="form-group full-width">
+        <label for="address">Address</label>
+        <input type="text" id="address" formControlName="address">
+      </div>
+
+      <div class="form-group">
+        <label for="city">City</label>
+        <input type="text" id="city" formControlName="city">
+      </div>
+
+      <div class="form-group">
+        <label for="zipCode">Zip Code</label>
+        <input type="text" id="zipCode" formControlName="zipCode">
+      </div>
+
+      <div class="form-group">
+        <label for="country">Country</label>
+        <input type="text" id="country" formControlName="country">
+      </div>
+
+      <div class="form-group">
+        <label for="birthDate">Date of Birth</label>
+        <input type="date" id="birthDate" formControlName="birthDate">
+      </div>
+
+      <div class="form-group">
+        <label for="driverLicense">Driver License*</label>
+        <input 
+          type="text" 
+          id="driverLicense" 
+          formControlName="driverLicense"
+          [class.invalid]="personalInfoForm.get('driverLicense')?.invalid && personalInfoForm.get('driverLicense')?.touched">
+        <div class="error-message" *ngIf="personalInfoForm.get('driverLicense')?.invalid && personalInfoForm.get('driverLicense')?.touched">
+          Driver license is required
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions" *ngIf="isEditing">
+      <button type="submit" class="save-button">Save Changes</button>
+    </div>
+  </form>
+</div>

@@ -4,6 +4,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { ReservationRoutingModule } from './reservation-routing.module';
 import { ReservationComponent } from './reservation.component';
+import { DatesComponent } from './dates/dates.component';
+import { VehiclesComponent } from './vehicles/vehicles.component';
+import { ExtrasComponent } from './extras/extras.component';
+import { CustomerDetailsComponent } from './customer-details/customer-details.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 @NgModule({
   declarations: [],
@@ -12,7 +17,12 @@ import { ReservationComponent } from './reservation.component';
     FormsModule,
     ReactiveFormsModule,
     ReservationRoutingModule,
-    ReservationComponent
+    ReservationComponent,
+    DatesComponent,
+    VehiclesComponent,
+    ExtrasComponent,
+    CustomerDetailsComponent,
+    CheckoutComponent
   ]
 })
 export class ReservationModule { } 

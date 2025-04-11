@@ -1,0 +1,65 @@
+<div class="bookings-container">
+  <div class="page-header">
+    <h1>My Bookings</h1>
+    <p>Manage your car rental bookings and reservations</p>
+  </div>
+  
+  <div class="filters-section">
+    <div class="filters">
+      <div class="filter-group">
+        <label for="status">Status</label>
+        <select 
+          id="status" 
+          [(ngModel)]="filter.status" 
+          (change)="onFilterChange()">
+          <option *ngFor="let option of statusOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="sort">Sort By</label>
+        <select 
+          id="sort" 
+          [(ngModel)]="filter.sort" 
+          (change)="onFilterChange()">
+          <option *ngFor="let option of sortOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+      
+      <button class="filter-button clear" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+  
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading bookings...</p>
+  </div>
+  
+  <!-- Error state -->
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <button (click)="loadBookings()">Try Again</button>
+  </div>
+  
+  <!-- No bookings message -->
+  <div *ngIf="!isLoading && !error && bookings.length === 0" class="empty-state">
+    <p>No bookings found matching your criteria.</p>
+    <button class="action-button primary" routerLink="/cars">Browse Cars</button>
+  </div>
+  
+  <!-- Bookings list -->
+  <div *ngIf="!isLoading && !error && bookings.length > 0" class="bookings-list">
+    <app-booking-card 
+      *ngFor="let booking of bookings"
+      [booking]="booking"
+      (cancelRequest)="onCancelBooking($event)"
+      (downloadInvoice)="onDownloadInvoice($event)"
+      (leaveReview)="onLeaveReview($event)">
+    </app-booking-card>
+  </div>
+</div>

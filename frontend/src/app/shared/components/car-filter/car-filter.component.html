@@ -1,0 +1,188 @@
+<div class="filter-container">
+  <h3 class="filter-title">Filter Cars</h3>
+  
+  <form [formGroup]="filterForm">
+    <!-- Price Range Filter -->
+    <div class="filter-section">
+      <h4 class="section-title">Price Range</h4>
+      <div formGroupName="priceRange" class="price-range-slider">
+        <div class="slider-values">
+          <span>{{ filterForm.get('priceRange')?.value?.min | currency }}</span>
+          <span>{{ filterForm.get('priceRange')?.value?.max | currency }}</span>
+        </div>
+        <div class="slider-container">
+          <input 
+            type="range" 
+            class="price-slider min-slider" 
+            formControlName="min" 
+            [min]="minPrice" 
+            [max]="maxPrice"
+          >
+          <input 
+            type="range" 
+            class="price-slider max-slider" 
+            formControlName="max" 
+            [min]="minPrice" 
+            [max]="maxPrice"
+          >
+        </div>
+      </div>
+    </div>
+    
+    <!-- Category Filter -->
+    <div class="filter-section">
+      <h4 class="section-title">Category</h4>
+      <div class="checkbox-group">
+        <div class="form-check" *ngFor="let category of availableCategories">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            [id]="'category-' + category" 
+            (change)="toggleCategory(category, $event)"
+          >
+          <label class="form-check-label" [for]="'category-' + category">
+            {{ category }}
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Features Filter -->
+    <div class="filter-section">
+      <h4 class="section-title">Features</h4>
+      <div class="checkbox-group">
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="feature-ac" 
+            (change)="toggleFeature('Air Conditioning', $event)"
+          >
+          <label class="form-check-label" for="feature-ac">
+            Air Conditioning
+          </label>
+        </div>
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="feature-nav" 
+            (change)="toggleFeature('Navigation System', $event)"
+          >
+          <label class="form-check-label" for="feature-nav">
+            Navigation System
+          </label>
+        </div>
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="feature-bluetooth" 
+            (change)="toggleFeature('Bluetooth', $event)"
+          >
+          <label class="form-check-label" for="feature-bluetooth">
+            Bluetooth
+          </label>
+        </div>
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="feature-usb" 
+            (change)="toggleFeature('USB Port', $event)"
+          >
+          <label class="form-check-label" for="feature-usb">
+            USB Port
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Gearbox Filter -->
+    <div class="filter-section">
+      <h4 class="section-title">Transmission</h4>
+      <div class="checkbox-group">
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="gearbox-auto" 
+            (change)="toggleGearbox('Automatic', $event)"
+          >
+          <label class="form-check-label" for="gearbox-auto">
+            Automatic
+          </label>
+        </div>
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="gearbox-manual" 
+            (change)="toggleGearbox('Manual', $event)"
+          >
+          <label class="form-check-label" for="gearbox-manual">
+            Manual
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Fuel Type Filter -->
+    <div class="filter-section">
+      <h4 class="section-title">Fuel Type</h4>
+      <div class="checkbox-group">
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="fuel-gas" 
+            (change)="toggleFuelType('Gasoline', $event)"
+          >
+          <label class="form-check-label" for="fuel-gas">
+            Gasoline
+          </label>
+        </div>
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="fuel-diesel" 
+            (change)="toggleFuelType('Diesel', $event)"
+          >
+          <label class="form-check-label" for="fuel-diesel">
+            Diesel
+          </label>
+        </div>
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="fuel-electric" 
+            (change)="toggleFuelType('Electric', $event)"
+          >
+          <label class="form-check-label" for="fuel-electric">
+            Electric
+          </label>
+        </div>
+        <div class="form-check">
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="fuel-hybrid" 
+            (change)="toggleFuelType('Hybrid', $event)"
+          >
+          <label class="form-check-label" for="fuel-hybrid">
+            Hybrid
+          </label>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Reset Filters Button -->
+    <div class="filter-actions">
+      <button type="button" class="btn" (click)="resetFilters()">
+        Reset Filters
+      </button>
+    </div>
+  </form>
+</div> 

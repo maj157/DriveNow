@@ -1,9 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ReservationComponent } from './reservation.component';
-import { ExtrasComponent } from './extras/extras.component';
 import { DatesComponent } from './dates/dates.component';
 import { VehiclesComponent } from './vehicles/vehicles.component';
+import { ExtrasComponent } from './extras/extras.component';
+import { CustomerDetailsComponent } from './customer-details/customer-details.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes: Routes = [
   {
@@ -13,7 +15,9 @@ const routes: Routes = [
       { path: '', redirectTo: 'dates', pathMatch: 'full' },
       { path: 'dates', component: DatesComponent },
       { path: 'vehicles', component: VehiclesComponent },
-      { path: 'extras', component: ExtrasComponent }
+      { path: 'extras', component: ExtrasComponent },
+      { path: 'customer-details', component: CustomerDetailsComponent },
+      { path: 'checkout', component: CheckoutComponent }
     ]
   }
 ];

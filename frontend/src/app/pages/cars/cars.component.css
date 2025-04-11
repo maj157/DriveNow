@@ -1,0 +1,195 @@
+.cars-page-container {
+  padding-top: 2rem;
+  padding-bottom: 4rem;
+}
+
+.cars-page-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.cars-page-header h1 {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.cars-page-header p {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+}
+
+.view-switcher {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.view-switcher .btn {
+  padding: 0.5rem 1.5rem;
+  border-radius: 30px;
+  background-color: #f1f1f1;
+  color: #555;
+  transition: all 0.3s;
+}
+
+.view-switcher .btn.active {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+/* Car Group Card Styles */
+.car-group-card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  cursor: pointer;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.car-group-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.car-group-image {
+  height: 180px;
+  overflow: hidden;
+}
+
+.car-group-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.car-group-info {
+  padding: 1.25rem;
+}
+
+.car-group-info h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.car-group-info p {
+  color: #666;
+  margin-bottom: 0.75rem;
+}
+
+/* Selected Group Styles */
+.selected-group-container {
+  margin-bottom: 2rem;
+}
+
+.group-header {
+  margin-bottom: 1.5rem;
+}
+
+.group-header h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.group-header p {
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+/* Filters Sidebar Styles */
+.filters-sidebar {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 1.5rem;
+  position: sticky;
+  top: 1.5rem;
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.filters-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.filter-group {
+  margin-bottom: 1.5rem;
+}
+
+.filter-group h4 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  color: #444;
+}
+
+.price-range {
+  margin-top: 0.75rem;
+}
+
+/* Cars Results Styles */
+.cars-results {
+  padding: 0 0.5rem;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.results-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.no-results {
+  background-color: #f8f9fa;
+  padding: 3rem;
+  text-align: center;
+  border-radius: 8px;
+  margin: 2rem 0;
+}
+
+.no-results h3 {
+  margin-bottom: 1rem;
+}
+
+.no-results p {
+  margin-bottom: 1.5rem;
+  color: #666;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991.98px) {
+  .filters-sidebar {
+    position: static;
+    margin-bottom: 2rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .cars-page-header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .cars-page-header p {
+    font-size: 1rem;
+  }
+} 
