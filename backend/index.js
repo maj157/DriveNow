@@ -16,6 +16,8 @@ const statisticsRoutes = require("./routes/statistics");
 const chatRoutes = require("./routes/chat");
 const vehicleRoutes = require("./routes/vehicleRoutes");
 
+const carsRouter = require('./routes/cars');
+
 const app = express();
 
 // Middleware
