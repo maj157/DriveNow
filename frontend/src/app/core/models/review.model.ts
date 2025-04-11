@@ -1,10 +1,9 @@
 export interface Review {
   id?: string;
   userId: string;
-  name: string; // User's name
-  profileImage?: string; // URL to user's profile image
-  stars: number; // Rating from 1-5
+  userName: string;
+  rating: number;  // 1-5 stars
   comment: string;
+  carId: string;
   date: Date;
-  carId?: string; // Optional car ID if review is for a specific car
 } 
