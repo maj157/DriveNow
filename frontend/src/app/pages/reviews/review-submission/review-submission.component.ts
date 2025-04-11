@@ -44,11 +44,12 @@ export class ReviewSubmissionComponent implements OnInit {
       this.error = null;
 
       const reviewData: Omit<Review, 'id' | 'date'> = {
-        userId: 'current-user-id', // This should come from your auth service
-        name: 'Current User', // This should come from your auth service
+        userId: 'current-user-id', // From auth service
+        name: 'Current User', // From auth service
         stars: this.reviewForm.value.stars,
         comment: this.reviewForm.value.comment,
-        carId: this.reviewForm.value.carId
+        carId: this.reviewForm.value.carId,
+        status: 'pending' // All new reviews start as pending
       };
 
       this.reviewService.postReview(reviewData)
@@ -56,7 +57,6 @@ export class ReviewSubmissionComponent implements OnInit {
           next: () => {
             this.success = true;
             this.reviewForm.reset();
-            // Optionally redirect after successful submission
             setTimeout(() => {
               this.router.navigate(['/reviews']);
             }, 2000);
