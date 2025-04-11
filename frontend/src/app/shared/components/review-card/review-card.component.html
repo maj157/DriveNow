@@ -28,4 +28,14 @@
   <div class="review-actions" *ngIf="canEdit">
     <button class="delete-btn" (click)="onDelete()">Delete Review</button>
   </div>
+  
+  <!-- Add moderation status badge -->
+  <div class="moderation-status" *ngIf="showModeration">
+    <span [class]="getModerationStatusClass()">
+      {{ review.status | titlecase }}
+    </span>
+    <p class="moderation-comment" *ngIf="review.moderationComment">
+      Moderator comment: {{ review.moderationComment }}
+    </p>
+  </div>
 </div>
