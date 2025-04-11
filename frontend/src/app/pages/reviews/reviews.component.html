@@ -18,28 +18,26 @@
   </div>
 
   <!-- Loading state -->
-  <div *ngIf="isLoading" class="loading-container">
+  <div *ngIf="isLoading" class="loading">
     <div class="loading-spinner"></div>
     <p>Loading reviews...</p>
   </div>
 
   <!-- Error state -->
-  <div *ngIf="error" class="error-message">
-    <p>{{ error }}</p>
-    <button (click)="activeTab === 'all' ? loadAllReviews() : loadUserReviews()">
-      Try Again
-    </button>
+  <div *ngIf="error" class="error">
+    {{ error }}
+    <button (click)="loadReviews()">Try Again</button>
   </div>
 
   <!-- All reviews tab -->
   <div *ngIf="activeTab === 'all' && !isLoading && !error">
-    <div *ngIf="allReviews.length === 0" class="empty-state">
+    <div *ngIf="reviews.length === 0" class="empty-state">
       <p>No reviews available yet.</p>
     </div>
     
     <div class="reviews-grid">
       <app-review-card 
-        *ngFor="let review of allReviews" 
+        *ngFor="let review of reviews" 
         [review]="review">
       </app-review-card>
     </div>
@@ -50,6 +48,7 @@
     <div *ngIf="userReviews.length === 0" class="empty-state">
       <p>You haven't submitted any reviews yet.</p>
       <p>After completing a rental, you can share your experience here.</p>
+      <button routerLink="/reviews/submit" class="btn-primary">Write a Review</button>
     </div>
     
     <div class="reviews-grid">

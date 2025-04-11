@@ -2,8 +2,13 @@ export interface Review {
   id?: string;
   userId: string;
   userName: string;
-  rating: number;  // 1-5 stars
+  name: string;
+  profileImage?: string;
+  stars: number;
+  rating: number;
   comment: string;
   carId: string;
   date: Date;
+  status?: 'pending' | 'approved' | 'rejected';
+  moderationComment?: string;
 } 
