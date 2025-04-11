@@ -13,6 +13,7 @@ import { RouterModule } from '@angular/router';
 export class ReviewCardComponent {
   @Input() review!: Review;
   @Input() canEdit: boolean = false;
+  @Input() showModeration: boolean = false;
   @Output() delete = new EventEmitter<void>();
   
   getStarsArray(rating: number): number[] {
@@ -29,5 +30,16 @@ export class ReviewCardComponent {
   
   onDelete(): void {
     this.delete.emit();
+  }
+
+  getModerationStatusClass(): string {
+    switch (this.review.status) {
+      case 'approved':
+        return 'status-approved';
+      case 'rejected':
+        return 'status-rejected';
+      default:
+        return 'status-pending';
+    }
   }
 }
