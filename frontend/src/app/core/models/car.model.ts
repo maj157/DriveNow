@@ -1,36 +1,36 @@
 export interface Car {
   id: string;
-  groupId: string;
   brand: string;
   model: string;
-  year: number;
-  price: number; // Price per day
-  pricePerDay?: number; // Alias for price, deprecated
-  image: string | string[]; // URL or array of URLs for car images
-  imageUrl?: string; // Alternative image URL
-  make?: string; // Alias for brand, deprecated
-  category?: string; // Car category (e.g., Economy, Luxury, SUV)
-  promotionBadge?: string; // Promotion badge text
-  location?: string; // Location of the car
-  discountPrice?: number; // Discounted price if on sale
-  features?: string[]; // Additional features for filtering
+  group: string;  // Changed from 'type' to match Firebase
+  imageURL?: string; // Added to match Firebase
+  pricePerDay: number;
+  images?: string[]; // Keep for backwards compatibility
   
+  // Make specs required and all its properties non-optional
   specs: {
-    engineSize: number; // Engine size in cc
+    engineSize: number;
     seats: number;
     doors: number;
     gearbox: 'Automatic' | 'Manual';
     fuelType: 'Gasoline' | 'Diesel' | 'Electric' | 'Hybrid';
-    trunkCapacity: number; // in liters
+    trunkCapacity: number;
     ac: boolean;
     electricWindows: boolean;
-    mileage?: number; // Optional mileage limit per day
-    additionalFeatures?: string[]; // Optional additional features
+    mileage: number;
+    additionalFeatures?: string[];
   };
   
-  availability: boolean; // Whether the car is available or not
-  averageRating?: number; // Average rating from reviews
-  reviewCount?: number; // Number of reviews
+  // Optional fields
+  year?: number;
+  location?: string;
+  category?: string;
+  promotionBadge?: string;
+  discountPrice?: number;
+  features?: string[];
+  availability?: boolean;
+  averageRating?: number;
+  reviewCount?: number;
 }
 
 // Car rental options (e.g., GPS, Child Seat, etc.)

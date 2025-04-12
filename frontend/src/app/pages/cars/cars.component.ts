@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
 import { CarService } from '../../core/services/car.service';
 import { Car, CarGroup } from '../../core/models/car.model';
-import { FilterPipe } from '../../shared/pipes/filter.pipe';
 import { CarCardComponent } from '../../shared/components/car-card/car-card.component';
 import { CarFilterComponent, CarFilters } from '../../shared/components/car-filter/car-filter.component';
 
@@ -35,7 +34,7 @@ interface AvailableFilters {
 @Component({
   selector: 'app-cars',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, FilterPipe, CarCardComponent, CarFilterComponent],
+  imports: [CommonModule, FormsModule, RouterModule, CarCardComponent, CarFilterComponent],
   templateUrl: './cars.component.html',
   styleUrls: ['./cars.component.css']
 })
@@ -104,7 +103,7 @@ export class CarsComponent implements OnInit {
         this.filteredCars = [...cars];
         // Set max price from available cars
         if (this.allCars.length > 0) {
-          const maxPrice = Math.max(...this.allCars.map(car => car.pricePerDay || car.price));
+          const maxPrice = Math.max(...this.allCars.map(car => car.pricePerDay));
           this.availableFilters.maxPrice = maxPrice;
           this.maxPrice = maxPrice;
           this.filters.priceRange.max = maxPrice;
@@ -160,7 +159,7 @@ export class CarsComponent implements OnInit {
   onFiltersChanged(filters: CarFilters): void {
     this.filteredCars = this.allCars.filter(car => {
       // Price range filter
-      if (filters.priceRange && ((car.pricePerDay || car.price) < filters.priceRange.min || (car.pricePerDay || car.price) > filters.priceRange.max)) {
+      if (filters.priceRange && (car.pricePerDay < filters.priceRange.min || car.pricePerDay > filters.priceRange.max)) {
         return false;
       }
       
@@ -170,12 +169,12 @@ export class CarsComponent implements OnInit {
       }
       
       // Gearbox filter
-      if (filters.gearbox?.length && car.specs.gearbox && !filters.gearbox.includes(car.specs.gearbox)) {
+      if (filters.gearbox?.length && car.specs?.gearbox && !filters.gearbox.includes(car.specs.gearbox)) {
         return false;
       }
       
       // Fuel type filter
-      if (filters.fuelType?.length && car.specs.fuelType && !filters.fuelType.includes(car.specs.fuelType)) {
+      if (filters.fuelType?.length && car.specs?.fuelType && !filters.fuelType.includes(car.specs.fuelType)) {
         return false;
       }
       
@@ -189,7 +188,7 @@ export class CarsComponent implements OnInit {
       }
       
       // Seats filter
-      if (filters.seats?.length && car.specs.seats && !filters.seats.includes(car.specs.seats)) {
+      if (filters.seats?.length && car.specs?.seats && !filters.seats.includes(car.specs.seats)) {
         return false;
       }
       
@@ -200,7 +199,7 @@ export class CarsComponent implements OnInit {
   filterCars(filters: any): Car[] {
     return this.allCars.filter(car => {
       // Price filter
-      if (filters.priceRange?.max && (car.pricePerDay || car.price) > filters.priceRange.max) {
+      if (filters.priceRange?.max && car.pricePerDay > filters.priceRange.max) {
         return false;
       }
       
@@ -210,12 +209,12 @@ export class CarsComponent implements OnInit {
       }
       
       // Gearbox filter
-      if (filters.gearbox?.length && car.specs.gearbox && !filters.gearbox.includes(car.specs.gearbox)) {
+      if (filters.gearbox?.length && car.specs?.gearbox && !filters.gearbox.includes(car.specs.gearbox)) {
         return false;
       }
       
       // Fuel type filter
-      if (filters.fuelType?.length && car.specs.fuelType && !filters.fuelType.includes(car.specs.fuelType)) {
+      if (filters.fuelType?.length && car.specs?.fuelType && !filters.fuelType.includes(car.specs.fuelType)) {
         return false;
       }
       
@@ -229,7 +228,7 @@ export class CarsComponent implements OnInit {
       }
       
       // Seats filter
-      if (filters.seats?.length && car.specs.seats && !filters.seats.includes(car.specs.seats)) {
+      if (filters.seats?.length && car.specs?.seats && !filters.seats.includes(car.specs.seats)) {
         return false;
       }
       
@@ -240,42 +239,42 @@ export class CarsComponent implements OnInit {
   applyFilters(): void {
     this.filteredCars = this.allCars.filter(car => {
       // Price filter
-      if ((car.pricePerDay || car.price) > this.filters.priceRange.max) {
+      if (car.pricePerDay > this.filters.priceRange.max) {
         return false;
       }
       
       // Engine size filter
-      if (this.filters.engineSize > 0 && car.specs.engineSize !== undefined && car.specs.engineSize < this.filters.engineSize) {
+      if (this.filters.engineSize > 0 && car.specs?.engineSize !== undefined && car.specs.engineSize < this.filters.engineSize) {
         return false;
       }
       
       // Seats filter
-      if (this.filters.seats > 0 && car.specs.seats !== undefined && car.specs.seats < this.filters.seats) {
+      if (this.filters.seats > 0 && car.specs?.seats !== undefined && car.specs.seats < this.filters.seats) {
         return false;
       }
       
       // Doors filter
-      if (this.filters.doors > 0 && car.specs.doors !== undefined && car.specs.doors < this.filters.doors) {
+      if (this.filters.doors > 0 && car.specs?.doors !== undefined && car.specs.doors < this.filters.doors) {
         return false;
       }
       
       // Gearbox filter
-      if (this.filters.gearbox && car.specs.gearbox && car.specs.gearbox !== this.filters.gearbox) {
+      if (this.filters.gearbox && car.specs?.gearbox && car.specs.gearbox !== this.filters.gearbox) {
         return false;
       }
       
       // Fuel type filter
-      if (this.filters.fuelType && car.specs.fuelType && car.specs.fuelType !== this.filters.fuelType) {
+      if (this.filters.fuelType && car.specs?.fuelType && car.specs.fuelType !== this.filters.fuelType) {
         return false;
       }
       
       // AC filter
-      if (this.filters.ac !== null && car.specs.ac !== undefined && car.specs.ac !== this.filters.ac) {
+      if (this.filters.ac !== null && car.specs?.ac !== undefined && car.specs.ac !== this.filters.ac) {
         return false;
       }
       
       // Electric windows filter
-      if (this.filters.electricWindows !== null && car.specs.electricWindows !== undefined && car.specs.electricWindows !== this.filters.electricWindows) {
+      if (this.filters.electricWindows !== null && car.specs?.electricWindows !== undefined && car.specs.electricWindows !== this.filters.electricWindows) {
         return false;
       }
       
@@ -299,4 +298,4 @@ export class CarsComponent implements OnInit {
     
     this.filteredCars = [...this.allCars];
   }
-} 
+}

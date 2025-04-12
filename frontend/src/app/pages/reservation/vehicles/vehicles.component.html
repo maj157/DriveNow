@@ -78,7 +78,7 @@
         
         <div class="car-card" *ngFor="let car of filteredCars" [class.selected]="selectedCar?.id === car.id" (click)="selectCar(car)">
           <div class="car-image">
-            <img [src]="car.image" alt="{{ car.brand }} {{ car.model }}">
+            <img [src]="car.imageURL" alt="{{ car.brand }} {{ car.model }}">
           </div>
           
           <div class="car-details">
@@ -89,7 +89,7 @@
               <span><i class="fas fa-user"></i> {{ car.specs.seats }} seats</span>
             </div>
             <div class="car-price">
-              <span class="price">${{ car.price }}<small>/day</small></span>
+              <span class="price">${{ car.pricePerDay }}<small>/day</small></span>
             </div>
           </div>
         </div>

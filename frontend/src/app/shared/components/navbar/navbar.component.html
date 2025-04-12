@@ -34,16 +34,16 @@
       <!-- Auth Buttons -->
       <div class="navbar-auth">
         <ng-container *ngIf="(currentUser$ | async) as user; else loggedOut">
-          <div class="user-menu">
+          <div class="user-menu" (clickOutside)="closeDropdown()">
             <span class="user-greeting">Hello, {{ user.firstName }}</span>
             <div class="dropdown">
-              <button class="dropdown-toggle">My Account</button>
-              <div class="dropdown-menu">
-                <a routerLink="/history" class="dropdown-item">My Rentals</a>
-                <a routerLink="/reservation" class="dropdown-item">New Reservation</a>
-                <a routerLink="/feedback" class="dropdown-item">Submit Review</a>
-                <a routerLink="/chat" class="dropdown-item">Support Chat</a>
-                <a (click)="logout()" class="dropdown-item">Logout</a>
+              <button class="dropdown-toggle" (click)="toggleDropdown($event)">My Account</button>
+              <div class="dropdown-menu" [class.show]="isDropdownOpen">
+                <a routerLink="/history" class="dropdown-item" (click)="closeDropdown()">My Rentals</a>
+                <a routerLink="/reservation" class="dropdown-item" (click)="closeDropdown()">New Reservation</a>
+                <a routerLink="/feedback" class="dropdown-item" (click)="closeDropdown()">Submit Review</a>
+                <a routerLink="/chat" class="dropdown-item" (click)="closeDropdown()">Support Chat</a>
+                <a (click)="logout(); closeDropdown()" class="dropdown-item">Logout</a>
               </div>
             </div>
           </div>

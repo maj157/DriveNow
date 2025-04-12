@@ -36,34 +36,27 @@ export class CarCardComponent implements OnInit {
   /**
    * Returns a subset of important car features to display
    */
-  getMainFeatures(): string[] {
-    const features = [];
+  getFeatures(): string[] {
+    const features: string[] = [];
     
-    // Add engine size
-    if (this.car.specs.engineSize) {
-      features.push(`${this.car.specs.engineSize}L`);
+    if (this.car?.specs) {
+      if (this.car.specs.engineSize) {
+        features.push(`${this.car.specs.engineSize}L`);
+      }
+      
+      if (this.car.specs.gearbox) {
+        features.push(this.car.specs.gearbox === 'Automatic' ? 'Auto' : 'Manual');
+      }
+      
+      if (this.car.specs.seats) {
+        features.push(`${this.car.specs.seats} Seats`);
+      }
+      
+      if (this.car.specs.fuelType) {
+        features.push(this.car.specs.fuelType);
+      }
     }
     
-    // Add transmission type
-    if (this.car.specs.gearbox) {
-      features.push(this.car.specs.gearbox === 'Automatic' ? 'Auto' : 'Manual');
-    }
-    
-    // Add seats
-    if (this.car.specs.seats) {
-      features.push(`${this.car.specs.seats} Seats`);
-    }
-    
-    // Add fuel type
-    if (this.car.specs.fuelType) {
-      features.push(this.car.specs.fuelType);
-    }
-    
-    // Add AC if present
-    if (this.car.specs.ac) {
-      features.push('A/C');
-    }
-
     return features;
   }
 }

@@ -67,13 +67,15 @@ export class VehiclesComponent implements OnInit {
     this.brands = [...new Set(this.cars.map(car => car.brand))];
     
     // Extract unique car types (based on fuelType in this model)
-    this.carTypes = [...new Set(this.cars.map(car => car.specs.fuelType))];
+    this.carTypes = [...new Set(this.cars
+      .filter(car => car.specs?.fuelType)
+      .map(car => car.specs.fuelType))];
   }
 
   applyFilters(): void {
     this.filteredCars = this.cars.filter(car => {
       // Filter by car type (fuelType)
-      if (this.filters.carType && car.specs.fuelType !== this.filters.carType) {
+      if (this.filters.carType && car.specs?.fuelType !== this.filters.carType) {
         return false;
       }
       
@@ -83,17 +85,17 @@ export class VehiclesComponent implements OnInit {
       }
       
       // Filter by transmission (gearbox)
-      if (this.filters.transmission && car.specs.gearbox !== this.filters.transmission) {
+      if (this.filters.transmission && car.specs?.gearbox !== this.filters.transmission) {
         return false;
       }
       
       // Filter by number of seats
-      if (this.filters.seats > 0 && car.specs.seats < this.filters.seats) {
+      if (this.filters.seats > 0 && car.specs?.seats !== undefined && car.specs.seats < this.filters.seats) {
         return false;
       }
       
       // Filter by price range
-      if (car.price < this.filters.priceRange.min || car.price > this.filters.priceRange.max) {
+      if (car.pricePerDay < this.filters.priceRange.min || car.pricePerDay > this.filters.priceRange.max) {
         return false;
       }
       
@@ -129,4 +131,4 @@ export class VehiclesComponent implements OnInit {
   goBack(): void {
     this.router.navigate(['/reservation/dates']);
   }
-} 
+}

@@ -136,7 +136,7 @@ export class ReservationService {
     // Add car price if available
     if (data.car && data.pickupDate && data.returnDate) {
       const days = this.calculateDays(data.pickupDate, data.returnDate);
-      total += data.car.price * days;
+      total += data.car.pricePerDay * days;
     }
     
     // Add extra services

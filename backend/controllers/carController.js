@@ -8,52 +8,68 @@ const Booking = require("../models/Booking");
  */
 const getAllCars = async (req, res) => {
   try {
-    const {
-      brand,
-      model,
-      type,
-      location,
-      minPrice,
-      maxPrice,
-      available,
-      sort = "createdAt:desc",
-    } = req.query;
+    console.log("getAllCars: Starting query execution");
 
-    let ref = db.collection("vehicles");
+    // Get base reference to cars collection
+    let ref = db.collection("cars");
+    console.log("getAllCars: Got reference to 'cars' collection");
 
-    // Apply filters
-    if (brand) ref = ref.where("make", "==", brand);
-    if (model) ref = ref.where("model", "==", model);
-    if (type) ref = ref.where("type", "==", type);
-    if (location) ref = ref.where("location", "==", location);
-    if (available !== undefined)
-      ref = ref.where("available", "==", available === "true");
-
-    // Apply sort
-    const [sortField, sortOrder] = sort.split(":");
-    ref = ref.orderBy(sortField, sortOrder === "desc" ? "desc" : "asc");
-
+    // Get all documents
     const snapshot = await ref.get();
-    const cars = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    console.log(
+      `getAllCars: Retrieved ${snapshot.size} documents from Firestore`
+    );
 
-    // Filter by price in memory (Firestore limitation)
-    let filteredCars = cars;
-    if (minPrice)
-      filteredCars = filteredCars.filter(
-        (car) => car.pricePerDay >= Number(minPrice)
-      );
-    if (maxPrice)
-      filteredCars = filteredCars.filter(
-        (car) => car.pricePerDay <= Number(maxPrice)
-      );
+    if (snapshot.empty) {
+      console.log("getAllCars: No documents found in collection");
+      return res.status(200).json({
+        success: true,
+        count: 0,
+        data: [],
+      });
+    }
+
+    // Map the documents to cars with default values for missing required fields
+    const cars = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        brand: data.brand,
+        model: data.model,
+        group: data.group,
+        pricePerDay: data.pricePerDay,
+        imageURL: data.imageURL,
+        // Add required specs with default values if not present
+        specs: {
+          engineSize: data.specs?.engineSize || 2.0,
+          seats: data.specs?.seats || 5,
+          doors: data.specs?.doors || 4,
+          gearbox: data.specs?.gearbox || "Automatic",
+          fuelType: data.group || "Gasoline", // Use group as fuelType if not specified
+          trunkCapacity: data.specs?.trunkCapacity || 400,
+          ac: data.specs?.ac !== undefined ? data.specs.ac : true,
+          electricWindows:
+            data.specs?.electricWindows !== undefined
+              ? data.specs.electricWindows
+              : true,
+          mileage: data.specs?.mileage || 0,
+          additionalFeatures: data.specs?.additionalFeatures || [],
+        },
+        // Optional fields
+        year: data.year || new Date().getFullYear(),
+        location: data.location || "Available at all locations",
+        category: data.group, // Use group as category
+        availability: data.available !== undefined ? data.available : true,
+      };
+    });
+
+    console.log(`getAllCars: Successfully mapped ${cars.length} cars`);
+    console.log("getAllCars: First car in results:", cars[0]);
 
     res.status(200).json({
       success: true,
-      count: filteredCars.length,
-      data: filteredCars,
+      count: cars.length,
+      data: cars,
     });
   } catch (error) {
     console.error("Error getting cars:", error);
