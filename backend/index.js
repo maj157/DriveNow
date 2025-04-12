@@ -11,6 +11,7 @@ const carRoutes = require("./routes/cars");
 const reviewRoutes = require("./routes/reviews");
 const bookingRoutes = require("./routes/bookings");
 const invoiceRoutes = require("./routes/invoiceRoutes");
+const locationRoutes = require("./routes/locations");
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use("/api/cars", carRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/invoices", invoiceRoutes);
+app.use("/api/locations", locationRoutes);
 
 // Health check route
 app.get("/", (req, res) => {

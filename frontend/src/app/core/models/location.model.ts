@@ -1,13 +1,11 @@
 export interface Location {
   name: string;
   address: string;
-  coordinates?: {
+  location: {
     lat: number;
     lng: number;
   };
-  // Additional properties used in map component
-  id?: string;
-  latitude?: number;
-  longitude?: number;
-  phoneNumber?: string;
-} 
+  open: string;
+  close: string;
+  phone: string;
+}

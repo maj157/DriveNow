@@ -112,10 +112,10 @@ export class MapSelectorComponent implements OnInit, AfterViewInit, OnChanges, O
       return;
     }
 
-    // Initialize the map centered on Charlotte, NC by default
+    // Initialize the map centered on Lebanon by default
     this.map = new google.maps.Map(document.getElementById('map'), {
-      center: { lat: 35.2271, lng: -80.8431 },
-      zoom: 10,
+      center: { lat: 33.8547, lng: 35.8623 }, // Center of Lebanon
+      zoom: 8,
       mapTypeId: google.maps.MapTypeId.ROADMAP,
       mapTypeControl: true,
       streetViewControl: false,
@@ -141,20 +141,23 @@ export class MapSelectorComponent implements OnInit, AfterViewInit, OnChanges, O
     // Add markers for each branch
     this.branches.forEach(branch => {
       // Get coordinates
-      let lat = 0;
-      let lng = 0;
+      let lat: number | undefined = undefined;
+      let lng: number | undefined = undefined;
       
       // Handle different location models (some have coordinates property, some have latitude/longitude)
-      if ('coordinates' in branch && branch.coordinates) {
+      if (branch.latitude !== undefined && branch.longitude !== undefined) {
+        lat = branch.latitude;
+        lng = branch.longitude;
+      } else if (branch.coordinates && branch.coordinates.lat && branch.coordinates.lng) {
         lat = branch.coordinates.lat;
         lng = branch.coordinates.lng;
-      } else if ('latitude' in branch && 'longitude' in branch) {
-        lat = (branch as any).latitude;
-        lng = (branch as any).longitude;
       }
       
       // Skip if no valid coordinates
-      if (!lat || !lng) return;
+      if (lat === undefined || lng === undefined) {
+        console.warn(`Branch ${branch.name} has invalid coordinates:`, branch);
+        return;
+      }
       
       // Create marker
       const marker = new google.maps.Marker({

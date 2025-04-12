@@ -12,7 +12,8 @@ const routes: Routes = [
     path: '',
     component: ReservationComponent,
     children: [
-      { path: '', redirectTo: 'dates', pathMatch: 'full' },
+      { path: '', redirectTo: 'locations', pathMatch: 'full' },
+      { path: 'locations', loadChildren: () => import('../../features/locations/locations.module').then(m => m.LocationsModule) },
       { path: 'dates', component: DatesComponent },
       { path: 'vehicles', component: VehiclesComponent },
       { path: 'extras', component: ExtrasComponent },
@@ -26,4 +27,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ReservationRoutingModule { } 
+export class ReservationRoutingModule { }

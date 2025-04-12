@@ -8,7 +8,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class LocationsService {
-  private apiUrl = `${environment.apiBaseUrl}/locations`;
+  private apiUrl = `${environment.apiUrl}/locations`;
   
   // Mock data for development
   private mockLocations: Location[] = [
@@ -58,6 +58,14 @@ export class LocationsService {
       coordinates: {
         lat: 33.2704,
         lng: 35.2037
+      }
+    },
+    {
+      name: 'Jounieh',
+      address: 'Main Highway, Jounieh',
+      coordinates: {
+        lat: 33.9808,
+        lng: 35.6178
       }
     }
   ];

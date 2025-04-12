@@ -33,8 +33,14 @@ export class DatesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Load existing dates from reservation service if available
+    // Check if locations are selected
     const currentReservation = this.reservationService.getCurrentReservation();
+    if (!currentReservation.pickupLocation) {
+      this.router.navigate(['/reservation/locations']);
+      return;
+    }
+
+    // Load existing dates if available
     if (currentReservation.pickupDate && currentReservation.returnDate) {
       const pickupDate = new Date(currentReservation.pickupDate);
       const returnDate = new Date(currentReservation.returnDate);
@@ -82,6 +88,10 @@ export class DatesComponent implements OnInit {
     this.router.navigate(['/reservation/vehicles']);
   }
   
+  goBack(): void {
+    this.router.navigate(['/reservation/locations']);
+  }
+  
   private combineDateTime(date: string, time: string): Date {
     const [year, month, day] = date.split('-').map(Number);
     const [hours, minutes] = time.split(':').map(Number);
@@ -96,4 +106,4 @@ export class DatesComponent implements OnInit {
   private formatTimeForInput(date: Date): string {
     return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
   }
-} 
+}

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { MapSelectorComponent } from '../../../../shared/components/map-selector/map-selector.component';
 import { Location } from '../../../../core/models/reservation.model';
 import { ReservationService } from '../../../../core/services/reservation.service';
+import { LocationsService } from '../../../../core/services/locations.service';
 
 @Component({
   selector: 'app-map-page',
@@ -21,6 +22,7 @@ export class MapPageComponent implements OnInit {
 
   constructor(
     private reservationService: ReservationService,
+    private locationsService: LocationsService,
     private router: Router
   ) { }
 
@@ -35,14 +37,30 @@ export class MapPageComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
 
-    // For now we'll use sample data
-    // In a real app, we'd use the service to get real data
-    // this.reservationService.getBranches().subscribe(...)
-    
-    setTimeout(() => {
-      this.branches = this.getSampleBranches();
-      this.isLoading = false;
-    }, 1000);
+    this.locationsService.getLocations().subscribe({
+      next: (locations) => {
+        this.branches = locations.map(location => {
+          // Map the API response to the format expected by the map selector
+          const lat = location.latitude || (location.coordinates ? location.coordinates.lat : undefined);
+          const lng = location.longitude || (location.coordinates ? location.coordinates.lng : undefined);
+          
+          return {
+            id: location.id,
+            name: location.name,
+            address: location.address,
+            latitude: lat,
+            longitude: lng,
+            phoneNumber: location.phoneNumber || ''
+          };
+        });
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading branches:', err);
+        this.error = 'Failed to load branch locations. Please try again.';
+        this.isLoading = false;
+      }
+    });
   }
 
   /**
@@ -93,56 +111,8 @@ export class MapPageComponent implements OnInit {
       // Save selected locations to reservation service
       this.reservationService.setLocations(pickupLocation, returnLocation!);
       
-      // Navigate to the dates selection page
+      // Navigate to the dates selection page within the reservation flow
       this.router.navigate(['/reservation/dates']);
     }
   }
-
-  /**
-   * Sample data for demonstration
-   */
-  private getSampleBranches(): Location[] {
-    return [
-      {
-        id: '1',
-        name: 'Charlotte Downtown',
-        address: '112 S Tryon St, Charlotte, NC 28202',
-        latitude: 35.2271,
-        longitude: -80.8431,
-        phoneNumber: '(704) 555-1234'
-      },
-      {
-        id: '2',
-        name: 'Charlotte Airport',
-        address: '5501 Josh Birmingham Pkwy, Charlotte, NC 28208',
-        latitude: 35.2144,
-        longitude: -80.9473,
-        phoneNumber: '(704) 555-5678'
-      },
-      {
-        id: '3',
-        name: 'University City',
-        address: '8700 University City Blvd, Charlotte, NC 28213',
-        latitude: 35.3078,
-        longitude: -80.7405,
-        phoneNumber: '(704) 555-9012'
-      },
-      {
-        id: '4',
-        name: 'Ballantyne',
-        address: '14835 Ballantyne Village Way, Charlotte, NC 28277',
-        latitude: 35.0493,
-        longitude: -80.8437,
-        phoneNumber: '(704) 555-3456'
-      },
-      {
-        id: '5',
-        name: 'South Park',
-        address: '4400 Sharon Rd, Charlotte, NC 28211',
-        latitude: 35.1545,
-        longitude: -80.8303,
-        phoneNumber: '(704) 555-7890'
-      }
-    ];
-  }
-} 
+}

@@ -43,6 +43,13 @@ export class VehiclesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Check if locations and dates are selected
+    const currentReservation = this.reservationService.getCurrentReservation();
+    if (!currentReservation.pickupLocation || !currentReservation.pickupDate || !currentReservation.returnDate) {
+      this.router.navigate(['/reservation/dates']);
+      return;
+    }
+
     this.loadCars();
   }
 
