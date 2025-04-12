@@ -22,44 +22,36 @@ import { AuthService } from '../../core/services/auth.service';
   styleUrls: ['./reviews.component.css']
 })
 export class ReviewsComponent implements OnInit {
-  // Reviews arrays
   allReviews: Review[] = [];
   userReviews: Review[] = [];
-  
-  // UI state
+
   activeTab: 'all' | 'mine' = 'all';
   isLoading = false;
   error: string | null = null;
-  
+
   constructor(
     private reviewService: ReviewService,
     private authService: AuthService
   ) {}
-  
+
   ngOnInit(): void {
     this.loadAllReviews();
   }
-  
+
   switchTab(tab: 'all' | 'mine'): void {
     if (this.activeTab !== tab) {
       this.activeTab = tab;
-      if (tab === 'all') {
-        this.loadAllReviews();
-      } else {
-        this.loadUserReviews();
-      }
+      tab === 'all' ? this.loadAllReviews() : this.loadUserReviews();
     }
   }
-  
+
   loadAllReviews(): void {
     this.isLoading = true;
     this.error = null;
-    
+
     this.reviewService.getReviews()
       .pipe(
-        tap(reviews => {
-          this.allReviews = reviews;
-        }),
+        tap(reviews => this.allReviews = reviews),
         catchError(err => {
           this.error = 'Failed to load reviews. Please try again.';
           console.error('Error loading reviews:', err);
@@ -69,24 +61,21 @@ export class ReviewsComponent implements OnInit {
       )
       .subscribe();
   }
-  
+
   loadUserReviews(): void {
     this.isLoading = true;
     this.error = null;
-    
+
     const currentUserId = this.authService.getCurrentUserId();
-    
     if (!currentUserId) {
       this.error = 'Please log in to view your reviews.';
       this.isLoading = false;
       return;
     }
-    
+
     this.reviewService.getUserReviews(currentUserId)
       .pipe(
-        tap(reviews => {
-          this.userReviews = reviews;
-        }),
+        tap(reviews => this.userReviews = reviews),
         catchError(err => {
           this.error = 'Failed to load your reviews. Please try again.';
           console.error('Error loading user reviews:', err);
@@ -96,15 +85,14 @@ export class ReviewsComponent implements OnInit {
       )
       .subscribe();
   }
-  
+
   deleteReview(reviewId: string): void {
     if (confirm('Are you sure you want to delete this review?')) {
       this.isLoading = true;
-      
+
       this.reviewService.deleteReview(reviewId)
         .pipe(
           tap(() => {
-            // Remove the review from the array
             this.userReviews = this.userReviews.filter(review => review.id !== reviewId);
           }),
           catchError(err => {

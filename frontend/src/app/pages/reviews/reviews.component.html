@@ -18,17 +18,15 @@
   </div>
 
   <!-- Loading state -->
-  <div *ngIf="isLoading" class="loading-container">
+  <div *ngIf="isLoading" class="loading">
     <div class="loading-spinner"></div>
     <p>Loading reviews...</p>
   </div>
 
   <!-- Error state -->
-  <div *ngIf="error" class="error-message">
-    <p>{{ error }}</p>
-    <button (click)="activeTab === 'all' ? loadAllReviews() : loadUserReviews()">
-      Try Again
-    </button>
+  <div *ngIf="error" class="error">
+    {{ error }}
+    <button (click)="activeTab === 'all' ? loadAllReviews() : loadUserReviews()">Try Again</button>
   </div>
 
   <!-- All reviews tab -->
@@ -50,6 +48,7 @@
     <div *ngIf="userReviews.length === 0" class="empty-state">
       <p>You haven't submitted any reviews yet.</p>
       <p>After completing a rental, you can share your experience here.</p>
+      <button routerLink="/reviews/submit" class="btn-primary">Write a Review</button>
     </div>
     
     <div class="reviews-grid">
