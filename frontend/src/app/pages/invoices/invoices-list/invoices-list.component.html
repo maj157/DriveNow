@@ -1,0 +1,64 @@
+<div class="invoices-container">
+  <div class="page-header">
+    <h1>My Invoices</h1>
+    <p>View and manage your invoices for car rentals</p>
+  </div>
+  
+  <div class="filters-section">
+    <div class="filters">
+      <div class="filter-group">
+        <label for="status">Status</label>
+        <select 
+          id="status" 
+          [(ngModel)]="filter.status" 
+          (change)="onFilterChange()">
+          <option *ngFor="let option of statusOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label for="sort">Sort By</label>
+        <select 
+          id="sort" 
+          [(ngModel)]="filter.sort" 
+          (change)="onFilterChange()">
+          <option *ngFor="let option of sortOptions" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+      
+      <button class="filter-button clear" (click)="clearFilters()">Clear Filters</button>
+    </div>
+  </div>
+  
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Loading invoices...</p>
+  </div>
+  
+  <!-- Error state -->
+  <div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <button (click)="loadInvoices()">Try Again</button>
+  </div>
+  
+  <!-- No invoices message -->
+  <div *ngIf="!isLoading && !error && invoices.length === 0" class="empty-state">
+    <p>No invoices found matching your criteria.</p>
+    <button class="action-button primary" routerLink="/bookings">View Bookings</button>
+  </div>
+  
+  <!-- Invoices list -->
+  <div *ngIf="!isLoading && !error && invoices.length > 0" class="invoices-list">
+    <app-invoice-card 
+      *ngFor="let invoice of invoices"
+      [invoice]="invoice"
+      (download)="onDownloadInvoice($event)"
+      (pay)="onPayInvoice($event)">
+    </app-invoice-card>
+  </div>
+</div>

@@ -2,10 +2,10 @@
   <div class="review-header">
     <div class="user-info">
       <div class="avatar" [style.backgroundImage]="review.profileImage ? 'url(' + review.profileImage + ')' : 'none'">
-        <span *ngIf="!review.profileImage">{{ review.name.charAt(0) }}</span>
+        <span *ngIf="!review.profileImage">{{ review.userName.charAt(0) }}</span>
       </div>
       <div class="user-details">
-        <h3 class="user-name">{{ review.name }}</h3>
+        <h3 class="user-name">{{ review.userName }}</h3>
         <span class="review-date">{{ formatDate(review.date) }}</span>
       </div>
     </div>

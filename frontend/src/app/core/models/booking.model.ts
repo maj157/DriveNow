@@ -1,10 +1,10 @@
 export interface Booking {
   id: string;
   userId: string;
-  vehicleId: string;
-  vehicleMake: string;
-  vehicleModel: string;
-  vehicleImage?: string;
+  carId: string;
+  carMake: string;
+  carModel: string;
+  carImage?: string;
   startDate: string | Date;
   endDate: string | Date;
   pickupLocation: string;

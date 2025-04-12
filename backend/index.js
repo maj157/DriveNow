@@ -8,15 +8,9 @@ require("dotenv").config();
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
 const carRoutes = require("./routes/cars");
-const reservationRoutes = require("./routes/reservations");
 const reviewRoutes = require("./routes/reviews");
-const locationRoutes = require("./routes/locations");
-const adminRoutes = require("./routes/admin");
-const statisticsRoutes = require("./routes/statistics");
-const chatRoutes = require("./routes/chat");
-const vehicleRoutes = require("./routes/vehicleRoutes");
-
-const carsRouter = require('./routes/cars');
+const bookingRoutes = require("./routes/bookings");
+const invoiceRoutes = require("./routes/invoiceRoutes");
 
 const app = express();
 
@@ -31,13 +25,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/cars", carRoutes);
-app.use("/api/reservations", reservationRoutes);
 app.use("/api/reviews", reviewRoutes);
-app.use("/api/locations", locationRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/statistics", statisticsRoutes);
-app.use("/api/chat", chatRoutes);
-app.use("/api/vehicles", vehicleRoutes);
+app.use("/api/bookings", bookingRoutes);
+app.use("/api/invoices", invoiceRoutes);
 
 // Health check route
 app.get("/", (req, res) => {

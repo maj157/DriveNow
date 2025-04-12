@@ -1,93 +1,99 @@
-const jwt = require("jsonwebtoken");
 const admin = require("firebase-admin");
 const db = require("../firebase");
 
 /**
- * Middleware to verify the JWT token and protect routes
+ * Middleware to verify Firebase token and protect routes
+ * Replaces both authenticate and verifyToken functions
  */
 exports.authenticate = async (req, res, next) => {
   try {
-    // Get token from header
-    const token = req.header("Authorization")?.replace("Bearer ", "");
-
-    if (!token) {
+    // Check if the authorization header exists
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({
-        error: true,
+        success: false,
         message: "No token provided, authorization denied",
       });
     }
 
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Extract the token
+    const token = authHeader.split(" ")[1];
 
-    // Check if user exists in Firebase
-    const userRef = db.collection("users").doc(decoded.uid);
-    const userDoc = await userRef.get();
+    // Verify the token using Firebase Admin
+    const decodedToken = await admin.auth().verifyIdToken(token);
+
+    // Get user information from Firestore based on UID
+    const userDoc = await db.collection("users").doc(decodedToken.uid).get();
 
     if (!userDoc.exists) {
       return res.status(401).json({
-        error: true,
+        success: false,
         message: "User not found, authorization denied",
       });
     }
 
-    // Add user data to request object
+    const userData = userDoc.data();
+
+    // Attach user information to the request object
     req.user = {
-      uid: decoded.uid,
-      email: decoded.email,
-      ...userDoc.data(),
+      _id: decodedToken.uid, // Include _id for backward compatibility
+      id: decodedToken.uid,
+      uid: decodedToken.uid, // Include uid for backward compatibility
+      email: decodedToken.email,
+      name: userData.name || decodedToken.name,
+      isAdmin: userData.role === "admin" || false,
+      ...userData, // Include all other user data
     };
 
     next();
   } catch (error) {
-    console.error("Auth middleware error:", error);
-    res.status(401).json({
-      error: true,
+    console.error("Authentication middleware error:", error);
+    return res.status(401).json({
+      success: false,
       message: "Invalid token, authorization denied",
+      error: error.message,
     });
   }
 };
+
+/**
+ * Alias for authenticate to maintain backward compatibility
+ */
+exports.verifyToken = exports.authenticate;
 
 /**
  * Middleware to verify admin role
  */
-exports.isAdmin = async (req, res, next) => {
-  try {
-    if (!req.user) {
-      return res.status(401).json({
-        error: true,
-        message: "User not authenticated",
-      });
-    }
-
-    // Check if user has admin role
-    if (req.user.role !== "admin") {
-      return res.status(403).json({
-        error: true,
-        message: "Access denied: Admin privileges required",
-      });
-    }
-
-    next();
-  } catch (error) {
-    console.error("Admin auth middleware error:", error);
-    res.status(500).json({
-      error: true,
-      message: "Server error in admin verification",
+exports.isAdmin = (req, res, next) => {
+  // The authenticate middleware should run first
+  if (!req.user) {
+    return res.status(401).json({
+      success: false,
+      message: "Authentication required",
     });
   }
+
+  if (!req.user.isAdmin && req.user.role !== "admin") {
+    return res.status(403).json({
+      success: false,
+      message: "Access denied: Admin privileges required",
+    });
+  }
+
+  next();
 };
 
 /**
- * Verify Firebase ID token middleware
+ * Verify Firebase ID token middleware (simplified version that only puts Firebase data in req.firebaseUser)
+ * Used by the /auth routes
  */
 exports.verifyFirebaseToken = async (req, res, next) => {
   try {
-    const idToken = req.header("Authorization")?.replace("Bearer ", "");
+    const idToken = req.headers.authorization?.replace("Bearer ", "");
 
     if (!idToken) {
       return res.status(401).json({
-        error: true,
+        success: false,
         message: "No token provided, authorization denied",
       });
     }
@@ -100,10 +106,11 @@ exports.verifyFirebaseToken = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Firebase auth middleware error:", error);
+    console.error("Firebase token verification error:", error);
     res.status(401).json({
-      error: true,
+      success: false,
       message: "Invalid Firebase token, authorization denied",
+      error: error.message,
     });
   }
 };

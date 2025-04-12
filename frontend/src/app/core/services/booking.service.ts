@@ -104,10 +104,10 @@ export class BookingService {
       {
         id: '1',
         userId: 'user123',
-        vehicleId: 'car1',
-        vehicleMake: 'Toyota',
-        vehicleModel: 'Camry',
-        vehicleImage: 'https://via.placeholder.com/300x200',
+        carId: 'car1',
+        carMake: 'Toyota',
+        carModel: 'Camry',
+        carImage: 'https://via.placeholder.com/300x200',
         startDate: new Date(new Date().setDate(new Date().getDate() + 3)),
         endDate: new Date(new Date().setDate(new Date().getDate() + 7)),
         pickupLocation: 'New York Airport',
@@ -116,8 +116,8 @@ export class BookingService {
         insuranceOption: 'basic',
         additionalDrivers: 1,
         additionalServices: [
-          { id: 'gps', name: 'GPS Navigation', price: 5 },
-          { id: 'childSeat', name: 'Child Seat', price: 7 }
+          { id: 'gps1', name: 'GPS Navigation', price: 5 },
+          { id: 'child1', name: 'Child Seat', price: 10 }
         ],
         basePrice: 350,
         additionalCosts: 82,
@@ -125,16 +125,15 @@ export class BookingService {
         durationDays: 4,
         createdAt: new Date(new Date().setDate(new Date().getDate() - 2)),
         updatedAt: new Date(new Date().setDate(new Date().getDate() - 2)),
-        paymentStatus: 'paid',
-        hasReview: false
+        paymentStatus: 'paid'
       },
       {
         id: '2',
         userId: 'user123',
-        vehicleId: 'car2',
-        vehicleMake: 'Honda',
-        vehicleModel: 'CR-V',
-        vehicleImage: 'https://via.placeholder.com/300x200',
+        carId: 'car2',
+        carMake: 'Honda',
+        carModel: 'CR-V',
+        carImage: 'https://via.placeholder.com/300x200',
         startDate: new Date(new Date().setDate(new Date().getDate() - 10)),
         endDate: new Date(new Date().setDate(new Date().getDate() - 5)),
         pickupLocation: 'Los Angeles Airport',
@@ -143,24 +142,24 @@ export class BookingService {
         insuranceOption: 'full',
         additionalDrivers: 0,
         additionalServices: [
-          { id: 'wifi', name: 'WiFi Hotspot', price: 8 }
+          { id: 'wifi1', name: 'WiFi Hotspot', price: 8 }
         ],
         basePrice: 425,
         additionalCosts: 53,
         totalPrice: 478,
         durationDays: 5,
         createdAt: new Date(new Date().setDate(new Date().getDate() - 15)),
-        updatedAt: new Date(new Date().setDate(new Date().getDate() - 15)),
+        updatedAt: new Date(new Date().setDate(new Date().getDate() - 5)),
         paymentStatus: 'paid',
         hasReview: true
       },
       {
         id: '3',
         userId: 'user123',
-        vehicleId: 'car3',
-        vehicleMake: 'BMW',
-        vehicleModel: '3 Series',
-        vehicleImage: 'https://via.placeholder.com/300x200',
+        carId: 'car3',
+        carMake: 'BMW',
+        carModel: '3 Series',
+        carImage: 'https://via.placeholder.com/300x200',
         startDate: new Date(new Date().setDate(new Date().getDate() + 15)),
         endDate: new Date(new Date().setDate(new Date().getDate() + 22)),
         pickupLocation: 'Chicago Downtown',
@@ -175,8 +174,7 @@ export class BookingService {
         durationDays: 7,
         createdAt: new Date(new Date().setDate(new Date().getDate() - 1)),
         updatedAt: new Date(new Date().setDate(new Date().getDate() - 1)),
-        paymentStatus: 'pending',
-        hasReview: false
+        paymentStatus: 'pending'
       }
     ];
     

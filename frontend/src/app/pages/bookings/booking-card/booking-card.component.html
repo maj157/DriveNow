@@ -12,11 +12,11 @@
   
   <div class="card-content">
     <div class="vehicle-info">
-      <div class="vehicle-image" [style.backgroundImage]="booking.vehicleImage ? 'url(' + booking.vehicleImage + ')' : 'none'">
-        <div class="no-image" *ngIf="!booking.vehicleImage">No Image</div>
+      <div class="vehicle-image" [style.backgroundImage]="booking.carImage ? 'url(' + booking.carImage + ')' : 'none'">
+        <div class="no-image" *ngIf="!booking.carImage">No Image</div>
       </div>
       <div class="vehicle-details">
-        <h3 class="vehicle-name">{{ booking.vehicleMake }} {{ booking.vehicleModel }}</h3>
+        <h3 class="vehicle-name">{{ booking.carMake }} {{ booking.carModel }}</h3>
         <div class="booking-dates">
           <div class="date-item">
             <span class="date-label">Pickup:</span>

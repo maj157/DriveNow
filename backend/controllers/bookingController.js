@@ -10,7 +10,7 @@ const createBooking = async (req, res) => {
   try {
     const userId = req.user.uid;
     const {
-      vehicleId,
+      carId,
       startDate,
       endDate,
       pickupLocation,
@@ -22,7 +22,7 @@ const createBooking = async (req, res) => {
 
     // Validate required fields
     if (
-      !vehicleId ||
+      !carId ||
       !startDate ||
       !endDate ||
       !pickupLocation ||
@@ -54,19 +54,19 @@ const createBooking = async (req, res) => {
         .json({ error: "End date must be after start date" });
     }
 
-    // Check vehicle availability
-    const vehicle = await db.collection("vehicles").doc(vehicleId).get();
+    // Check car availability
+    const car = await db.collection("vehicles").doc(carId).get();
 
-    if (!vehicle.exists) {
-      return res.status(404).json({ error: "Vehicle not found" });
+    if (!car.exists) {
+      return res.status(404).json({ error: "Car not found" });
     }
 
-    const vehicleData = vehicle.data();
+    const carData = car.data();
 
-    // Check if vehicle is available for the requested dates
+    // Check if car is available for the requested dates
     const conflictingBookings = await db
       .collection("reservations")
-      .where("vehicleId", "==", vehicleId)
+      .where("carId", "==", carId)
       .where("status", "in", ["confirmed", "active"])
       .where("endDate", ">", startDate)
       .where("startDate", "<", endDate)
@@ -75,7 +75,7 @@ const createBooking = async (req, res) => {
     if (!conflictingBookings.empty) {
       return res
         .status(400)
-        .json({ error: "Vehicle is not available for the selected dates" });
+        .json({ error: "Car is not available for the selected dates" });
     }
 
     // Calculate rental duration in days
@@ -83,7 +83,7 @@ const createBooking = async (req, res) => {
     const durationDays = Math.ceil(durationMs / (1000 * 60 * 60 * 24));
 
     // Calculate base price
-    let basePrice = vehicleData.pricePerDay * durationDays;
+    let basePrice = carData.pricePerDay * durationDays;
 
     // Calculate additional costs
     let additionalCosts = 0;
@@ -129,10 +129,10 @@ const createBooking = async (req, res) => {
     const bookingData = {
       id: uuidv4(),
       userId,
-      vehicleId,
-      vehicleModel: vehicleData.model,
-      vehicleMake: vehicleData.make,
-      vehicleImage: vehicleData.images[0] || null,
+      carId,
+      carModel: carData.model,
+      carMake: carData.make,
+      carImage: carData.images[0] || null,
       startDate,
       endDate,
       pickupLocation,
@@ -229,7 +229,7 @@ const updateBooking = async (req, res) => {
     // Prevent updating certain fields
     delete updateData.id;
     delete updateData.userId;
-    delete updateData.vehicleId;
+    delete updateData.carId;
     delete updateData.status;
     delete updateData.createdAt;
     delete updateData.basePrice;
@@ -300,7 +300,7 @@ const processPayment = async (req, res) => {
       currency: "USD",
       items: [
         {
-          description: `Vehicle rental: ${bookingData.vehicleMake} ${bookingData.vehicleModel}`,
+          description: `Car rental: ${bookingData.carMake} ${bookingData.carModel}`,
           amount: bookingData.basePrice,
         },
         {
@@ -352,16 +352,16 @@ const processPayment = async (req, res) => {
 };
 
 /**
- * Check vehicle availability
+ * Check car availability
  * @param {Object} req - Request object
  * @param {Object} res - Response object
  */
 const checkAvailability = async (req, res) => {
   try {
-    const { vehicleId, startDate, endDate } = req.query;
+    const { carId, startDate, endDate } = req.query;
 
     // Validate required fields
-    if (!vehicleId || !startDate || !endDate) {
+    if (!carId || !startDate || !endDate) {
       return res.status(400).json({ error: "Missing required information" });
     }
 
@@ -379,30 +379,29 @@ const checkAvailability = async (req, res) => {
         .json({ error: "End date must be after start date" });
     }
 
-    // Check if vehicle exists
-    const vehicle = await db.collection("vehicles").doc(vehicleId).get();
+    // Check if car exists
+    const car = await Car.findById(carId);
 
-    if (!vehicle.exists) {
-      return res.status(404).json({ error: "Vehicle not found" });
+    if (!car) {
+      return res.status(404).json({ error: "Car not found" });
     }
 
-    // Check for conflicting bookings
+    // Check car availability for the dates
     const conflictingBookings = await db
       .collection("reservations")
-      .where("vehicleId", "==", vehicleId)
+      .where("carId", "==", carId)
       .where("status", "in", ["confirmed", "active"])
       .where("endDate", ">", startDate)
       .where("startDate", "<", endDate)
       .get();
 
-    const isAvailable = conflictingBookings.empty;
+    if (!conflictingBookings.empty) {
+      return res
+        .status(400)
+        .json({ error: "Car is not available for the selected dates" });
+    }
 
-    res.status(200).json({
-      vehicleId,
-      startDate,
-      endDate,
-      isAvailable,
-    });
+    res.status(200).json({ available: true });
   } catch (error) {
     console.error("Error checking availability:", error);
     res.status(500).json({ error: "Failed to check availability" });
@@ -450,11 +449,9 @@ const extendBooking = async (req, res) => {
 
     // Check if booking is confirmed or active
     if (bookingData.status !== "confirmed" && bookingData.status !== "active") {
-      return res
-        .status(400)
-        .json({
-          error: "Cannot extend booking that is not confirmed or active",
-        });
+      return res.status(400).json({
+        error: "Cannot extend booking that is not confirmed or active",
+      });
     }
 
     // Check if new end date is after current end date
@@ -466,10 +463,10 @@ const extendBooking = async (req, res) => {
         .json({ error: "New end date must be after current end date" });
     }
 
-    // Check if vehicle is available for the extension period
+    // Check if car is available for the extension period
     const conflictingBookings = await db
       .collection("reservations")
-      .where("vehicleId", "==", bookingData.vehicleId)
+      .where("carId", "==", bookingData.carId)
       .where("status", "in", ["confirmed", "active"])
       .where("id", "!=", bookingId)
       .where("startDate", "<", newEndDate)
@@ -479,20 +476,20 @@ const extendBooking = async (req, res) => {
     if (!conflictingBookings.empty) {
       return res
         .status(400)
-        .json({ error: "Vehicle is not available for the extension period" });
+        .json({ error: "Car is not available for the extension period" });
     }
 
-    // Get vehicle price
-    const vehicleRef = db.collection("vehicles").doc(bookingData.vehicleId);
-    const vehicleDoc = await vehicleRef.get();
-    const vehicleData = vehicleDoc.data();
+    // Get car price
+    const carRef = db.collection("vehicles").doc(bookingData.carId);
+    const carDoc = await carRef.get();
+    const carData = carDoc.data();
 
     // Calculate additional days
     const additionalDaysMs = end.getTime() - currentEndDate.getTime();
     const additionalDays = Math.ceil(additionalDaysMs / (1000 * 60 * 60 * 24));
 
     // Calculate additional costs
-    const additionalBasePrice = vehicleData.pricePerDay * additionalDays;
+    const additionalBasePrice = carData.pricePerDay * additionalDays;
 
     // Calculate other additional costs
     let additionalCosts = 0;
@@ -559,7 +556,7 @@ const extendBooking = async (req, res) => {
       currency: "USD",
       items: [
         {
-          description: `Extension: ${bookingData.vehicleMake} ${bookingData.vehicleModel} (${additionalDays} days)`,
+          description: `Extension: ${bookingData.carMake} ${bookingData.carModel} (${additionalDays} days)`,
           amount: additionalBasePrice,
         },
         {

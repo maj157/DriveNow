@@ -4,6 +4,7 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { ReviewService } from '../../../core/services/review.service';
 import { Review } from '../../../core/models/review.model';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-review-submission',
@@ -25,6 +26,7 @@ export class ReviewSubmissionComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private reviewService: ReviewService,
+    private authService: AuthService,
     private router: Router
   ) {
     this.reviewForm = this.fb.group({
@@ -35,7 +37,12 @@ export class ReviewSubmissionComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // You can add initialization logic here if needed
+    // Check if user is logged in
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], {
+        queryParams: { returnUrl: '/reviews/submit' }
+      });
+    }
   }
 
   onSubmit(): void {
@@ -43,13 +50,22 @@ export class ReviewSubmissionComponent implements OnInit {
       this.isSubmitting = true;
       this.error = null;
 
-      const reviewData: Omit<Review, 'id' | 'date'> = {
-        userId: 'current-user-id', // From auth service
-        name: 'Current User', // From auth service
+      const currentUser = this.authService.currentUserValue;
+      
+      if (!currentUser) {
+        this.error = 'You must be logged in to submit a review';
+        this.isSubmitting = false;
+        return;
+      }
+
+      const reviewData: Omit<Review, 'id'> = {
+        userId: currentUser.id,
+        userName: `${currentUser.firstName} ${currentUser.lastName}`,
         stars: this.reviewForm.value.stars,
         comment: this.reviewForm.value.comment,
         carId: this.reviewForm.value.carId,
-        status: 'pending' // All new reviews start as pending
+        status: 'pending', // All new reviews start as pending
+        date: new Date() // Add the current date
       };
 
       this.reviewService.postReview(reviewData)
@@ -64,8 +80,6 @@ export class ReviewSubmissionComponent implements OnInit {
           error: (err) => {
             this.error = 'Failed to submit review. Please try again.';
             console.error('Error submitting review:', err);
-          },
-          complete: () => {
             this.isSubmitting = false;
           }
         });

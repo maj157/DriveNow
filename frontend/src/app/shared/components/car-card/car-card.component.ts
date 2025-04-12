@@ -1,13 +1,14 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Car } from '../../../core/models/car.model';
 
 @Component({
   selector: 'app-car-card',
-  templateUrl: './car-card.component.html',
-  styleUrls: ['./car-card.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, RouterModule],
+  templateUrl: './car-card.component.html',
+  styleUrls: ['./car-card.component.css']
 })
 export class CarCardComponent implements OnInit {
   @Input() car!: Car;
@@ -39,27 +40,27 @@ export class CarCardComponent implements OnInit {
     const features = [];
     
     // Add engine size
-    if (this.car.engineSize) {
-      features.push(`${this.car.engineSize}L`);
+    if (this.car.specs.engineSize) {
+      features.push(`${this.car.specs.engineSize}L`);
     }
     
     // Add transmission type
-    if (this.car.gearbox) {
-      features.push(this.car.gearbox === 'Automatic' ? 'Auto' : 'Manual');
+    if (this.car.specs.gearbox) {
+      features.push(this.car.specs.gearbox === 'Automatic' ? 'Auto' : 'Manual');
     }
     
     // Add seats
-    if (this.car.seats) {
-      features.push(`${this.car.seats} Seats`);
+    if (this.car.specs.seats) {
+      features.push(`${this.car.specs.seats} Seats`);
     }
     
     // Add fuel type
-    if (this.car.fuelType) {
-      features.push(this.car.fuelType);
+    if (this.car.specs.fuelType) {
+      features.push(this.car.specs.fuelType);
     }
     
     // Add AC if present
-    if (this.car.ac) {
+    if (this.car.specs.ac) {
       features.push('A/C');
     }
 

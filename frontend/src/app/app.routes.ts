@@ -10,8 +10,33 @@ export const routes: Routes = [
   { path: 'locations', loadChildren: () => import('./features/locations/locations.module').then(m => m.LocationsModule) },
   { path: 'about', loadComponent: () => import('./pages/about/about.component').then(c => c.AboutComponent) },
   { path: 'contact', loadComponent: () => import('./pages/contact/contact.component').then(c => c.ContactComponent) },
-  { path: 'cars', loadComponent: () => import('./pages/cars/cars.component').then(c => c.CarsComponent) },
-  { path: 'reviews', loadComponent: () => import('./pages/reviews/reviews.component').then(c => c.ReviewsComponent) },
+  { 
+    path: 'cars',
+    loadComponent: () => import('./pages/cars/cars.component').then(c => c.CarsComponent)
+  },
+  {
+    path: 'cars/:id',
+    loadComponent: () => import('./pages/cars/cars.component').then(c => c.CarsComponent)
+  },
+  {
+    path: 'cars/filter',
+    loadComponent: () => import('./vehicles/filter/filter.component').then(c => c.FilterComponent)
+  },
+  {
+    path: 'cars/groups',
+    loadComponent: () => import('./vehicles/groups/groups.component').then(c => c.GroupsComponent)
+  },
+  { 
+    path: 'reviews',
+    children: [
+      { path: '', loadComponent: () => import('./pages/reviews/reviews.component').then(c => c.ReviewsComponent) },
+      { 
+        path: 'submit', 
+        canActivate: [authGuard],
+        loadComponent: () => import('./pages/reviews/review-submission/review-submission.component').then(c => c.ReviewSubmissionComponent) 
+      }
+    ]
+  },
   
   // Protected routes - require authentication
   { 
@@ -29,12 +54,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadChildren: () => import('./pages/bookings/bookings.module').then(m => m.BookingsModule)
   },
-  // TODO: Uncomment when invoices module is created
-  // { 
-  //   path: 'invoices', 
-  //   canActivate: [authGuard],
-  //   loadChildren: () => import('./pages/invoices/invoices.module').then(m => m.InvoicesModule)
-  // },
+  { 
+    path: 'invoices', 
+    canActivate: [authGuard],
+    loadChildren: () => import('./pages/invoices/invoices.module').then(m => m.InvoicesModule)
+  },
   
   // Fallback route
   { path: '**', redirectTo: '/home' }

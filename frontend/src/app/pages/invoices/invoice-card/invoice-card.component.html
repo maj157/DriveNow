@@ -1,0 +1,88 @@
+<div class="invoice-card" [ngClass]="getStatusClass(invoice.status)">
+  <div class="card-header">
+    <div class="invoice-id">
+      <span class="label">Invoice #:</span>
+      <span class="id">{{ invoice.invoiceNumber }}</span>
+    </div>
+    <div class="invoice-status">
+      <span class="status-icon">{{ getStatusIcon(invoice.status) }}</span>
+      <span class="status-text">{{ invoice.status | titlecase }}</span>
+    </div>
+  </div>
+  
+  <div class="card-content">
+    <div class="vehicle-info">
+      <div class="vehicle-image" [style.backgroundImage]="invoice.carImage ? 'url(' + invoice.carImage + ')' : 'none'">
+        <div class="no-image" *ngIf="!invoice.carImage">No Image</div>
+      </div>
+      <div class="vehicle-details">
+        <h3 class="vehicle-name">{{ invoice.carMake }} {{ invoice.carModel }}</h3>
+        <div class="booking-dates">
+          <div class="date-item">
+            <span class="date-label">Rental Period:</span>
+            <span class="date-value">{{ formatDate(invoice.startDate) }} - {{ formatDate(invoice.endDate) }}</span>
+          </div>
+          <div class="duration">
+            <span class="duration-label">Duration:</span>
+            <span class="duration-value">{{ invoice.durationDays }} days</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="invoice-details">
+      <div class="detail-item">
+        <span class="label">Issue Date:</span>
+        <span class="value">{{ formatDate(invoice.issueDate) }}</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Due Date:</span>
+        <span class="value">{{ formatDate(invoice.dueDate) }}</span>
+      </div>
+      <div class="detail-item" *ngIf="invoice.paymentDate">
+        <span class="label">Payment Date:</span>
+        <span class="value">{{ formatDate(invoice.paymentDate) }}</span>
+      </div>
+      
+      <div class="price-section">
+        <div class="price-item">
+          <span class="price-label">Base Amount:</span>
+          <span class="price-value">{{ formatCurrency(invoice.baseAmount) }}</span>
+        </div>
+        <div class="price-item" *ngIf="invoice.discountAmount > 0">
+          <span class="price-label">Discount:</span>
+          <span class="price-value">-{{ formatCurrency(invoice.discountAmount) }}</span>
+        </div>
+        <div class="price-item">
+          <span class="price-label">Tax:</span>
+          <span class="price-value">{{ formatCurrency(invoice.taxAmount) }}</span>
+        </div>
+        <div class="price-item total">
+          <span class="price-label">Total Amount:</span>
+          <span class="price-value">{{ formatCurrency(invoice.totalAmount) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card-actions">
+    <button 
+      class="action-button view-details"
+      [routerLink]="['/invoices', invoice.id]">
+      View Details
+    </button>
+    
+    <button 
+      *ngIf="isPayable()"
+      class="action-button pay"
+      (click)="onPay()">
+      Pay Now
+    </button>
+    
+    <button 
+      class="action-button download"
+      (click)="onDownload()">
+      Download PDF
+    </button>
+  </div>
+</div>

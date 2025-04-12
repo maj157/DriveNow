@@ -170,12 +170,12 @@ export class CarsComponent implements OnInit {
       }
       
       // Gearbox filter
-      if (filters.gearbox?.length && car.gearbox && !filters.gearbox.includes(car.gearbox)) {
+      if (filters.gearbox?.length && car.specs.gearbox && !filters.gearbox.includes(car.specs.gearbox)) {
         return false;
       }
       
       // Fuel type filter
-      if (filters.fuelType?.length && car.fuelType && !filters.fuelType.includes(car.fuelType)) {
+      if (filters.fuelType?.length && car.specs.fuelType && !filters.fuelType.includes(car.specs.fuelType)) {
         return false;
       }
       
@@ -189,7 +189,47 @@ export class CarsComponent implements OnInit {
       }
       
       // Seats filter
-      if (filters.seats?.length && car.seats && !filters.seats.includes(car.seats)) {
+      if (filters.seats?.length && car.specs.seats && !filters.seats.includes(car.specs.seats)) {
+        return false;
+      }
+      
+      return true;
+    });
+  }
+  
+  filterCars(filters: any): Car[] {
+    return this.allCars.filter(car => {
+      // Price filter
+      if (filters.priceRange?.max && (car.pricePerDay || car.price) > filters.priceRange.max) {
+        return false;
+      }
+      
+      // Category filter
+      if (filters.category?.length && car.category && !filters.category.includes(car.category)) {
+        return false;
+      }
+      
+      // Gearbox filter
+      if (filters.gearbox?.length && car.specs.gearbox && !filters.gearbox.includes(car.specs.gearbox)) {
+        return false;
+      }
+      
+      // Fuel type filter
+      if (filters.fuelType?.length && car.specs.fuelType && !filters.fuelType.includes(car.specs.fuelType)) {
+        return false;
+      }
+      
+      // Features filter
+      if (filters.features?.length && car.features) {
+        for (const feature of filters.features) {
+          if (!car.features.includes(feature)) {
+            return false;
+          }
+        }
+      }
+      
+      // Seats filter
+      if (filters.seats?.length && car.specs.seats && !filters.seats.includes(car.specs.seats)) {
         return false;
       }
       
@@ -205,37 +245,37 @@ export class CarsComponent implements OnInit {
       }
       
       // Engine size filter
-      if (this.filters.engineSize > 0 && car.engineSize !== undefined && car.engineSize < this.filters.engineSize) {
+      if (this.filters.engineSize > 0 && car.specs.engineSize !== undefined && car.specs.engineSize < this.filters.engineSize) {
         return false;
       }
       
       // Seats filter
-      if (this.filters.seats > 0 && car.seats !== undefined && car.seats < this.filters.seats) {
+      if (this.filters.seats > 0 && car.specs.seats !== undefined && car.specs.seats < this.filters.seats) {
         return false;
       }
       
       // Doors filter
-      if (this.filters.doors > 0 && car.doors !== undefined && car.doors < this.filters.doors) {
+      if (this.filters.doors > 0 && car.specs.doors !== undefined && car.specs.doors < this.filters.doors) {
         return false;
       }
       
       // Gearbox filter
-      if (this.filters.gearbox && car.gearbox && car.gearbox !== this.filters.gearbox) {
+      if (this.filters.gearbox && car.specs.gearbox && car.specs.gearbox !== this.filters.gearbox) {
         return false;
       }
       
       // Fuel type filter
-      if (this.filters.fuelType && car.fuelType && car.fuelType !== this.filters.fuelType) {
+      if (this.filters.fuelType && car.specs.fuelType && car.specs.fuelType !== this.filters.fuelType) {
         return false;
       }
       
       // AC filter
-      if (this.filters.ac !== null && car.airConditioning !== undefined && car.airConditioning !== this.filters.ac) {
+      if (this.filters.ac !== null && car.specs.ac !== undefined && car.specs.ac !== this.filters.ac) {
         return false;
       }
       
       // Electric windows filter
-      if (this.filters.electricWindows !== null && car.electricWindows !== undefined && car.electricWindows !== this.filters.electricWindows) {
+      if (this.filters.electricWindows !== null && car.specs.electricWindows !== undefined && car.specs.electricWindows !== this.filters.electricWindows) {
         return false;
       }
       

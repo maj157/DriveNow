@@ -28,13 +28,18 @@ export class ReviewService {
   }
 
   // Get a user's reviews
-  getUserReviews(): Observable<Review[]> {
-    return this.http.get<Review[]>(`${this.apiUrl}/user`);
+  getUserReviews(userId: string): Observable<Review[]> {
+    return this.http.get<Review[]>(`${this.apiUrl}/user/${userId}`);
   }
 
   // Post a new review
   addReview(review: Omit<Review, 'id'>): Observable<Review> {
     return this.http.post<Review>(this.apiUrl, review);
+  }
+
+  // Post a new review (alias for addReview)
+  postReview(review: Omit<Review, 'id'>): Observable<Review> {
+    return this.addReview(review);
   }
 
   // Update a review
