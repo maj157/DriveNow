@@ -209,6 +209,12 @@
   color: #3498db;
 }
 
+.dropdown-divider {
+  height: 1px;
+  margin: 8px 0;
+  background-color: #e9ecef;
+}
+
 /* Media Queries */
 @media (max-width: 768px) {
   .navbar-toggle {

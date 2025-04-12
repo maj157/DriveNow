@@ -26,10 +26,15 @@ export class GalleryComponent implements OnInit {
 
   loadCars(): void {
     this.loading = true;
+    this.error = null;
     this.carService.getAllCars().subscribe({
       next: (cars) => {
-        this.cars = cars;
-        this.filteredCars = cars;
+        if (cars && Array.isArray(cars)) {
+          this.cars = cars;
+          this.filteredCars = cars;
+        } else {
+          this.error = 'Invalid data format received';
+        }
         this.loading = false;
       },
       error: (err) => {

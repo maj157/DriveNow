@@ -1,17 +1,16 @@
 .cars-page-container {
-  padding-top: 2rem;
-  padding-bottom: 4rem;
+  padding: 2rem 0;
 }
 
 .cars-page-header {
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: 3rem;
 }
 
 .cars-page-header h1 {
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  font-size: 2.5rem;
   color: #333;
+  margin-bottom: 0.5rem;
 }
 
 .cars-page-header p {
@@ -114,7 +113,10 @@
   border-radius: 8px;
   padding: 1.5rem;
   position: sticky;
-  top: 1.5rem;
+  top: 2rem;
+  height: calc(100vh - 4rem);
+  overflow-y: auto;
+  padding-right: 1rem;
 }
 
 .filters-header {
@@ -160,20 +162,50 @@
 }
 
 .no-results {
-  background-color: #f8f9fa;
-  padding: 3rem;
   text-align: center;
+  padding: 3rem;
+  background-color: #f8f9fa;
   border-radius: 8px;
   margin: 2rem 0;
 }
 
 .no-results h3 {
+  color: #333;
   margin-bottom: 1rem;
 }
 
 .no-results p {
-  margin-bottom: 1.5rem;
   color: #666;
+  margin-bottom: 1.5rem;
+}
+
+/* Container for filters and cars grid */
+.row {
+  display: flex;
+  margin: 0 -15px;
+}
+
+/* Filters Sidebar */
+.col-md-3 {
+  flex: 0 0 25%;
+  max-width: 25%;
+  padding: 0 15px;
+  position: relative;
+}
+
+/* Cars Grid Container */
+.col-md-9 {
+  flex: 0 0 75%;
+  max-width: 75%;
+  padding: 0 15px;
+}
+
+/* Cars Grid */
+.row.g-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 0;
 }
 
 /* Responsive Adjustments */
@@ -184,12 +216,36 @@
   }
 }
 
-@media (max-width: 767.98px) {
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+  }
+
+  .col-md-3, .col-md-9 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  .cars-page-container {
+    padding: 1rem;
+  }
+
+  .cars-page-header {
+    margin-bottom: 2rem;
+  }
+
   .cars-page-header h1 {
-    font-size: 1.8rem;
+    font-size: 2rem;
   }
-  
-  .cars-page-header p {
-    font-size: 1rem;
+
+  .filters-sidebar {
+    position: relative;
+    height: auto;
+    margin-bottom: 2rem;
+    padding-right: 0;
   }
-} 
+
+  .row.g-4 {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}

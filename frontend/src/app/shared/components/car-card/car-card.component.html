@@ -1,6 +1,6 @@
 <div class="car-card" (click)="onSelect()">
   <div class="car-image">
-    <img [src]="car.imageUrl || 'assets/images/car-placeholder.jpg'" [alt]="car.brand + ' ' + car.model" class="img-fluid">
+    <img [src]="car.imageURL || 'assets/images/car-placeholder.jpg'" [alt]="car.brand + ' ' + car.model" class="img-fluid">
     <div *ngIf="car.promotionBadge" class="promotion-badge">{{car.promotionBadge}}</div>
   </div>
   
@@ -11,7 +11,7 @@
     </div>
     
     <div class="car-features">
-      <span *ngFor="let feature of getMainFeatures()" class="feature-tag">
+      <span *ngFor="let feature of getFeatures()" class="feature-tag">
         {{ feature }}
       </span>
     </div>
@@ -22,9 +22,9 @@
     
     <div class="price-section">
       <div class="price-container">
-        <div *ngIf="car.discountPrice" class="original-price">{{car.price | currency:'USD':'symbol':'1.0-0'}}</div>
+        <div *ngIf="car.discountPrice" class="original-price">{{car.pricePerDay | currency:'USD':'symbol':'1.0-0'}}</div>
         <div *ngIf="car.discountPrice" class="discounted-price">{{car.discountPrice | currency:'USD':'symbol':'1.0-0'}}</div>
-        <div *ngIf="!car.discountPrice" class="price">{{car.price | currency:'USD':'symbol':'1.0-0'}}</div>
+        <div *ngIf="!car.discountPrice" class="price">{{car.pricePerDay | currency:'USD':'symbol':'1.0-0'}}</div>
         <span class="price-period">/day</span>
       </div>
     </div>

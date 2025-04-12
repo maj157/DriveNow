@@ -4,67 +4,12 @@
     <div class="col-12 cars-page-header">
       <h1>Our Vehicles</h1>
       <p>Choose from our wide selection of high-quality rental cars</p>
-      
-      <!-- View Switcher Buttons -->
-      <div class="view-switcher">
-        <button class="btn" [class.active]="activeView === 'groups'" (click)="viewCarGroups()">
-          Car Groups
-        </button>
-        <button class="btn" [class.active]="activeView === 'all'" (click)="viewAllCars()">
-          All Cars
-        </button>
-      </div>
     </div>
   </div>
 
-  <!-- Loading Indicator -->
-  <div class="row" *ngIf="loading">
-    <div class="col-12 loading-indicator">
-      <div class="spinner-border text-primary" role="status">
-        <span class="visually-hidden">Loading...</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Car Groups View -->
-  <div class="row" *ngIf="activeView === 'groups' && !loading">
-    <div class="col-md-4 col-lg-3 mb-4" *ngFor="let group of carGroups">
-      <div class="car-group-card" (click)="selectCarGroup(group.id)">
-        <div class="car-group-image">
-          <img [src]="group.imageUrl || 'assets/images/car-placeholder.jpg'" [alt]="group.name">
-        </div>
-        <div class="car-group-info">
-          <h3>{{ group.name }}</h3>
-          <p>{{ group.description }}</p>
-          <p class="text-primary fw-bold">From {{ group.basePrice | currency }} / day</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Selected Group Cars View -->
-  <div class="selected-group-container" *ngIf="activeView === 'group' && selectedGroup && !loading">
-    <div class="row group-header">
-      <div class="col-12">
-        <button class="btn btn-outline-secondary mb-3" (click)="viewCarGroups()">
-          <i class="bi bi-arrow-left"></i> Back to Car Groups
-        </button>
-        <h2>{{ selectedGroup.name }}</h2>
-        <p>{{ selectedGroup.description }}</p>
-      </div>
-    </div>
-    
-    <div class="row">
-      <div class="col-md-6 col-lg-4 mb-4" *ngFor="let car of selectedGroup.cars">
-        <app-car-card [car]="car" (select)="selectCar($event)"></app-car-card>
-      </div>
-    </div>
-  </div>
-
-  <!-- All Cars View -->
-  <div class="row" *ngIf="activeView === 'all' && !loading">
+  <div class="row">
     <!-- Filters Sidebar -->
-    <div class="col-lg-3 mb-4">
+    <div class="col-md-3">
       <app-car-filter 
         [availableCategories]="availableCategories"
         [minPrice]="minPrice"
@@ -74,26 +19,32 @@
     </div>
     
     <!-- Cars Results -->
-    <div class="col-lg-9">
-      <div class="cars-results">
-        <div class="results-header mb-4">
-          <h3>Available Cars ({{ filteredCars.length }})</h3>
+    <div class="col-md-9">
+      <!-- Loading Indicator -->
+      <div *ngIf="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
         </div>
-        
-        <!-- No Results Message -->
-        <div class="no-results" *ngIf="filteredCars.length === 0">
-          <h3>No Cars Found</h3>
-          <p>Try adjusting your filters to see more results.</p>
-          <button class="btn btn-primary" (click)="clearFilters()">Clear All Filters</button>
-        </div>
-        
-        <!-- Car Results Grid -->
-        <div class="row" *ngIf="filteredCars.length > 0">
-          <div class="col-md-6 col-lg-4 mb-4" *ngFor="let car of filteredCars">
-            <app-car-card [car]="car" (select)="selectCar($event)"></app-car-card>
-          </div>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="!loading && filteredCars.length === 0" class="no-results">
+        <h3>No Cars Found</h3>
+        <p>Try adjusting your filters to see more results.</p>
+        <button class="btn btn-primary" (click)="clearFilters()">Clear All Filters</button>
+      </div>
+
+      <!-- Cars Grid -->
+      <div class="row g-4" *ngIf="!loading && filteredCars.length > 0">
+        <div class="col-md-6 col-lg-4" *ngFor="let car of filteredCars">
+          <app-car-card 
+            [car]="car"
+            [showActions]="true"
+            (select)="selectCar($event)"
+            (viewDetails)="onViewDetails($event)">
+          </app-car-card>
         </div>
       </div>
     </div>
   </div>
-</div> 
+</div>

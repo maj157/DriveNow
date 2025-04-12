@@ -39,10 +39,14 @@
             <div class="dropdown">
               <button class="dropdown-toggle" (click)="toggleDropdown($event)">My Account</button>
               <div class="dropdown-menu" [class.show]="isDropdownOpen">
-                <a routerLink="/history" class="dropdown-item" (click)="closeDropdown()">My Rentals</a>
+                <a routerLink="/profile" class="dropdown-item" (click)="closeDropdown()">My Profile</a>
+                <a routerLink="/bookings" class="dropdown-item" (click)="closeDropdown()">My Bookings</a>
+                <a routerLink="/invoices" class="dropdown-item" (click)="closeDropdown()">My Invoices</a>
+                <div class="dropdown-divider"></div>
                 <a routerLink="/reservation" class="dropdown-item" (click)="closeDropdown()">New Reservation</a>
-                <a routerLink="/feedback" class="dropdown-item" (click)="closeDropdown()">Submit Review</a>
+                <a routerLink="/reviews" class="dropdown-item" (click)="closeDropdown()">Submit Review</a>
                 <a routerLink="/chat" class="dropdown-item" (click)="closeDropdown()">Support Chat</a>
+                <div class="dropdown-divider"></div>
                 <a (click)="logout(); closeDropdown()" class="dropdown-item">Logout</a>
               </div>
             </div>

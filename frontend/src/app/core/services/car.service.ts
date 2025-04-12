@@ -29,7 +29,9 @@ export class CarService {
     return this.http.get<ApiResponse<Car[]>>(this.apiUrl)
       .pipe(
         map(response => {
-          console.log('API Response:', response);
+          if (!response.success || !response.data) {
+            throw new Error('Failed to get cars data');
+          }
           return response.data;
         })
       );

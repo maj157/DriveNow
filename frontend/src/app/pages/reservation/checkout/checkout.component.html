@@ -16,9 +16,8 @@
             <div class="summary-item" *ngIf="reservation.car">
               <h4>Vehicle</h4>
               <div class="car-summary">
-                <div class="car-image" *ngIf="reservation.car.image">
-                  <img [src]="typeof reservation.car.image === 'string' ? reservation.car.image : reservation.car.image[0]" 
-                      alt="{{ reservation.car.brand }} {{ reservation.car.model }}">
+                <div class="car-image" *ngIf="reservation.car.imageURL">
+                  <img [src]="reservation.car.imageURL" [alt]="reservation.car.brand + ' ' + reservation.car.model">
                 </div>
                 <div class="car-details">
                   <h5>{{ reservation.car.brand }} {{ reservation.car.model }}</h5>
@@ -28,7 +27,7 @@
                     <span><i class="fas fa-user"></i> {{ reservation.car.specs.seats }} seats</span>
                   </div>
                   <div class="car-price">
-                    <span>${{ reservation.car.price }}/day</span>
+                    <span>${{ reservation.car.pricePerDay }}/day</span>
                   </div>
                 </div>
               </div>
@@ -226,4 +225,4 @@
       </div>
     </div>
   </div>
-</div> 
+</div>

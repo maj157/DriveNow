@@ -24,13 +24,12 @@
       <div class="cart-item" *ngIf="reservation.car">
         <div class="item-header">Vehicle</div>
         <div class="car-details">
-          <div class="car-image" *ngIf="reservation.car.image">
-            <img [src]="typeof reservation.car.image === 'string' ? reservation.car.image : reservation.car.image[0]" 
-                 alt="{{ reservation.car.brand }} {{ reservation.car.model }}">
+          <div class="car-image" *ngIf="reservation.car.imageURL">
+            <img [src]="reservation.car.imageURL" [alt]="reservation.car.brand + ' ' + reservation.car.model">
           </div>
           <div class="car-info">
             <div class="car-name">{{ reservation.car.brand }} {{ reservation.car.model }}</div>
-            <div class="car-price">${{ reservation.car.price }}/day</div>
+            <div class="car-price">${{ reservation.car.pricePerDay }}/day</div>
           </div>
         </div>
       </div>
