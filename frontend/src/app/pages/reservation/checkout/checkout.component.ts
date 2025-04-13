@@ -29,6 +29,10 @@ export class CheckoutComponent implements OnInit {
   userPoints = 0;
   processingPayment = false;
   
+  // Add error handling state
+  errorMessage: string | null = null;
+  showSuccessMessage = false;
+  
   constructor(
     private fb: FormBuilder,
     private reservationService: ReservationService,
@@ -40,6 +44,17 @@ export class CheckoutComponent implements OnInit {
     this.reservation = this.reservationService.getCurrentReservation();
     this.getUserPoints();
     this.initForms();
+    
+    // Make sure we have all the necessary data
+    this.validateReservationData();
+  }
+  
+  private validateReservationData(): void {
+    // Check if we have all the necessary data to proceed
+    if (!this.reservation.car || !this.reservation.pickupLocation || !this.reservation.returnLocation || 
+        !this.reservation.pickupDate || !this.reservation.returnDate || !this.reservation.customerDetails) {
+      this.errorMessage = 'Missing reservation information. Please go back and complete all steps.';
+    }
   }
 
   private getUserPoints(): void {
@@ -105,27 +120,45 @@ export class CheckoutComponent implements OnInit {
   }
 
   saveReservation(): void {
+    this.processingPayment = true;
+    this.errorMessage = null;
+    
     this.reservationService.saveReservation().subscribe({
       next: (result) => {
-        this.router.navigate(['/profile'], { 
-          queryParams: { message: 'Reservation saved successfully' } 
-        });
+        this.processingPayment = false;
+        this.showSuccessMessage = true;
+        setTimeout(() => {
+          this.router.navigate(['/bookings'], { 
+            queryParams: { message: 'Reservation saved successfully' } 
+          });
+        }, 2000);
       },
       error: (err) => {
+        this.processingPayment = false;
         console.error('Error saving reservation:', err);
+        this.errorMessage = 'There was an error saving your reservation. Please try again.';
       }
     });
   }
 
   requestQuotation(): void {
+    this.processingPayment = true;
+    this.errorMessage = null;
+    
     this.reservationService.requestQuotation().subscribe({
       next: (result) => {
-        this.router.navigate(['/profile'], { 
-          queryParams: { message: 'Quotation request sent successfully' } 
-        });
+        this.processingPayment = false;
+        this.showSuccessMessage = true;
+        setTimeout(() => {
+          this.router.navigate(['/bookings'], { 
+            queryParams: { message: 'Quotation request sent successfully' } 
+          });
+        }, 2000);
       },
       error: (err) => {
+        this.processingPayment = false;
         console.error('Error requesting quotation:', err);
+        this.errorMessage = 'There was an error requesting your quotation. Please try again.';
       }
     });
   }
@@ -136,10 +169,15 @@ export class CheckoutComponent implements OnInit {
   }
 
   completeReservation(): void {
+    if (this.errorMessage) {
+      return; // Don't proceed if there are validation errors
+    }
+    
     const paymentMethod = this.paymentForm.get('paymentMethod')?.value;
     const saveTransaction = this.paymentForm.get('saveTransaction')?.value;
     
     this.processingPayment = true;
+    this.errorMessage = null;
     
     if (paymentMethod === 'location') {
       // Process with payment at location
@@ -159,21 +197,29 @@ export class CheckoutComponent implements OnInit {
     this.reservationService.finalizeReservation().subscribe({
       next: (result) => {
         this.processingPayment = false;
-        this.router.navigate(['/bookings'], { 
-          queryParams: { 
-            reservationId: result.id,
-            success: true
-          } 
-        });
+        this.showSuccessMessage = true;
+        
+        // If we have a result ID, use it, otherwise use a placeholder
+        const reservationId = result && result.id ? result.id : 'new';
+        
+        setTimeout(() => {
+          this.router.navigate(['/bookings'], { 
+            queryParams: { 
+              reservationId: reservationId,
+              success: true
+            } 
+          });
+        }, 2000);
       },
       error: (err) => {
         this.processingPayment = false;
         console.error('Error finalizing reservation:', err);
+        this.errorMessage = 'There was an error finalizing your reservation. Please try again.';
       }
     });
   }
 
   goBack(): void {
-    this.router.navigate(['/reservation/customer-details']);
+    this.router.navigate(['/reservation/review']);
   }
 } 
