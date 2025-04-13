@@ -1,1 +1,142 @@
-<p>booking-details works!</p>
+<div class="booking-details-container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+      <div class="loading-spinner"></div>
+      <p>Loading booking details...</p>
+    </div>
+    
+    <!-- Error State -->
+    <div *ngIf="error && !isLoading" class="error-container">
+      <div class="error-message">
+        <h3>Error Loading Booking</h3>
+        <p>{{ error }}</p>
+        <button class="btn-primary" (click)="retryLoad()">Retry</button>
+        <button class="btn-secondary" (click)="goBack()">Back to Bookings</button>
+      </div>
+    </div>
+    
+    <!-- Booking Details -->
+    <div *ngIf="booking && !isLoading && !error" class="booking-content">
+      <div class="booking-header">
+        <button class="back-button" (click)="goBack()">Back to Bookings</button>
+        
+        <div class="header-content">
+          <div class="booking-title">
+            <h1>Booking #{{ booking.id }}</h1>
+            <span [class]="'booking-status ' + getStatusClass(booking.status)">
+              {{ booking.status | titlecase }}
+            </span>
+          </div>
+          
+          <div class="booking-actions">
+            <button 
+              *ngIf="canCancel(booking.status)"
+              class="action-button cancel"
+              (click)="cancelBooking()">
+              Cancel Booking
+            </button>
+            
+            <button 
+              *ngIf="canDownloadInvoice(booking.status)"
+              class="action-button invoice"
+              (click)="downloadInvoice()">
+              Download Invoice
+            </button>
+            
+            <button 
+              *ngIf="canLeaveReview(booking)"
+              class="action-button review"
+              (click)="leaveReview()">
+              Leave Review
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div *ngIf="actionSuccess" class="success-message">
+        <i class="fas fa-check-circle"></i>
+        <span>Action completed successfully</span>
+      </div>
+      
+      <div *ngIf="actionError" class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ actionError }}</span>
+      </div>
+      
+      <div class="booking-body">
+        <div class="booking-section vehicle-info">
+          <h2>Vehicle Information</h2>
+          <div class="vehicle-card">
+            <div class="vehicle-image" [style.backgroundImage]="booking.carImage ? 'url(' + booking.carImage + ')' : 'none'">
+              <div class="no-image" *ngIf="!booking.carImage">No Image</div>
+            </div>
+            <div class="vehicle-details">
+              <h3>{{ booking.carMake }} {{ booking.carModel }}</h3>
+              <a [routerLink]="['/cars', booking.carId]">View Vehicle Details</a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="booking-section rental-period">
+          <h2>Rental Period</h2>
+          <div class="period-info">
+            <div class="period-item">
+              <span class="period-label">Pickup:</span>
+              <span class="period-date">{{ formatDate(booking.startDate) }}</span>
+              <span class="period-location">{{ booking.pickupLocation }}</span>
+            </div>
+            
+            <div class="period-item">
+              <span class="period-label">Return:</span>
+              <span class="period-date">{{ formatDate(booking.endDate) }}</span>
+              <span class="period-location">{{ booking.returnLocation }}</span>
+            </div>
+            
+            <div class="period-duration">
+              <span>Duration: {{ booking.durationDays }} Days</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="booking-section additional-services">
+          <h2>Additional Services & Options</h2>
+          <div class="services-list">
+            <div class="service-item insurance">
+              <span class="service-name">Insurance:</span>
+              <span class="service-value">{{ booking.insuranceOption | titlecase }}</span>
+            </div>
+            
+            <div class="service-item drivers">
+              <span class="service-name">Additional Drivers:</span>
+              <span class="service-value">{{ booking.additionalDrivers }}</span>
+            </div>
+            
+            <div *ngFor="let service of booking.additionalServices" class="service-item">
+              <span class="service-name">{{ service.name }}:</span>
+              <span class="service-value">{{ formatCurrency(service.price) }} / day</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="booking-section pricing">
+          <h2>Price Breakdown</h2>
+          <div class="price-table">
+            <div class="price-row">
+              <span class="price-label">Base Rental ({{ booking.durationDays }} days):</span>
+              <span class="price-value">{{ formatCurrency(booking.basePrice) }}</span>
+            </div>
+            
+            <div *ngIf="booking.additionalCosts > 0" class="price-row">
+              <span class="price-label">Additional Costs:</span>
+              <span class="price-value">{{ formatCurrency(booking.additionalCosts) }}</span>
+            </div>
+            
+            <div class="price-row total">
+              <span class="price-label">Total Price:</span>
+              <span class="price-value">{{ formatCurrency(booking.totalPrice) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
