@@ -1,0 +1,74 @@
+<div class="customer-details-container">
+  <div class="customer-details-header">
+    <h1>Your Information</h1>
+    <p>Please provide your details to complete the reservation</p>
+  </div>
+
+  <div class="customer-details-content">
+    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input 
+          type="text" 
+          id="name" 
+          formControlName="name" 
+          class="form-control" 
+          [ngClass]="{'is-invalid': customerForm.get('name')?.invalid && customerForm.get('name')?.touched}"
+        >
+        <div class="invalid-feedback" *ngIf="customerForm.get('name')?.invalid && customerForm.get('name')?.touched">
+          <span *ngIf="customerForm.get('name')?.errors?.['required']">Name is required</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="age">Age</label>
+        <input 
+          type="number" 
+          id="age" 
+          formControlName="age" 
+          class="form-control" 
+          [ngClass]="{'is-invalid': customerForm.get('age')?.invalid && customerForm.get('age')?.touched}"
+        >
+        <div class="invalid-feedback" *ngIf="customerForm.get('age')?.invalid && customerForm.get('age')?.touched">
+          <span *ngIf="customerForm.get('age')?.errors?.['required']">Age is required</span>
+          <span *ngIf="customerForm.get('age')?.errors?.['min']">You must be at least 18 years old to rent a car</span>
+          <span *ngIf="customerForm.get('age')?.errors?.['max']">Maximum age for drivers is 75</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          type="email" 
+          id="email" 
+          formControlName="email" 
+          class="form-control" 
+          [ngClass]="{'is-invalid': customerForm.get('email')?.invalid && customerForm.get('email')?.touched}"
+        >
+        <div class="invalid-feedback" *ngIf="customerForm.get('email')?.invalid && customerForm.get('email')?.touched">
+          <span *ngIf="customerForm.get('email')?.errors?.['required']">Email is required</span>
+          <span *ngIf="customerForm.get('email')?.errors?.['email']">Please enter a valid email address</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number <small>(optional)</small></label>
+        <input 
+          type="tel" 
+          id="phone" 
+          formControlName="phone" 
+          class="form-control" 
+          [ngClass]="{'is-invalid': customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched}"
+        >
+        <div class="invalid-feedback" *ngIf="customerForm.get('phone')?.invalid && customerForm.get('phone')?.touched">
+          <span *ngIf="customerForm.get('phone')?.errors?.['pattern']">Please enter a valid phone number (8-12 digits)</span>
+        </div>
+      </div>
+
+      <div class="customer-details-actions">
+        <button type="button" class="btn btn-secondary" (click)="goBack()">Back</button>
+        <button type="submit" class="btn btn-primary">Continue to Checkout</button>
+      </div>
+    </form>
+  </div>
+</div> 

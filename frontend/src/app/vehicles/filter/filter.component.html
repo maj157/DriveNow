@@ -1,23 +1,6 @@
 <div class="filter-container">
   <h3>Filter Cars</h3>
-
-  <div class="filter-group">
-    <label>Sort By</label>
-    <select [(ngModel)]="filters.sortBy">
-      <option *ngFor="let option of sortOptions" [value]="option.value">{{ option.label }}</option>
-    </select>
-  </div>
   
-  <div class="filter-group">
-    <label>Brand</label>
-    <input type="text" [(ngModel)]="filters.brand" placeholder="Enter brand">
-  </div>
-
-  <div class="filter-group">
-    <label>Model</label>
-    <input type="text" [(ngModel)]="filters.model" placeholder="Enter model">
-  </div>
-
   <div class="filter-group">
     <label>Number of Seats</label>
     <select [(ngModel)]="filters.seats">
@@ -43,64 +26,29 @@
   </div>
 
   <div class="filter-group">
-    <label>Color</label>
-    <select [(ngModel)]="filters.color">
+    <label>Air Conditioning</label>
+    <select [(ngModel)]="filters.ac">
       <option [ngValue]="null">Any</option>
-      <option *ngFor="let color of colorOptions" [value]="color">{{ color }}</option>
+      <option [value]="true">Yes</option>
+      <option [value]="false">No</option>
     </select>
   </div>
 
   <div class="filter-group">
-    <label>Year Range</label>
-    <div class="range-inputs">
-      <input type="number" [(ngModel)]="filters.minYear" placeholder="Min Year">
-      <span>to</span>
-      <input type="number" [(ngModel)]="filters.maxYear" placeholder="Max Year">
-    </div>
-  </div>
-
-  <div class="filter-group">
-    <label>Mileage Range</label>
-    <div class="range-inputs">
-      <input type="number" [(ngModel)]="filters.minMileage" placeholder="Min Mileage">
-      <span>to</span>
-      <input type="number" [(ngModel)]="filters.maxMileage" placeholder="Max Mileage">
-    </div>
+    <label>Electric Windows</label>
+    <select [(ngModel)]="filters.electricWindows">
+      <option [ngValue]="null">Any</option>
+      <option [value]="true">Yes</option>
+      <option [value]="false">No</option>
+    </select>
   </div>
 
   <div class="filter-group">
     <label>Price Range</label>
-    <div class="range-inputs">
+    <div class="price-range">
       <input type="number" [(ngModel)]="filters.minPrice" placeholder="Min Price">
       <span>to</span>
       <input type="number" [(ngModel)]="filters.maxPrice" placeholder="Max Price">
-    </div>
-  </div>
-
-  <div class="filter-group">
-    <label>Features</label>
-    <div class="features-grid">
-      <div *ngFor="let feature of featureOptions" class="feature-checkbox">
-        <input type="checkbox" 
-               [id]="feature"
-               [checked]="filters.features.includes(feature)"
-               (change)="toggleFeature(feature)">
-        <label [for]="feature">{{ feature }}</label>
-      </div>
-    </div>
-  </div>
-
-  <div class="filter-group">
-    <label>Additional Options</label>
-    <div class="additional-options">
-      <div class="option-checkbox">
-        <input type="checkbox" id="ac" [(ngModel)]="filters.ac">
-        <label for="ac">Air Conditioning</label>
-      </div>
-      <div class="option-checkbox">
-        <input type="checkbox" id="electricWindows" [(ngModel)]="filters.electricWindows">
-        <label for="electricWindows">Electric Windows</label>
-      </div>
     </div>
   </div>
 

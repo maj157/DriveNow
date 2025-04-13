@@ -1,0 +1,293 @@
+.cart-sidebar-container {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Toggle Button */
+.cart-toggle-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background-color: #fff;
+  color: #666;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.cart-toggle-btn i {
+  font-size: 1.5rem;
+}
+
+.cart-toggle-btn.has-items {
+  background-color: #007bff;
+  color: white;
+}
+
+.cart-toggle-btn:hover {
+  transform: scale(1.05);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* Sidebar */
+.cart-sidebar {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 350px;
+  max-width: 90vw;
+  height: 100vh;
+  background-color: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease;
+  z-index: 1002;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-sidebar.open {
+  right: 0;
+}
+
+/* Sidebar Header */
+.cart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.cart-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #666;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+/* Cart Content */
+.cart-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+.cart-item {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.item-header {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+/* Car Details */
+.car-details {
+  display: flex;
+  align-items: center;
+}
+
+.car-image {
+  width: 70px;
+  height: 50px;
+  overflow: hidden;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+.car-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.car-info {
+  flex: 1;
+}
+
+.car-name {
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.car-price {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Location and Date Details */
+.location-details, .date-details {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.location-label, .date-label {
+  width: 60px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.location-name, .date-value {
+  flex: 1;
+  color: #333;
+}
+
+/* Extras List */
+.extras-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.extra-item {
+  display: flex;
+  justify-content: space-between;
+}
+
+.extra-name {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.extra-price {
+  font-size: 0.9rem;
+  color: #333;
+  font-weight: 500;
+}
+
+/* Price Summary */
+.price-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.price-label {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.price-value {
+  color: #333;
+  font-weight: 500;
+}
+
+.price-row.discount {
+  color: #28a745;
+}
+
+.price-row.total {
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px dashed #eee;
+  font-weight: 600;
+}
+
+.price-row.total .price-label,
+.price-row.total .price-value {
+  font-weight: 600;
+  color: #333;
+}
+
+/* Empty Cart */
+.empty-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+  color: #999;
+  text-align: center;
+}
+
+.empty-cart i {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.empty-cart p {
+  margin: 0;
+}
+
+/* Cart Actions */
+.cart-actions {
+  padding: 15px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-continue {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  text-align: center;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.btn-continue:hover {
+  background-color: #0069d9;
+}
+
+/* Overlay */
+.cart-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1001;
+  visibility: hidden;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.cart-overlay.visible {
+  visibility: visible;
+  opacity: 1;
+}

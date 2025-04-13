@@ -1,0 +1,104 @@
+<div class="vehicles-container">
+  <div class="vehicles-header">
+    <h1>Choose Your Vehicle</h1>
+    <p>Select from our range of available vehicles</p>
+  </div>
+
+  <div class="vehicles-content">
+    <div class="row">
+      <!-- Filters sidebar -->
+      <div class="col-md-3 filters-sidebar">
+        <div class="filters-section">
+          <h3>Filters</h3>
+          
+          <div class="filter-group">
+            <label>Vehicle Type</label>
+            <select [(ngModel)]="filters.carType" (change)="applyFilters()" class="form-control">
+              <option value="">All Types</option>
+              <option *ngFor="let type of carTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label>Brand</label>
+            <select [(ngModel)]="filters.brand" (change)="applyFilters()" class="form-control">
+              <option value="">All Brands</option>
+              <option *ngFor="let brand of brands" [value]="brand">{{ brand }}</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label>Transmission</label>
+            <select [(ngModel)]="filters.transmission" (change)="applyFilters()" class="form-control">
+              <option value="">Any</option>
+              <option *ngFor="let type of transmissionTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label>Number of Seats</label>
+            <select [(ngModel)]="filters.seats" (change)="applyFilters()" class="form-control">
+              <option [value]="0">Any</option>
+              <option *ngFor="let seats of availableSeats" [value]="seats">{{ seats }} seats</option>
+            </select>
+          </div>
+          
+          <div class="filter-group">
+            <label>Price Range (per day)</label>
+            <div class="price-slider">
+              <span>${{ filters.priceRange.min }}</span>
+              <input 
+                type="range" 
+                [(ngModel)]="filters.priceRange.max" 
+                [min]="0" 
+                [max]="maxPrice" 
+                (input)="applyFilters()" 
+                class="form-range"
+              >
+              <span>${{ filters.priceRange.max }}</span>
+            </div>
+          </div>
+          
+          <button class="btn btn-outline-secondary btn-sm" (click)="clearFilters()">
+            Clear Filters
+          </button>
+        </div>
+      </div>
+      
+      <!-- Cars list -->
+      <div class="col-md-9 cars-list">
+        <div class="loading-spinner" *ngIf="loading">
+          <div class="spinner"></div>
+          <p>Loading vehicles...</p>
+        </div>
+        
+        <div class="no-results" *ngIf="!loading && filteredCars.length === 0">
+          <p>No vehicles found matching your criteria. Try adjusting your filters.</p>
+        </div>
+        
+        <div class="car-card" *ngFor="let car of filteredCars" [class.selected]="selectedCar?.id === car.id" (click)="selectCar(car)">
+          <div class="car-image">
+            <img [src]="car.imageURL" alt="{{ car.brand }} {{ car.model }}">
+          </div>
+          
+          <div class="car-details">
+            <h3>{{ car.brand }} {{ car.model }}</h3>
+            <div class="car-specs">
+              <span><i class="fas fa-car"></i> {{ car.specs.fuelType }}</span>
+              <span><i class="fas fa-cog"></i> {{ car.specs.gearbox }}</span>
+              <span><i class="fas fa-user"></i> {{ car.specs.seats }} seats</span>
+            </div>
+            <div class="car-price">
+              <span class="price">${{ car.pricePerDay }}<small>/day</small></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="vehicles-actions">
+    <button type="button" class="btn btn-secondary" (click)="goBack()">Back</button>
+    <button type="button" class="btn btn-primary" [disabled]="!selectedCar" (click)="continue()">Continue</button>
+  </div>
+</div> 

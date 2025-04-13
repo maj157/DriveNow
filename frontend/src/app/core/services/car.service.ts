@@ -1,8 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Car } from '../models/car.model';
+
+interface ApiResponse<T> {
+  success: boolean;
+  count?: number;
+  data: T;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -14,27 +20,44 @@ export class CarService {
 
   // Get all car groups (SUV, Hybrid, etc.)
   getCarGroups(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/groups`);
+    return this.http.get<ApiResponse<any[]>>(`${this.apiUrl}/groups`)
+      .pipe(map(response => response.data));
   }
 
   // Get all cars
   getAllCars(): Observable<Car[]> {
-    return this.http.get<Car[]>(this.apiUrl);
+    return this.http.get<ApiResponse<Car[]>>(this.apiUrl)
+      .pipe(
+        map(response => {
+          if (!response.success || !response.data) {
+            throw new Error('Failed to get cars data');
+          }
+          return response.data;
+        })
+      );
   }
 
   // Get cars by group ID
   getCarsByGroup(groupId: string): Observable<Car[]> {
-    return this.http.get<Car[]>(`${this.apiUrl}/group/${groupId}`);
+    return this.http.get<ApiResponse<Car[]>>(`${this.apiUrl}/group/${groupId}`)
+      .pipe(map(response => response.data));
   }
 
   // Get a single car by ID
   getCarById(carId: string): Observable<Car> {
-    return this.http.get<Car>(`${this.apiUrl}/${carId}`);
+    return this.http.get<ApiResponse<Car>>(`${this.apiUrl}/${carId}`)
+      .pipe(map(response => response.data));
   }
 
   // Get random cars (for homepage)
   getRandomCars(count: number = 3): Observable<Car[]> {
     return this.http.get<Car[]>(`${this.apiUrl}/random?count=${count}`);
+  }
+
+  // Get random cars from distinct groups (for homepage highlights)
+  getRandomCarsFromDistinctGroups(count: number = 3): Observable<Car[]> {
+    return this.http.get<ApiResponse<Car[]>>(`${this.apiUrl}/random-distinct?count=${count}`)
+      .pipe(map(response => response.data));
   }
 
   // Get most rented car
@@ -65,6 +88,7 @@ export class CarService {
       }
     });
     
-    return this.http.get<Car[]>(`${this.apiUrl}/filter?${params.toString()}`);
+    return this.http.get<ApiResponse<Car[]>>(`${this.apiUrl}/filter?${params.toString()}`)
+      .pipe(map(response => response.data));
   }
 }

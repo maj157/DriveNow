@@ -1,1 +1,29 @@
-<p>map-selector works!</p>
+<div class="map-container">
+  <div class="map-wrapper">
+    <div id="map" class="map"></div>
+  </div>
+  
+  <div class="branch-list">
+    <h3>Available Locations</h3>
+    <div class="search-box">
+      <input type="text" placeholder="Search locations..." class="search-input" #searchInput (input)="filterBranches(searchInput.value)">
+    </div>
+    
+    <ul class="locations-list">
+      <li *ngFor="let branch of filteredBranches" 
+          [class.selected-pickup]="branch.name === selectedPickup"
+          [class.selected-return]="branch.name === selectedReturn"
+          (click)="branchClicked.emit(branch)">
+        <div class="branch-info">
+          <span class="branch-name">{{ branch.name }}</span>
+          <span class="branch-address">{{ branch.address }}</span>
+          
+          <div class="branch-selection-indicator" *ngIf="branch.name === selectedPickup || branch.name === selectedReturn">
+            <span *ngIf="branch.name === selectedPickup" class="pickup-badge">Pickup</span>
+            <span *ngIf="branch.name === selectedReturn" class="return-badge">Return</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

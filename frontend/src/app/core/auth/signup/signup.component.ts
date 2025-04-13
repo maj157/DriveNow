@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
+import { RegisterRequest } from '../../models/user.model';
 
 @Component({
   selector: 'app-signup',
@@ -28,7 +29,8 @@ export class SignupComponent implements OnInit {
     }
 
     this.signupForm = this.formBuilder.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
@@ -67,16 +69,26 @@ export class SignupComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    this.authService.signup(
-      this.f['name'].value,
-      this.f['email'].value,
-      this.f['password'].value
+    const registerData: RegisterRequest = {
+      firstName: this.f['firstName'].value,
+      lastName: this.f['lastName'].value,
+      email: this.f['email'].value,
+      password: this.f['password'].value
+    };
+
+    this.authService.register(
+      registerData.firstName,
+      registerData.lastName,
+      registerData.email,
+      registerData.password
     ).subscribe({
       next: () => {
-        this.router.navigate(['/']);
+        this.router.navigate(['/login'], { 
+          queryParams: { registered: true }
+        });
       },
       error: error => {
-        this.error = error?.error?.message || 'Registration failed. Please try again.';
+        this.error = typeof error === 'string' ? error : 'Registration failed. Please try again.';
         this.loading = false;
       }
     });

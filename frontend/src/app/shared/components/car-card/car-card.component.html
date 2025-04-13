@@ -1,45 +1,32 @@
-<div class="car-card" *ngIf="car" (click)="onSelect()">
+<div class="car-card" (click)="onSelect()">
   <div class="car-image">
-    <img [src]="car.image" [alt]="car.brand + ' ' + car.model" class="img-fluid">
-    <div class="car-price">
-      <span class="currency">$</span>{{ car.price }}<span class="period">/day</span>
-    </div>
+    <img [src]="car.imageURL || 'assets/images/car-placeholder.jpg'" [alt]="car.brand + ' ' + car.model" class="img-fluid">
+    <div *ngIf="car.promotionBadge" class="promotion-badge">{{car.promotionBadge}}</div>
   </div>
-  <div class="car-details">
-    <h3 class="car-title">{{ car.brand }} {{ car.model }}</h3>
-    <p class="car-year">{{ car.year }}</p>
-    
-    <div class="car-specs">
-      <div class="spec-item">
-        <i class="fas fa-users"></i>
-        <span>{{ car.specs.seats }} seats</span>
-      </div>
-      <div class="spec-item">
-        <i class="fas fa-cog"></i>
-        <span>{{ car.specs.gearbox }}</span>
-      </div>
-      <div class="spec-item">
-        <i class="fas fa-gas-pump"></i>
-        <span>{{ car.specs.fuelType }}</span>
-      </div>
-      <div class="spec-item" *ngIf="car.specs.ac">
-        <i class="fas fa-snowflake"></i>
-        <span>A/C</span>
-      </div>
-    </div>
-
-    <div class="car-rating" *ngIf="car.averageRating">
-      <i class="fas fa-star"></i>
-      <span>{{ car.averageRating | number:'1.1-1' }}</span>
+  
+  <div class="car-content">
+    <div class="car-header">
+      <h3>{{ car.brand }} {{ car.model }}</h3>
+      <div class="car-category" *ngIf="car.category">{{ car.category }}</div>
     </div>
     
-    <div class="car-actions" *ngIf="showActions">
-      <button class="btn btn-outline" (click)="onViewDetails($event)">
-        View Details
-      </button>
-      <button class="btn btn-primary" (click)="onSelect()">
-        Select Car
-      </button>
+    <div class="car-features">
+      <span *ngFor="let feature of getFeatures()" class="feature-tag">
+        {{ feature }}
+      </span>
+    </div>
+    
+    <div class="car-location" *ngIf="car.location">
+      <i class="bi bi-geo-alt"></i> {{car.location}}
+    </div>
+    
+    <div class="price-section">
+      <div class="price-container">
+        <div *ngIf="car.discountPrice" class="original-price">{{car.pricePerDay | currency:'USD':'symbol':'1.0-0'}}</div>
+        <div *ngIf="car.discountPrice" class="discounted-price">{{car.discountPrice | currency:'USD':'symbol':'1.0-0'}}</div>
+        <div *ngIf="!car.discountPrice" class="price">{{car.pricePerDay | currency:'USD':'symbol':'1.0-0'}}</div>
+        <span class="price-period">/day</span>
+      </div>
     </div>
   </div>
 </div>

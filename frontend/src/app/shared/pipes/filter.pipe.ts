@@ -1,56 +1,62 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { Car } from '../../core/models/car.model';
 
+interface CarFilters {
+  seats?: number;
+  gearbox?: string;
+  fuelType?: string;
+  ac?: boolean;
+  electricWindows?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+}
+
 @Pipe({
   name: 'filter',
-  pure: false,
   standalone: true
 })
 export class FilterPipe implements PipeTransform {
-  transform(cars: Car[] | null, filters: {
-    seats?: number;
-    gearbox?: 'Automatic' | 'Manual';
-    fuelType?: string;
-    ac?: boolean;
-    electricWindows?: boolean;
-    minPrice?: number;
-    maxPrice?: number;
-  }): Car[] {
+  transform(cars: Car[], filters: CarFilters): Car[] {
     if (!cars || !filters) {
-      return cars || [];
+      return cars;
     }
 
     return cars.filter(car => {
-      // Check each filter criterion
-      if (filters.seats && car.specs.seats < filters.seats) {
+      // Handle seats filter
+      if (filters.seats && car.specs?.seats !== undefined && car.specs.seats < filters.seats) {
         return false;
       }
 
-      if (filters.gearbox && car.specs.gearbox !== filters.gearbox) {
+      // Handle gearbox filter
+      if (filters.gearbox && car.specs?.gearbox !== undefined && car.specs.gearbox !== filters.gearbox) {
         return false;
       }
 
-      if (filters.fuelType && car.specs.fuelType !== filters.fuelType) {
+      // Handle fuel type filter
+      if (filters.fuelType && car.specs?.fuelType !== undefined && car.specs.fuelType !== filters.fuelType) {
         return false;
       }
 
-      if (filters.ac !== undefined && car.specs.ac !== filters.ac) {
+      // Handle AC filter
+      if (filters.ac !== undefined && car.specs?.ac !== undefined && car.specs.ac !== filters.ac) {
         return false;
       }
 
-      if (filters.electricWindows !== undefined && car.specs.electricWindows !== filters.electricWindows) {
+      // Handle electric windows filter
+      if (filters.electricWindows !== undefined && car.specs?.electricWindows !== undefined && 
+          car.specs.electricWindows !== filters.electricWindows) {
         return false;
       }
 
-      if (filters.minPrice && car.price < filters.minPrice) {
+      // Handle price filters
+      if (filters.minPrice && car.pricePerDay < filters.minPrice) {
         return false;
       }
 
-      if (filters.maxPrice && car.price > filters.maxPrice) {
+      if (filters.maxPrice && car.pricePerDay > filters.maxPrice) {
         return false;
       }
 
-      // Car passed all filters
       return true;
     });
   }

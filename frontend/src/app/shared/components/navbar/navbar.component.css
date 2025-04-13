@@ -181,12 +181,18 @@
   border-radius: 4px;
   padding: 8px 0;
   margin-top: 5px;
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.3s, transform 0.3s, visibility 0s linear 0.3s;
   z-index: 1000;
 }
 
-.dropdown:hover .dropdown-menu {
-  display: block;
+.dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  transition: opacity 0.3s, transform 0.3s;
 }
 
 .dropdown-item {
@@ -201,6 +207,12 @@
 .dropdown-item:hover {
   background-color: rgba(52, 152, 219, 0.1);
   color: #3498db;
+}
+
+.dropdown-divider {
+  height: 1px;
+  margin: 8px 0;
+  background-color: #e9ecef;
 }
 
 /* Media Queries */
@@ -284,5 +296,10 @@
     width: 100%;
     box-shadow: none;
     margin-top: 10px;
+    transform: none;
+  }
+
+  .dropdown-menu.show {
+    transform: none;
   }
 }

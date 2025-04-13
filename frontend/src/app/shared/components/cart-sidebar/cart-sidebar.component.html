@@ -1,1 +1,110 @@
-<p>cart-sidebar works!</p>
+<div class="cart-sidebar-container">
+  <!-- Cart Toggle Button -->
+  <button 
+    class="cart-toggle-btn" 
+    [class.has-items]="hasReservationData()" 
+    (click)="toggleSidebar()"
+    aria-label="Toggle Reservation Summary"
+  >
+    <i class="fas fa-shopping-cart"></i>
+    <span class="visually-hidden">Toggle Reservation Summary</span>
+  </button>
+  
+  <!-- Sidebar Content -->
+  <div class="cart-sidebar" [class.open]="isOpen">
+    <div class="cart-header">
+      <h3>Your Reservation</h3>
+      <button class="close-btn" (click)="toggleSidebar()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="cart-content" *ngIf="hasReservationData(); else emptyCart">
+      <!-- Car Details -->
+      <div class="cart-item" *ngIf="reservation.car">
+        <div class="item-header">Vehicle</div>
+        <div class="car-details">
+          <div class="car-image" *ngIf="reservation.car.imageURL">
+            <img [src]="reservation.car.imageURL" [alt]="reservation.car.brand + ' ' + reservation.car.model">
+          </div>
+          <div class="car-info">
+            <div class="car-name">{{ reservation.car.brand }} {{ reservation.car.model }}</div>
+            <div class="car-price">${{ reservation.car.pricePerDay }}/day</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Locations -->
+      <div class="cart-item" *ngIf="reservation.pickupLocation || reservation.returnLocation">
+        <div class="item-header">Locations</div>
+        <div class="location-details" *ngIf="reservation.pickupLocation">
+          <div class="location-label">Pickup:</div>
+          <div class="location-name">{{ reservation.pickupLocation.name }}</div>
+        </div>
+        <div class="location-details" *ngIf="reservation.returnLocation">
+          <div class="location-label">Return:</div>
+          <div class="location-name">{{ reservation.returnLocation.name }}</div>
+        </div>
+      </div>
+      
+      <!-- Dates -->
+      <div class="cart-item" *ngIf="reservation.pickupDate || reservation.returnDate">
+        <div class="item-header">Dates</div>
+        <div class="date-details" *ngIf="reservation.pickupDate">
+          <div class="date-label">Pickup:</div>
+          <div class="date-value">{{ reservation.pickupDate | date:'short' }}</div>
+        </div>
+        <div class="date-details" *ngIf="reservation.returnDate">
+          <div class="date-label">Return:</div>
+          <div class="date-value">{{ reservation.returnDate | date:'short' }}</div>
+        </div>
+      </div>
+      
+      <!-- Extra Services -->
+      <div class="cart-item" *ngIf="reservation.extraServices && reservation.extraServices.length > 0">
+        <div class="item-header">Extra Services</div>
+        <div class="extras-list">
+          <div class="extra-item" *ngFor="let service of reservation.extraServices">
+            <div class="extra-name">{{ service.name }}</div>
+            <div class="extra-price">${{ service.price }}</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Price Summary -->
+      <div class="cart-item price-summary" *ngIf="reservation.totalPrice">
+        <div class="item-header">Price Summary</div>
+        <div class="price-details">
+          <div class="price-row">
+            <div class="price-label">Rental Fee:</div>
+            <div class="price-value">${{ reservation.totalPrice }}</div>
+          </div>
+          <div class="price-row discount" *ngIf="reservation.appliedDiscount">
+            <div class="price-label">Discount:</div>
+            <div class="price-value">-${{ reservation.appliedDiscount.amount }}</div>
+          </div>
+          <div class="price-row total">
+            <div class="price-label">Total:</div>
+            <div class="price-value">${{ reservation.appliedDiscount ? (reservation.totalPrice - reservation.appliedDiscount.amount) : reservation.totalPrice }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <ng-template #emptyCart>
+      <div class="empty-cart">
+        <i class="fas fa-shopping-cart"></i>
+        <p>Your reservation is empty</p>
+      </div>
+    </ng-template>
+    
+    <div class="cart-actions" *ngIf="hasReservationData()">
+      <a routerLink="/reservation" class="btn-continue">
+        Continue Reservation
+      </a>
+    </div>
+  </div>
+  
+  <!-- Overlay -->
+  <div class="cart-overlay" [class.visible]="isOpen" (click)="toggleSidebar()"></div>
+</div>

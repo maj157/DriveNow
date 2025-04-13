@@ -18,13 +18,13 @@
           <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Home</a>
         </li>
         <li class="nav-item">
-          <a routerLink="/vehicles/groups" routerLinkActive="active" class="nav-link">Vehicles</a>
-        </li>
-        <li class="nav-item">
-          <a routerLink="/vehicles/filter" routerLinkActive="active" class="nav-link">Find a Car</a>
+          <a routerLink="/cars" routerLinkActive="active" class="nav-link">Find a Car</a>
         </li>
         <li class="nav-item">
           <a routerLink="/about" routerLinkActive="active" class="nav-link">About</a>
+        </li>
+        <li class="nav-item">
+          <a routerLink="/reviews" routerLinkActive="active" class="nav-link">Reviews</a>
         </li>
         <li class="nav-item">
           <a routerLink="/contact" routerLinkActive="active" class="nav-link">Contact</a>
@@ -34,16 +34,20 @@
       <!-- Auth Buttons -->
       <div class="navbar-auth">
         <ng-container *ngIf="(currentUser$ | async) as user; else loggedOut">
-          <div class="user-menu">
-            <span class="user-greeting">Hello, {{ user.name }}</span>
+          <div class="user-menu" (clickOutside)="closeDropdown()">
+            <span class="user-greeting">Hello, {{ user.firstName }}</span>
             <div class="dropdown">
-              <button class="dropdown-toggle">My Account</button>
-              <div class="dropdown-menu">
-                <a routerLink="/history" class="dropdown-item">My Rentals</a>
-                <a routerLink="/reservation" class="dropdown-item">New Reservation</a>
-                <a routerLink="/feedback" class="dropdown-item">Submit Review</a>
-                <a routerLink="/chat" class="dropdown-item">Support Chat</a>
-                <a (click)="logout()" class="dropdown-item">Logout</a>
+              <button class="dropdown-toggle" (click)="toggleDropdown($event)">My Account</button>
+              <div class="dropdown-menu" [class.show]="isDropdownOpen">
+                <a routerLink="/profile" class="dropdown-item" (click)="closeDropdown()">My Profile</a>
+                <a routerLink="/bookings" class="dropdown-item" (click)="closeDropdown()">My Bookings</a>
+                <a routerLink="/invoices" class="dropdown-item" (click)="closeDropdown()">My Invoices</a>
+                <div class="dropdown-divider"></div>
+                <a routerLink="/reservation" class="dropdown-item" (click)="closeDropdown()">New Reservation</a>
+                <a routerLink="/reviews" class="dropdown-item" (click)="closeDropdown()">Submit Review</a>
+                <a routerLink="/chat" class="dropdown-item" (click)="closeDropdown()">Support Chat</a>
+                <div class="dropdown-divider"></div>
+                <a (click)="logout(); closeDropdown()" class="dropdown-item">Logout</a>
               </div>
             </div>
           </div>

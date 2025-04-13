@@ -1,0 +1,135 @@
+.map-container {
+  display: flex;
+  width: 100%;
+  height: 600px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.map-wrapper {
+  flex: 2;
+  position: relative;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.branch-list {
+  flex: 1;
+  background-color: #fff;
+  padding: 20px;
+  overflow-y: auto;
+  border-left: 1px solid #eee;
+}
+
+.branch-list h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.search-box {
+  margin-bottom: 15px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  font-size: 0.9rem;
+}
+
+.locations-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.locations-list li {
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid #eee;
+}
+
+.locations-list li:hover {
+  background-color: #f9f9f9;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.branch-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.branch-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+}
+
+.branch-address {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.branch-selection-indicator {
+  display: flex;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+.pickup-badge, .return-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.pickup-badge {
+  background-color: #4caf50;
+  color: white;
+}
+
+.return-badge {
+  background-color: #2196f3;
+  color: white;
+}
+
+.selected-pickup {
+  border-left: 4px solid #4caf50 !important;
+  background-color: rgba(76, 175, 80, 0.05);
+}
+
+.selected-return {
+  border-left: 4px solid #2196f3 !important;
+  background-color: rgba(33, 150, 243, 0.05);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .map-container {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .map-wrapper {
+    height: 400px;
+  }
+  
+  .branch-list {
+    border-left: none;
+    border-top: 1px solid #eee;
+  }
+}

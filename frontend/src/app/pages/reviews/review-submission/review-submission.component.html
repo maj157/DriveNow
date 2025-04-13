@@ -1,0 +1,63 @@
+<div class="review-submission-container">
+  <h2>Write a Review</h2>
+  
+  <form [formGroup]="reviewForm" (ngSubmit)="onSubmit()" class="review-form">
+    <!-- Star Rating -->
+    <div class="form-group">
+      <label>Rating</label>
+      <div class="star-rating">
+        <button 
+          *ngFor="let star of [1,2,3,4,5]" 
+          type="button"
+          (click)="reviewForm.patchValue({ stars: star })"
+          [class.active]="star <= reviewForm.get('stars')?.value"
+          class="star-button"
+        >
+          ★
+        </button>
+      </div>
+      <div *ngIf="hasError('stars', 'required')" class="error-message">
+        Please select a rating
+      </div>
+    </div>
+
+    <!-- Comment -->
+    <div class="form-group">
+      <label for="comment">Your Review</label>
+      <textarea
+        id="comment"
+        formControlName="comment"
+        rows="5"
+        placeholder="Share your experience..."
+      ></textarea>
+      <div *ngIf="hasError('comment', 'required')" class="error-message">
+        Please write a review
+      </div>
+      <div *ngIf="hasError('comment', 'minlength')" class="error-message">
+        Review must be at least 10 characters
+      </div>
+      <div *ngIf="hasError('comment', 'maxlength')" class="error-message">
+        Review cannot exceed 500 characters
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button 
+      type="submit" 
+      [disabled]="reviewForm.invalid || isSubmitting"
+      class="submit-button"
+    >
+      {{ isSubmitting ? 'Submitting...' : 'Submit Review' }}
+    </button>
+
+    <!-- Success Message -->
+    <div *ngIf="success" class="success-message">
+      Thank you for your review! Redirecting...
+    </div>
+
+    <!-- Error Message -->
+    <div *ngIf="error" class="error-message">
+      {{ error }}
+    </div>
+  </form>
+</div>

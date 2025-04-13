@@ -1,0 +1,63 @@
+<div class="reviews-container">
+  <div class="page-header">
+    <h1>Customer Reviews</h1>
+    <p>See what our customers are saying about their rental experiences</p>
+  </div>
+
+  <div class="tabs">
+    <button 
+      [class.active]="activeTab === 'all'" 
+      (click)="switchTab('all')">
+      All Reviews
+    </button>
+    <button 
+      [class.active]="activeTab === 'mine'" 
+      (click)="switchTab('mine')">
+      My Reviews
+    </button>
+  </div>
+
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="loading-spinner"></div>
+    <p>Loading reviews...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error" class="error">
+    {{ error }}
+    <button (click)="activeTab === 'all' ? loadAllReviews() : loadUserReviews()">Try Again</button>
+  </div>
+
+  <!-- All reviews tab -->
+  <div *ngIf="activeTab === 'all' && !isLoading && !error">
+    <div *ngIf="allReviews.length === 0" class="empty-state">
+      <p>No reviews available yet.</p>
+    </div>
+    
+    <div class="reviews-grid">
+      <app-review-card 
+        *ngFor="let review of allReviews" 
+        [review]="review">
+      </app-review-card>
+    </div>
+  </div>
+
+  <!-- My reviews tab -->
+  <div *ngIf="activeTab === 'mine' && !isLoading && !error">
+    <div *ngIf="userReviews.length === 0" class="empty-state">
+      <p>You haven't submitted any reviews yet.</p>
+      <p>After completing a rental, you can share your experience here.</p>
+      <button routerLink="/reviews/submit" class="btn-primary">Write a Review</button>
+    </div>
+    
+    <div class="reviews-grid">
+      <app-review-card 
+        *ngFor="let review of userReviews" 
+        [review]="review" 
+        [canEdit]="true"
+        (delete)="deleteReview(review.id!)">
+      </app-review-card>
+    </div>
+  </div>
+</div>

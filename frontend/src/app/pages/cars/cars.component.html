@@ -1,0 +1,50 @@
+<div class="container cars-page-container">
+  <!-- Page Header -->
+  <div class="row">
+    <div class="col-12 cars-page-header">
+      <h1>Our Vehicles</h1>
+      <p>Choose from our wide selection of high-quality rental cars</p>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Filters Sidebar -->
+    <div class="col-md-3">
+      <app-car-filter 
+        [availableCategories]="availableCategories"
+        [minPrice]="minPrice"
+        [maxPrice]="maxPrice"
+        (filtersChanged)="onFiltersChanged($event)">
+      </app-car-filter>
+    </div>
+    
+    <!-- Cars Results -->
+    <div class="col-md-9">
+      <!-- Loading Indicator -->
+      <div *ngIf="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="!loading && filteredCars.length === 0" class="no-results">
+        <h3>No Cars Found</h3>
+        <p>Try adjusting your filters to see more results.</p>
+        <button class="btn btn-primary" (click)="clearFilters()">Clear All Filters</button>
+      </div>
+
+      <!-- Cars Grid -->
+      <div class="row g-4" *ngIf="!loading && filteredCars.length > 0">
+        <div class="col-md-6 col-lg-4" *ngFor="let car of filteredCars">
+          <app-car-card 
+            [car]="car"
+            [showActions]="true"
+            (select)="selectCar($event)"
+            (viewDetails)="onViewDetails($event)">
+          </app-car-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

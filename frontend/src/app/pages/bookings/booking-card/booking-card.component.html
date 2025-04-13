@@ -1,0 +1,93 @@
+<div class="booking-card" [ngClass]="getStatusClass(booking.status)">
+  <div class="card-header">
+    <div class="booking-id">
+      <span class="label">Booking ID:</span>
+      <span class="id">{{ booking.id }}</span>
+    </div>
+    <div class="booking-status">
+      <span class="status-icon">{{ getStatusIcon(booking.status) }}</span>
+      <span class="status-text">{{ booking.status | titlecase }}</span>
+    </div>
+  </div>
+  
+  <div class="card-content">
+    <div class="vehicle-info">
+      <div class="vehicle-image" [style.backgroundImage]="booking.carImage ? 'url(' + booking.carImage + ')' : 'none'">
+        <div class="no-image" *ngIf="!booking.carImage">No Image</div>
+      </div>
+      <div class="vehicle-details">
+        <h3 class="vehicle-name">{{ booking.carMake }} {{ booking.carModel }}</h3>
+        <div class="booking-dates">
+          <div class="date-item">
+            <span class="date-label">Pickup:</span>
+            <span class="date-value">{{ formatDate(booking.startDate) }}</span>
+            <span class="location">{{ booking.pickupLocation }}</span>
+          </div>
+          <div class="date-item">
+            <span class="date-label">Return:</span>
+            <span class="date-value">{{ formatDate(booking.endDate) }}</span>
+            <span class="location">{{ booking.returnLocation }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="booking-details">
+      <div class="detail-item">
+        <span class="label">Duration:</span>
+        <span class="value">{{ booking.durationDays }} days</span>
+      </div>
+      <div class="detail-item">
+        <span class="label">Insurance:</span>
+        <span class="value">{{ booking.insuranceOption | titlecase }}</span>
+      </div>
+      <div class="detail-item" *ngIf="booking.additionalDrivers > 0">
+        <span class="label">Additional Drivers:</span>
+        <span class="value">{{ booking.additionalDrivers }}</span>
+      </div>
+      <div class="price-section">
+        <div class="price-item">
+          <span class="price-label">Base Price:</span>
+          <span class="price-value">{{ formatCurrency(booking.basePrice) }}</span>
+        </div>
+        <div class="price-item" *ngIf="booking.additionalCosts > 0">
+          <span class="price-label">Additional:</span>
+          <span class="price-value">{{ formatCurrency(booking.additionalCosts) }}</span>
+        </div>
+        <div class="price-item total">
+          <span class="price-label">Total:</span>
+          <span class="price-value">{{ formatCurrency(booking.totalPrice) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card-actions">
+    <button 
+      class="action-button view-details"
+      [routerLink]="['/bookings', booking.id]">
+      View Details
+    </button>
+    
+    <button 
+      *ngIf="canCancel(booking)"
+      class="action-button cancel"
+      (click)="onCancelRequest()">
+      Cancel Booking
+    </button>
+    
+    <button 
+      *ngIf="canDownloadInvoice(booking)"
+      class="action-button invoice"
+      (click)="onDownloadInvoice()">
+      Download Invoice
+    </button>
+    
+    <button 
+      *ngIf="canLeaveReview(booking)"
+      class="action-button review"
+      (click)="onLeaveReview()">
+      Leave Review
+    </button>
+  </div>
+</div>

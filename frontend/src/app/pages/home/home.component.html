@@ -1,1 +1,63 @@
-<p>home works!</p>
+<div class="home-container">
+  <section class="hero">
+    <h1>Welcome to DriveNow</h1>
+    <p>Your premier car rental service</p>
+    <button routerLink="/cars" class="btn-primary">Explore Vehicles</button>
+  </section>
+  
+  <section class="featured-cars" *ngIf="featuredCars.length > 0">
+    <h2>Featured Vehicles</h2>
+    <div class="car-cards">
+      <div *ngFor="let car of featuredCars" class="car-card" [routerLink]="['/cars', car.id]">
+        <div class="car-image" [style.backgroundImage]="'url(' + (car.imageURL || 'assets/images/car-placeholder.jpg') + ')'">
+          <div class="car-group">{{ car.group }}</div>
+        </div>
+        <div class="car-details">
+          <h3>{{ car.brand }} {{ car.model }}</h3>
+          <div class="car-specs">
+            <span><i class="fas fa-user"></i> {{ car.specs.seats }} seats</span>
+            <span><i class="fas fa-cog"></i> {{ car.specs.gearbox }}</span>
+            <span><i class="fas fa-gas-pump"></i> {{ car.specs.fuelType }}</span>
+          </div>
+          <div class="car-price">
+            <span class="price">${{ car.pricePerDay }}/day</span>
+            <button class="view-btn">View Details</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading state -->
+  <section class="loading-state" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading featured vehicles...</p>
+  </section>
+
+  <!-- Error state -->
+  <section class="error-state" *ngIf="error">
+    <p>{{ error }}</p>
+    <button (click)="loadFeaturedCars()" class="retry-button">Try Again</button>
+  </section>
+  
+  <section class="features">
+    <h2>Why Choose DriveNow?</h2>
+    <div class="feature-cards">
+      <div class="feature-card">
+        <i class="fas fa-car"></i>
+        <h3>Wide Selection</h3>
+        <p>Choose from our extensive fleet of vehicles for any occasion</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-money-bill-wave"></i>
+        <h3>Best Prices</h3>
+        <p>Competitive rates with no hidden fees</p>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-map-marker-alt"></i>
+        <h3>Convenient Locations</h3>
+        <p>Pick up and return at any of our numerous locations</p>
+      </div>
+    </div>
+  </section>
+</div>

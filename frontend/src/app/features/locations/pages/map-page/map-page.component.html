@@ -1,0 +1,51 @@
+<div class="map-page-container">
+  <div class="map-page-header">
+    <h1>Find a Location</h1>
+    <p class="instructions">Select pickup and return locations by clicking on the map or from the list.</p>
+  </div>
+
+  <div class="map-page-content">
+    <div *ngIf="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading branch locations...</p>
+    </div>
+    
+    <div *ngIf="error" class="error-state">
+      <p>{{ error }}</p>
+      <button (click)="loadBranches()" class="retry-button">Retry</button>
+    </div>
+    
+    <div *ngIf="!isLoading && !error" class="map-container">
+      <app-map-selector 
+        [branches]="branches"
+        [selectedPickup]="selectedPickup"
+        [selectedReturn]="selectedReturn"
+        (branchClicked)="onBranchSelected($event)">
+      </app-map-selector>
+    </div>
+    
+    <div class="selection-summary" *ngIf="selectedPickup || selectedReturn">
+      <h3>Your Selected Locations</h3>
+      
+      <div class="location-selection" *ngIf="selectedPickup">
+        <div class="location-type pickup">Pickup Location</div>
+        <div class="location-details">
+          <strong>{{ selectedPickup }}</strong>
+          <span>{{ getBranchAddress(selectedPickup) }}</span>
+        </div>
+      </div>
+      
+      <div class="location-selection" *ngIf="selectedReturn">
+        <div class="location-type return">Return Location</div>
+        <div class="location-details">
+          <strong>{{ selectedReturn }}</strong>
+          <span>{{ getBranchAddress(selectedReturn) }}</span>
+        </div>
+      </div>
+      
+      <button class="continue-button" [disabled]="!selectedPickup" (click)="onContinue()">
+        Continue to Select Dates
+      </button>
+    </div>
+  </div>
+</div>
