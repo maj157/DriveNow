@@ -9,7 +9,7 @@ import { Booking, BookingFilter, BookingStatus } from '../models/booking.model';
   providedIn: 'root'
 })
 export class BookingService {
-  private apiUrl = `${environment.apiUrl}/reservations`;
+  private apiUrl = `${environment.apiUrl}/bookings`;
 
   constructor(private http: HttpClient) {}
 
@@ -46,14 +46,14 @@ export class BookingService {
 
   // Cancel a booking
   cancelBooking(bookingId: string): Observable<any> {
-    return this.http.patch(`${this.apiUrl}/${bookingId}/cancel`, {}).pipe(
+    return this.http.post(`${this.apiUrl}/${bookingId}/cancel`, {}).pipe(
       catchError(this.handleError('cancelBooking'))
     );
   }
 
   // Extend a booking
   extendBooking(bookingId: string, newEndDate: Date): Observable<Booking> {
-    return this.http.patch<Booking>(
+    return this.http.post<Booking>(
       `${this.apiUrl}/${bookingId}/extend`, 
       { endDate: newEndDate.toISOString() }
     ).pipe(

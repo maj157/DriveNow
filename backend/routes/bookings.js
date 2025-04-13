@@ -3,11 +3,14 @@ const router = express.Router();
 const { authenticate } = require("../middleware/auth");
 const bookingController = require("../controllers/bookingController");
 
-// POST /api/bookings - Create a new booking
-router.post("/", authenticate, bookingController.createBooking);
+// GET /api/bookings/user - Get all bookings for current user
+router.get("/user", authenticate, bookingController.getUserBookings);
 
 // GET /api/bookings/check-availability - Check vehicle availability
 router.get("/check-availability", bookingController.checkAvailability);
+
+// POST /api/bookings - Create a new booking
+router.post("/", authenticate, bookingController.createBooking);
 
 // GET /api/bookings/:id - Get booking details
 router.get("/:id", authenticate, bookingController.getBookingById);

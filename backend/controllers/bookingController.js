@@ -2,6 +2,96 @@ const db = require("../firebase");
 const { v4: uuidv4 } = require("uuid");
 
 /**
+ * Get all bookings for the current user
+ * @param {Object} req - Request object
+ * @param {Object} res - Response object
+ */
+const getUserBookings = async (req, res) => {
+  try {
+    const userId = req.user.uid;
+    console.log(`Getting bookings for user: ${userId}`);
+
+    // Parse query parameters
+    const status = req.query.status;
+    const startDate = req.query.startDate
+      ? new Date(req.query.startDate)
+      : null;
+    const endDate = req.query.endDate ? new Date(req.query.endDate) : null;
+    const sortBy = req.query.sortBy || "newest"; // Default sort by newest
+
+    // Build the query
+    let query = db.collection("reservations").where("userId", "==", userId);
+
+    // Add status filter if provided
+    if (status && status !== "all") {
+      query = query.where("status", "==", status);
+    }
+
+    // Execute the query
+    const bookingsSnapshot = await query.get();
+
+    if (bookingsSnapshot.empty) {
+      console.log("No bookings found for user");
+      return res.status(200).json([]);
+    }
+
+    // Process bookings
+    let bookings = [];
+
+    bookingsSnapshot.forEach((doc) => {
+      bookings.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+
+    // Apply date filters in memory (since Firestore can't handle multiple range filters)
+    if (startDate) {
+      bookings = bookings.filter(
+        (booking) => new Date(booking.startDate) >= startDate
+      );
+    }
+
+    if (endDate) {
+      bookings = bookings.filter(
+        (booking) => new Date(booking.endDate) <= endDate
+      );
+    }
+
+    // Apply sorting
+    switch (sortBy) {
+      case "newest":
+        bookings.sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        break;
+      case "oldest":
+        bookings.sort(
+          (a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+        break;
+      case "price-asc":
+        bookings.sort((a, b) => a.totalPrice - b.totalPrice);
+        break;
+      case "price-desc":
+        bookings.sort((a, b) => b.totalPrice - a.totalPrice);
+        break;
+    }
+
+    console.log(`Found ${bookings.length} bookings for user`);
+    res.status(200).json(bookings);
+  } catch (error) {
+    console.error("Error fetching user bookings:", error);
+    res.status(500).json({
+      error: "Failed to fetch user bookings",
+      message: error.message,
+    });
+  }
+};
+
+/**
  * Create a new booking
  * @param {Object} req - Request object
  * @param {Object} res - Response object
@@ -929,4 +1019,5 @@ module.exports = {
   extendBooking,
   cancelBooking,
   getBookingInvoice,
+  getUserBookings,
 };

@@ -57,9 +57,8 @@ export class BookingsListComponent implements OnInit {
     this.isLoading = true;
     this.error = null;
     
-    // During development, use mock data; in production, use the real service
-    // this.bookingService.getUserBookings(this.filter)
-    this.bookingService.getMockBookings()
+    // Use the real API endpoint to fetch bookings
+    this.bookingService.getUserBookings(this.filter)
       .pipe(
         tap(bookings => {
           this.bookings = this.applyFilters(bookings);
