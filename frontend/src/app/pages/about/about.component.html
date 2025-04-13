@@ -1,1 +1,80 @@
-<p>about works!</p>
+<div class="about-container">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>About DriveNow</h1>
+      <p class="subtitle">Your Trusted Partner in Car Rental Services Since 2020</p>
+    </div>
+  </section>
+
+  <!-- Mission Section -->
+  <section class="mission-section">
+    <div class="section-content">
+      <h2>Our Mission</h2>
+      <p>At DriveNow, we're committed to providing exceptional car rental experiences through quality vehicles, transparent pricing, and outstanding customer service. Whether you're traveling for business or pleasure, we make it easy to find and rent the perfect vehicle for your needs.</p>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features-section">
+    <h2>Why Choose DriveNow</h2>
+    <div class="features-grid">
+      <div class="feature-card" *ngFor="let feature of features">
+        <i class="fas {{ feature.icon }}"></i>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats-section">
+    <h2>DriveNow by the Numbers</h2>
+    <div class="stats-grid">
+      <div class="stat-card" *ngFor="let stat of stats">
+        <div class="stat-number">{{ stat.number }}</div>
+        <div class="stat-label">{{ stat.label }}</div>
+        <p class="stat-description">{{ stat.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works-section">
+    <h2>How It Works</h2>
+    <div class="steps-container">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3>Choose Your Vehicle</h3>
+        <p>Browse our extensive fleet and select the perfect car for your needs.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3>Select Location & Time</h3>
+        <p>Pick your preferred pickup location and rental duration.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3>Book & Confirm</h3>
+        <p>Complete your booking with our secure payment system.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3>Enjoy Your Ride</h3>
+        <p>Pick up your vehicle and start your journey with DriveNow.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta-section">
+    <div class="cta-content">
+      <h2>Ready to Hit the Road?</h2>
+      <p>Experience the freedom of driving with DriveNow's premium car rental service.</p>
+      <div class="cta-buttons">
+        <a routerLink="/cars" class="btn-primary">Browse Vehicles</a>
+        <a routerLink="/contact" class="btn-secondary">Contact Us</a>
+      </div>
+    </div>
+  </section>
+</div>
