@@ -5,15 +5,21 @@ const { verifyToken, isAdmin } = require("../middleware/auth");
 const carController = require("../controllers/carController");
 
 // Public routes - Get cars
+// Root route should be first to avoid conflicting with other routes
+router.get("/", carController.getAllCars);
+
+// Fixed/static routes (no parameters) need to be before dynamic parameter routes
+router.get("/random-distinct", carController.getRandomCarsFromDistinctGroups);
 router.get("/filter", carController.filterCars);
 router.get("/groups", carController.getCarGroups);
 router.get("/group/:groupId", carController.getCarsByGroup);
 router.get("/stats/most-rented", carController.getMostRentedCar);
 router.get("/stats/average-fee", carController.getAverageDailyFee);
+
+// Dynamic parameter routes last
 router.get("/:id/availability", carController.getCarAvailability);
 router.get("/:id/reviews", carController.getCarReviews);
 router.get("/:id", carController.getCarById);
-router.get("/", carController.getAllCars);
 
 // Protected routes - require authentication
 router.post("/:id/reviews", verifyToken, carController.addCarReview);

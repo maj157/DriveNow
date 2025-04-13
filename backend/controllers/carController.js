@@ -417,6 +417,106 @@ const filterCars = async (req, res) => {
   }
 };
 
+/**
+ * Get random cars from distinct groups
+ * @param {Object} req - Express request object
+ * @param {Object} res - Express response object
+ */
+const getRandomCarsFromDistinctGroups = async (req, res) => {
+  try {
+    const count = parseInt(req.query.count) || 3;
+
+    // Get all car groups first
+    const groupsRef = db.collection("cars").select("group");
+    const groupsSnapshot = await groupsRef.get();
+
+    if (groupsSnapshot.empty) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+      });
+    }
+
+    // Extract unique groups
+    const uniqueGroups = new Set();
+    groupsSnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.group) {
+        uniqueGroups.add(data.group);
+      }
+    });
+
+    // Convert to array and shuffle
+    const shuffledGroups = Array.from(uniqueGroups).sort(
+      () => 0.5 - Math.random()
+    );
+
+    // Take only the number of groups we need
+    const selectedGroups = shuffledGroups.slice(0, count);
+
+    // For each selected group, get one random car
+    const randomCars = [];
+
+    for (const group of selectedGroups) {
+      const carsRef = db
+        .collection("cars")
+        .where("group", "==", group)
+        .limit(5);
+      const carsSnapshot = await carsRef.get();
+
+      if (!carsSnapshot.empty) {
+        // Get random index within the range of returned cars
+        const randomIndex = Math.floor(Math.random() * carsSnapshot.size);
+        const randomDoc = carsSnapshot.docs[randomIndex];
+        const carData = randomDoc.data();
+
+        // Format the car data
+        randomCars.push({
+          id: randomDoc.id,
+          brand: carData.brand,
+          model: carData.model,
+          group: carData.group,
+          pricePerDay: carData.pricePerDay,
+          imageURL: carData.imageURL,
+          // Add required specs with default values if not present
+          specs: {
+            engineSize: carData.specs?.engineSize || 2.0,
+            seats: carData.specs?.seats || 5,
+            doors: carData.specs?.doors || 4,
+            gearbox: carData.specs?.gearbox || "Automatic",
+            fuelType: carData.group || "Gasoline", // Use group as fuelType if not specified
+            trunkCapacity: carData.specs?.trunkCapacity || 400,
+            ac: carData.specs?.ac !== undefined ? carData.specs.ac : true,
+            electricWindows:
+              carData.specs?.electricWindows !== undefined
+                ? carData.specs.electricWindows
+                : true,
+            mileage: carData.specs?.mileage || 0,
+            additionalFeatures: carData.specs?.additionalFeatures || [],
+          },
+          // Optional fields
+          year: carData.year || new Date().getFullYear(),
+          location: carData.location || "Available at all locations",
+          category: carData.group, // Use group as category
+          availability:
+            carData.available !== undefined ? carData.available : true,
+        });
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      data: randomCars,
+    });
+  } catch (error) {
+    console.error("Error getting random cars from distinct groups:", error);
+    res.status(500).json({
+      success: false,
+      error: "Error retrieving random cars",
+    });
+  }
+};
+
 module.exports = {
   getAllCars,
   getCarById,
@@ -431,4 +531,5 @@ module.exports = {
   getMostRentedCar,
   getAverageDailyFee,
   filterCars,
+  getRandomCarsFromDistinctGroups,
 };

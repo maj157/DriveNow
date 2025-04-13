@@ -54,6 +54,12 @@ export class CarService {
     return this.http.get<Car[]>(`${this.apiUrl}/random?count=${count}`);
   }
 
+  // Get random cars from distinct groups (for homepage highlights)
+  getRandomCarsFromDistinctGroups(count: number = 3): Observable<Car[]> {
+    return this.http.get<ApiResponse<Car[]>>(`${this.apiUrl}/random-distinct?count=${count}`)
+      .pipe(map(response => response.data));
+  }
+
   // Get most rented car
   getMostRentedCar(): Observable<Car> {
     return this.http.get<Car>(`${this.apiUrl}/most-rented`);
