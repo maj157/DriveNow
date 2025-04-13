@@ -1,4 +1,21 @@
 <div class="checkout-container">
+  <!-- Success and Error Messages -->
+  <div *ngIf="showSuccessMessage" class="message success-message">
+    <div class="message-content">
+      <i class="fas fa-check-circle"></i>
+      <span>Your reservation has been successfully processed! A confirmation email has been sent to your email address.</span>
+    </div>
+  </div>
+  
+  <div *ngIf="errorMessage" class="message error-message">
+    <div class="message-content">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
+  </div>
+
+  <h2 class="section-title">Complete Your Reservation</h2>
+
   <div class="checkout-header">
     <h1>Checkout</h1>
     <p>Review your reservation and complete your booking</p>
@@ -74,12 +91,17 @@
             </div>
 
             <!-- Extra Services -->
-            <div class="summary-item" *ngIf="reservation.extraServices && reservation.extraServices.length">
+            <div class="summary-item">
               <h4>Extra Services</h4>
               <div class="extras-summary">
-                <div class="extra-item" *ngFor="let service of reservation.extraServices">
-                  <div class="extra-name">{{ service.name }}</div>
-                  <div class="extra-price">${{ service.price }}</div>
+                <ng-container *ngIf="reservation.extraServices && reservation.extraServices.length > 0">
+                  <div class="extra-item" *ngFor="let service of reservation.extraServices">
+                    <div class="extra-name">{{ service.name }}</div>
+                    <div class="extra-price">${{ service.price }}</div>
+                  </div>
+                </ng-container>
+                <div *ngIf="!reservation.extraServices || reservation.extraServices.length === 0" class="no-extras">
+                  No extras selected
                 </div>
               </div>
             </div>
@@ -199,25 +221,25 @@
           <!-- Action Buttons -->
           <div class="checkout-actions">
             <div class="action-buttons">
-              <button type="button" class="btn btn-primary" (click)="completeReservation()" [disabled]="processingPayment">
+              <button type="button" class="btn btn-primary" (click)="completeReservation()" [disabled]="processingPayment || errorMessage || showSuccessMessage">
                 <span class="spinner-border spinner-border-sm" *ngIf="processingPayment"></span>
                 {{ processingPayment ? 'Processing...' : 'Complete Reservation' }}
               </button>
               
-              <button type="button" class="btn btn-outline" (click)="saveReservation()">
+              <button type="button" class="btn btn-outline" (click)="saveReservation()" [disabled]="processingPayment || showSuccessMessage">
                 Save for Later
               </button>
               
-              <button type="button" class="btn btn-outline" (click)="requestQuotation()">
+              <button type="button" class="btn btn-outline" (click)="requestQuotation()" [disabled]="processingPayment || showSuccessMessage">
                 Request Quotation
               </button>
               
-              <button type="button" class="btn btn-cancel" (click)="cancelReservation()">
+              <button type="button" class="btn btn-cancel" (click)="cancelReservation()" [disabled]="processingPayment || showSuccessMessage">
                 Cancel
               </button>
             </div>
             
-            <button type="button" class="btn btn-secondary" (click)="goBack()">
+            <button type="button" class="btn btn-secondary" (click)="goBack()" [disabled]="processingPayment || showSuccessMessage">
               Back
             </button>
           </div>

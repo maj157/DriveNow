@@ -1,0 +1,270 @@
+<!-- Review Component -->
+<div class="container py-4">
+  <!-- Progress Step Indicators -->
+  <div class="reservation-progress mb-4">
+    <div class="row text-center">
+      <div class="col">
+        <div class="progress-step completed">
+          <div class="step-number">1</div>
+          <div class="step-label">Location & Date</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="progress-step completed">
+          <div class="step-number">2</div>
+          <div class="step-label">Choose Vehicle</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="progress-step completed">
+          <div class="step-number">3</div>
+          <div class="step-label">Extras</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="progress-step active">
+          <div class="step-number">4</div>
+          <div class="step-label">Review</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="progress-step">
+          <div class="step-number">5</div>
+          <div class="step-label">Confirmation</div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col">
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" style="width: 80%" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col">
+      <h2 class="mb-3">Review Your Reservation</h2>
+      <p class="lead">Please review all details of your reservation before proceeding to checkout.</p>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading reservation details...</p>
+  </div>
+
+  <!-- Show warnings for missing data -->
+  <div *ngIf="!loading && missingData.length > 0" class="alert alert-warning mb-4">
+    <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i>Missing Information</h5>
+    <p>Some required information is missing from your reservation:</p>
+    <ul>
+      <li *ngFor="let item of missingData">
+        {{ item.step }} - <a [routerLink]="item.redirect" class="alert-link">Click here to add</a>
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="!loading && reservation">
+    <!-- Main Content Row -->
+    <div class="row">
+      <!-- Reservation Details Column -->
+      <div class="col-md-8">
+        <!-- Vehicle Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4 class="text-white mb-0">Vehicle Details</h4>
+          </div>
+          <div class="card-body" *ngIf="reservation.car">
+            <div class="d-flex align-items-center">
+              <img *ngIf="reservation.car.imageURL" [src]="reservation.car.imageURL" class="img-fluid rounded me-3" style="width: 120px; height: 90px; object-fit: cover;" [alt]="reservation.car.brand + ' ' + reservation.car.model">
+              <div>
+                <h5 class="mb-1">{{ reservation.car.brand }} {{ reservation.car.model }}</h5>
+                <span class="badge bg-secondary">{{ reservation.car.group }}</span>
+                <ul class="list-unstyled mt-2">
+                  <li><i class="bi bi-people"></i> {{ reservation.car.specs?.seats || 'N/A' }} seats</li>
+                  <li><i class="bi bi-gear"></i> {{ reservation.car.specs?.gearbox || 'N/A' }}</li>
+                  <li><i class="bi bi-fuel-pump"></i> {{ reservation.car.specs?.fuelType || 'N/A' }}</li>
+                  <li class="text-primary"><strong>${{ reservation.car.pricePerDay }} per day</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="card-body" *ngIf="!reservation.car">
+            <div class="alert alert-danger mb-0">
+              <p class="mb-0">No vehicle selected. <a routerLink="/reservation/vehicles" class="alert-link">Select a vehicle</a></p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Rental Details Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4 class="text-white mb-0">Rental Details</h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="fw-bold small mb-1">Pick-up Location:</label>
+                  <p class="mb-1">{{ reservation.pickupLocation?.name || 'Not selected' }}</p>
+                  <small class="text-muted d-block">{{ reservation.pickupLocation?.address || '' }}</small>
+                  <small *ngIf="!reservation.pickupLocation" class="text-danger">
+                    <a routerLink="/reservation/locations" class="alert-link">Select a pickup location</a>
+                  </small>
+                </div>
+                
+                <div class="mb-3">
+                  <label class="fw-bold small mb-1">Pickup Date:</label>
+                  <p class="mb-0">{{ formatDate(reservation.pickupDate) }}</p>
+                  <small *ngIf="!reservation.pickupDate" class="text-danger">
+                    <a routerLink="/reservation/dates" class="alert-link">Select pickup date</a>
+                  </small>
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="fw-bold small mb-1">Return Location:</label>
+                  <p class="mb-1">{{ reservation.returnLocation?.name || 'Not selected' }}</p>
+                  <small class="text-muted d-block">{{ reservation.returnLocation?.address || '' }}</small>
+                  <small *ngIf="!reservation.returnLocation" class="text-danger">
+                    <a routerLink="/reservation/locations" class="alert-link">Select a return location</a>
+                  </small>
+                </div>
+                
+                <div class="mb-3">
+                  <label class="fw-bold small mb-1">Return Date:</label>
+                  <p class="mb-0">{{ formatDate(reservation.returnDate) }}</p>
+                  <small *ngIf="!reservation.returnDate" class="text-danger">
+                    <a routerLink="/reservation/dates" class="alert-link">Select return date</a>
+                  </small>
+                </div>
+              </div>
+              
+              <div class="col-12">
+                <div class="alert alert-info mb-0" *ngIf="calculateDuration() > 0">
+                  <label class="fw-bold small mb-1">Duration:</label>
+                  <p class="mb-0">{{ calculateDuration() }} day{{ calculateDuration() !== 1 ? 's' : '' }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Customer Details Card (if available) -->
+        <div class="card mb-4" *ngIf="reservation.customerDetails">
+          <div class="card-header">
+            <h4 class="text-white mb-0">Customer Information</h4>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="fw-bold small mb-1">Full Name:</label>
+                  <p class="mb-0">{{ reservation.customerDetails.name }}</p>
+                </div>
+                <div class="mb-3">
+                  <label class="fw-bold small mb-1">Age:</label>
+                  <p class="mb-0">{{ reservation.customerDetails.age }} years</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3">
+                  <label class="fw-bold small mb-1">Email:</label>
+                  <p class="mb-0">{{ reservation.customerDetails.email }}</p>
+                </div>
+                <div class="mb-3" *ngIf="reservation.customerDetails.phone">
+                  <label class="fw-bold small mb-1">Phone:</label>
+                  <p class="mb-0">{{ reservation.customerDetails.phone }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Extras Card -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h4 class="text-white mb-0">Selected Extras</h4>
+          </div>
+          <div class="card-body">
+            <div *ngIf="hasSelectedExtras()">
+              <ul class="list-group">
+                <li *ngFor="let extra of getSelectedExtras()" class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <span>{{ extra.name }}</span>
+                    <small class="text-muted d-block">{{ extra.category }}</small>
+                  </div>
+                  <span class="badge bg-primary rounded-pill">${{ extra.price }}</span>
+                </li>
+              </ul>
+            </div>
+            <div *ngIf="!hasSelectedExtras()" class="d-flex justify-content-between align-items-center">
+              <p class="text-muted mb-0">No extras selected</p>
+              <a routerLink="/reservation/extras" class="btn btn-sm btn-outline-primary">Add extras</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Summary Column -->
+      <div class="col-md-4">
+        <div class="card sticky-top" style="top: 20px;">
+          <div class="card-header">
+            <h4 class="text-white mb-0">Cost Summary</h4>
+          </div>
+          <div class="card-body">
+            <table class="table table-sm">
+              <tbody>
+                <tr *ngIf="reservation.car">
+                  <td>Base Rate ({{ calculateDuration() }} day{{ calculateDuration() !== 1 ? 's' : '' }})</td>
+                  <td class="text-end">${{ (reservation.car.pricePerDay * calculateDuration()).toFixed(2) }}</td>
+                </tr>
+                <tr *ngIf="calculateExtrasCost() > 0">
+                  <td>Extras</td>
+                  <td class="text-end">${{ calculateExtrasCost().toFixed(2) }}</td>
+                </tr>
+                <tr *ngIf="reservation.appliedDiscount">
+                  <td>Discount ({{ reservation.appliedDiscount.code }})</td>
+                  <td class="text-end text-danger">-${{ reservation.appliedDiscount.amount.toFixed(2) }}</td>
+                </tr>
+                <tr>
+                  <td>Estimated Taxes (10%)</td>
+                  <td class="text-end">${{ (getTotalPrice() * 0.1).toFixed(2) }}</td>
+                </tr>
+                <tr class="table-active fw-bold">
+                  <td>Total</td>
+                  <td class="text-end text-primary">${{ (getTotalPrice() * 1.1).toFixed(2) }}</td>
+                </tr>
+              </tbody>
+            </table>
+            <small class="text-muted d-block mt-2">* Final price may be adjusted based on actual usage and additional charges.</small>
+            
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2 mt-4">
+              <button type="button" class="btn btn-primary" (click)="continue()" [disabled]="missingData.length > 0">
+                {{ reservation.customerDetails ? 'Proceed to Checkout' : 'Enter Customer Details' }}
+              </button>
+              <button type="button" class="btn btn-outline-secondary" (click)="goBack()">Back to Extras</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error State (No Reservation) -->
+  <div *ngIf="!loading && !reservation" class="alert alert-danger" role="alert">
+    <h4 class="alert-heading">No Reservation Found</h4>
+    <p>We couldn't find your reservation details. Please start a new reservation.</p>
+    <hr>
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-danger" routerLink="/reservation/locations">Start New Reservation</button>
+    </div>
+  </div>
+</div> 

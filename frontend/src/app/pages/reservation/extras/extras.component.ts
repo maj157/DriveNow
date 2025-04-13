@@ -11,7 +11,7 @@ import { ExtraService as ReservationExtraService } from '../../../core/models/re
   styleUrls: ['./extras.component.css'],
   standalone: true,
   imports: [CommonModule],
-  providers: [ExtraService, ReservationService]
+  providers: []  // Remove providers here to use the singleton instances
 })
 export class ExtrasComponent implements OnInit {
   extras: (Extra & { selected: boolean })[] = [];
@@ -58,14 +58,32 @@ export class ExtrasComponent implements OnInit {
     extra.selected = !extra.selected;
     
     if (extra.selected) {
+      // Determine the appropriate category based on extra type or name
+      let category: 'Chauffeur' | 'BabySeat' | 'SatelliteNavigator' | 'Insurance' | 'Fuel' | 'GPS' = 'GPS';
+      
+      // Simple logic to determine category based on name (can be enhanced)
+      const lowerName = extra.name.toLowerCase();
+      if (lowerName.includes('chauffeur') || lowerName.includes('driver')) {
+        category = 'Chauffeur';
+      } else if (lowerName.includes('baby') || lowerName.includes('child') || lowerName.includes('seat')) {
+        category = 'BabySeat';
+      } else if (lowerName.includes('gps') || lowerName.includes('navigation') || lowerName.includes('navigator')) {
+        category = 'SatelliteNavigator';
+      } else if (lowerName.includes('insurance') || lowerName.includes('coverage')) {
+        category = 'Insurance';
+      } else if (lowerName.includes('fuel') || lowerName.includes('gas')) {
+        category = 'Fuel';
+      }
+      
       // Create an extraService object compatible with the ReservationService
       const extraService: ReservationExtraService = {
         id: extra.id.toString(),
         name: extra.name,
         price: extra.price,
-        category: 'GPS', // Default category
+        category: category,
         selected: true
       };
+      
       this.reservationService.addExtraService(extraService);
     } else {
       this.reservationService.removeExtraService(extra.id.toString());
@@ -81,10 +99,26 @@ export class ExtrasComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/reservation']);
+    this.router.navigate(['/reservation/vehicles']);
   }
 
   continue(): void {
-    this.router.navigate(['/reservation']);
+    // Save extra selections before continuing
+    this.syncExtrasWithReservation();
+    this.router.navigate(['/reservation/review']);
+  }
+  
+  // Make sure all extras are correctly synced with the reservation service before continuing
+  private syncExtrasWithReservation(): void {
+    const currentReservation = this.reservationService.getCurrentReservation();
+    const existingExtras = currentReservation.extraServices || [];
+    
+    // Remove any extras that might still be in the reservation but are unselected in UI
+    existingExtras.forEach(existingExtra => {
+      const uiExtra = this.extras.find(e => e.id.toString() === existingExtra.id);
+      if (!uiExtra || !uiExtra.selected) {
+        this.reservationService.removeExtraService(existingExtra.id);
+      }
+    });
   }
 } 

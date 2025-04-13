@@ -42,7 +42,7 @@ export class CustomerDetailsComponent implements OnInit {
   onSubmit(): void {
     if (this.customerForm.valid) {
       this.reservationService.setCustomerDetails(this.customerForm.value);
-      this.router.navigate(['/reservation/checkout']);
+      this.router.navigate(['/reservation/review']);
     } else {
       this.markFormGroupTouched(this.customerForm);
     }
@@ -56,6 +56,6 @@ export class CustomerDetailsComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/reservation/extras']);
+    this.router.navigate(['/reservation/review']);
   }
 } 
