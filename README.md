@@ -1,13 +1,15 @@
 # 🚗 DriveNow – Car Rental Website
 
 ## 📌 Project Overview
+
 DriveNow is a web-based car rental platform that allows users to browse, filter, and book cars while managing reservations efficiently. The project is built using **Angular** for the frontend and **Node.js (Express)** for backend services, following the full specification of the CMPS278 Web Design & Programming course.
 
 ---
 
 ## 📅 Project Details
-- **Course:** CMPS 278 – Web Design & Programming  
-- **Due Date:** April 18, 2025  
+
+- **Course:** CMPS 278 – Web Design & Programming
+- **Due Date:** April 18, 2025
 - **Team Members:**
   - **Frontend Developer:** [Your Name]
   - **Backend Developer:** [Your Name]
@@ -18,20 +20,23 @@ DriveNow is a web-based car rental platform that allows users to browse, filter,
 ## 🛠️ Tech Stack
 
 ### **Frontend**
+
 - Angular 16
 - HTML, CSS, TypeScript
 - Google Maps API (for location selection)
 
 ### **Backend**
+
 - Node.js (Express.js)
 - PostgreSQL / MySQL
 - JWT for authentication
 - RESTful API
 
 ### **Hosting & Deployment**
-- **Frontend:** Vercel  
-- **Backend:** AWS  
-- **Database:** PostgreSQL or MySQL  
+
+- **Frontend:** Vercel
+- **Backend:** AWS
+- **Database:** PostgreSQL or MySQL
 
 ---
 
@@ -45,7 +50,7 @@ DriveNow is a web-based car rental platform that allows users to browse, filter,
 ✔️ **User Reviews & Feedback System**  
 ✔️ **Live Chat with an Agent**  
 ✔️ **Statistical Insights (Popular Car, Average Rental Fee, etc.)**  
-✔️ **Admin Dashboard (Manage Cars, Users, Bookings, Reviews)**  
+✔️ **Admin Dashboard (Manage Cars, Users, Bookings, Reviews)**
 
 ---
 
@@ -54,14 +59,17 @@ DriveNow is a web-based car rental platform that allows users to browse, filter,
 ### 📁 `core/` – Application logic, authentication, services, and route guards
 
 - **`auth/`**
+
   - `login.component.ts` – Handles user login.
   - `signup.component.ts` – Handles user registration.
   - `auth.service.ts` – Manages authentication logic and token storage.
 
 - **`guards/`**
+
   - `auth.guard.ts` – Restricts access to protected routes if the user is not logged in.
 
 - **`services/`**
+
   - `auth.service.ts` – Communicates with backend for login/signup.
   - `car.service.ts` – Retrieves car group info, specs, filters.
   - `user.service.ts` – Retrieves user profile, invoices, points.
@@ -77,6 +85,7 @@ DriveNow is a web-based car rental platform that allows users to browse, filter,
 ### 📁 `shared/` – Reusable components, UI elements, pipes
 
 - **`components/`**
+
   - `navbar` – Top site navigation
   - `footer` – Site footer with links/socials
   - `cart-sidebar` – Shows selected cars/services and price
@@ -93,6 +102,7 @@ DriveNow is a web-based car rental platform that allows users to browse, filter,
 ### 📁 `pages/` – Major application pages
 
 - `home/` – Main homepage:
+
   - Random car images from distinct groups
   - Random user reviews
   - Popular car and average rental price
@@ -122,7 +132,9 @@ DriveNow is a web-based car rental platform that allows users to browse, filter,
 ---
 
 ### 📄 `app.routes.ts`
+
 Houses all route definitions in one place. This includes:
+
 ```ts
 { path: 'login', component: LoginComponent }
 { path: 'reservation', canActivate: [AuthGuard], component: ReservationComponent }
@@ -131,7 +143,9 @@ Houses all route definitions in one place. This includes:
 ---
 
 ### 📄 `app.module.ts`
+
 The central Angular module that declares and imports:
+
 - All components (from shared, core, pages)
 - Angular modules (`FormsModule`, `HttpClientModule`, etc.)
 - Services and guards
@@ -139,7 +153,9 @@ The central Angular module that declares and imports:
 ---
 
 ### 📄 `app.component.ts`
+
 The root component of the Angular app. This usually contains:
+
 - The app layout (header + router + footer)
 - Shared components like navbar or sidebar
 
@@ -156,6 +172,7 @@ The root component of the Angular app. This usually contains:
 ---
 
 ## 🔐 Authentication & Authorization
+
 - JWT stored securely in localStorage
 - Guards used to protect checkout and history routes
 - Backend verifies JWT on each protected API request
@@ -163,6 +180,7 @@ The root component of the Angular app. This usually contains:
 ---
 
 ## 🧪 Testing & Validation
+
 - Frontend form validation with Angular Validators
 - Backend validation using middleware and DB constraints
 - Unit tests can be written using Jasmine + Karma (optional)
@@ -170,6 +188,7 @@ The root component of the Angular app. This usually contains:
 ---
 
 ## 📈 Statistical Features (Homepage)
+
 - Show most rented car
 - Show average daily rental fee
 - Dynamically updated based on actual reservations
@@ -177,6 +196,7 @@ The root component of the Angular app. This usually contains:
 ---
 
 ## 💰 Loyalty & Points System
+
 - Every successful booking grants points
 - Points can be redeemed at checkout for discounts
 - Formula stored in backend, displayed on frontend
@@ -184,6 +204,7 @@ The root component of the Angular app. This usually contains:
 ---
 
 ## 🧾 Invoice & Booking History
+
 - Booking confirmation and invoices shown under `history/`
 - Saved transactions are resumable later
 - Users can cancel or finalize bookings at any time
@@ -191,6 +212,7 @@ The root component of the Angular app. This usually contains:
 ---
 
 ## 💬 Reviews & Ratings
+
 - Review component allows submitting feedback with stars
 - Homepage shows 3 random reviews with pagination
 - Reviews linked to user profiles (with photo and name)
@@ -198,11 +220,13 @@ The root component of the Angular app. This usually contains:
 ---
 
 ## 📞 Contact & Chat
+
 - Contact form triggers backend email route
 - Real-time chat box UI for communicating with support (agent-side backend handles messages)
 
 ---
 
 ## 📌 Notes
+
 - All functionality follows the project specs strictly.
 - This README serves as both a project guide and team documentation.

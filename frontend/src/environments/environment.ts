@@ -1,3 +1,4 @@
+
 export const environment = {
   production: false,
   apiUrl: 'http://localhost:3000/api',
@@ -9,4 +10,4 @@ export const environment = {
     messagingSenderId: "184233804904",
     appId: "1:184233804904:web:5c1a32d51ee6b0e8f00c18"
   }
-}; 
+};
