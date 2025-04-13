@@ -6,8 +6,8 @@ import { Car } from '../models/car.model';
 
 interface ApiResponse<T> {
   success: boolean;
-  count?: number;
   data: T;
+  error?: string;
 }
 
 @Injectable({
@@ -44,14 +44,14 @@ export class CarService {
   }
 
   // Get a single car by ID
-  getCarById(carId: string): Observable<Car> {
-    return this.http.get<ApiResponse<Car>>(`${this.apiUrl}/${carId}`)
-      .pipe(map(response => response.data));
+  getCarById(carId: string): Observable<ApiResponse<Car>> {
+    return this.http.get<ApiResponse<Car>>(`${this.apiUrl}/${carId}`);
   }
 
   // Get random cars (for homepage)
   getRandomCars(count: number = 3): Observable<Car[]> {
-    return this.http.get<Car[]>(`${this.apiUrl}/random?count=${count}`);
+    return this.http.get<ApiResponse<Car[]>>(`${this.apiUrl}/random?count=${count}`)
+      .pipe(map(response => response.data));
   }
 
   // Get most rented car
@@ -64,25 +64,9 @@ export class CarService {
     return this.http.get<number>(`${this.apiUrl}/average-fee`);
   }
 
-  // Filter cars by specs
-  filterCars(filters: { 
-    seats?: number,
-    gearbox?: string,
-    fuelType?: string,
-    ac?: boolean,
-    electricWindows?: boolean,
-    minPrice?: number,
-    maxPrice?: number
-  }): Observable<Car[]> {
-    // Convert filters to query params
-    const params = new URLSearchParams();
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        params.append(key, value.toString());
-      }
-    });
-    
-    return this.http.get<ApiResponse<Car[]>>(`${this.apiUrl}/filter?${params.toString()}`)
+  // Filter cars based on criteria
+  filterCars(filters: any): Observable<Car[]> {
+    return this.http.post<ApiResponse<Car[]>>(`${this.apiUrl}/filter`, filters)
       .pipe(map(response => response.data));
   }
 }

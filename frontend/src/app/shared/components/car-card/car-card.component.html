@@ -1,4 +1,4 @@
-<div class="car-card" (click)="onSelect()">
+<div class="car-card">
   <div class="car-image">
     <img [src]="car.imageURL || 'assets/images/car-placeholder.jpg'" [alt]="car.brand + ' ' + car.model" class="img-fluid">
     <div *ngIf="car.promotionBadge" class="promotion-badge">{{car.promotionBadge}}</div>
@@ -27,6 +27,11 @@
         <div *ngIf="!car.discountPrice" class="price">{{car.pricePerDay | currency:'USD':'symbol':'1.0-0'}}</div>
         <span class="price-period">/day</span>
       </div>
+    </div>
+
+    <div class="car-actions">
+      <button class="btn btn-primary" (click)="onSelect()">Select Car</button>
+      <button class="btn btn-outline-primary" (click)="onViewDetails($event)">View Details</button>
     </div>
   </div>
 </div>

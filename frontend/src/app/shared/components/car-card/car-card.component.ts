@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Car } from '../../../core/models/car.model';
 
 @Component({
@@ -16,7 +16,7 @@ export class CarCardComponent implements OnInit {
   @Output() select = new EventEmitter<Car>();
   @Output() viewDetails = new EventEmitter<Car>();
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit(): void {
     if (!this.car) {
@@ -30,7 +30,7 @@ export class CarCardComponent implements OnInit {
 
   onViewDetails(event: Event): void {
     event.stopPropagation();
-    this.viewDetails.emit(this.car);
+    this.router.navigate(['/cars', this.car.id]);
   }
 
   /**

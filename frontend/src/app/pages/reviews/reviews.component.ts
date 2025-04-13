@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ReviewService } from '../../core/services/review.service';
 import { Review } from '../../core/models/review.model';
-import { Observable, catchError, finalize, of, tap } from 'rxjs';
+import { Observable, catchError, finalize, map, of, tap } from 'rxjs';
 import { ReviewCardComponent } from '../../shared/components/review-card/review-card.component';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
@@ -51,6 +51,7 @@ export class ReviewsComponent implements OnInit {
 
     this.reviewService.getReviews()
       .pipe(
+        map(response => response.data),
         tap(reviews => this.allReviews = reviews),
         catchError(err => {
           this.error = 'Failed to load reviews. Please try again.';
@@ -75,6 +76,7 @@ export class ReviewsComponent implements OnInit {
 
     this.reviewService.getUserReviews(currentUserId)
       .pipe(
+        map(response => response.data),
         tap(reviews => this.userReviews = reviews),
         catchError(err => {
           this.error = 'Failed to load your reviews. Please try again.';

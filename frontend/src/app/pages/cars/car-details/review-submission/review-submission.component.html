@@ -1,0 +1,36 @@
+<div class="review-submission">
+  <h3>Write a Review</h3>
+  
+  <div class="rating-section">
+    <p>How would you rate this car?</p>
+    <div class="stars">
+      <button 
+        *ngFor="let star of [1,2,3,4,5]"
+        (click)="setRating(star)"
+        [class.active]="star <= rating"
+        class="star-button">
+        ★
+      </button>
+    </div>
+  </div>
+
+  <div class="comment-section">
+    <textarea
+      [(ngModel)]="comment"
+      placeholder="Share your experience with this car..."
+      rows="4"
+      required>
+    </textarea>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <button
+    (click)="submitReview()"
+    [disabled]="isSubmitting || !rating || !comment.trim()"
+    class="submit-button">
+    {{ isSubmitting ? 'Submitting...' : 'Submit Review' }}
+  </button>
+</div> 

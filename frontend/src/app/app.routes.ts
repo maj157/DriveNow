@@ -12,28 +12,31 @@ export const routes: Routes = [
   { path: 'contact', loadComponent: () => import('./pages/contact/contact.component').then(c => c.ContactComponent) },
   { 
     path: 'cars',
-    loadComponent: () => import('./pages/cars/cars.component').then(c => c.CarsComponent)
-  },
-  {
-    path: 'cars/:id',
-    loadComponent: () => import('./pages/cars/cars.component').then(c => c.CarsComponent)
-  },
-  {
-    path: 'cars/filter',
-    loadComponent: () => import('./vehicles/filter/filter.component').then(c => c.FilterComponent)
-  },
-  {
-    path: 'cars/groups',
-    loadComponent: () => import('./vehicles/groups/groups.component').then(c => c.GroupsComponent)
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./pages/cars/cars.component').then(c => c.CarsComponent)
+      },
+      {
+        path: ':id',
+        loadComponent: () => import('./pages/cars/car-details/car-details.component').then(c => c.CarDetailsComponent)
+      },
+      {
+        path: 'filter',
+        loadComponent: () => import('./vehicles/filter/filter.component').then(c => c.FilterComponent)
+      },
+      {
+        path: 'groups',
+        loadComponent: () => import('./vehicles/groups/groups.component').then(c => c.GroupsComponent)
+      }
+    ]
   },
   { 
     path: 'reviews',
     children: [
-      { path: '', loadComponent: () => import('./pages/reviews/reviews.component').then(c => c.ReviewsComponent) },
       { 
-        path: 'submit', 
-        canActivate: [authGuard],
-        loadComponent: () => import('./pages/reviews/review-submission/review-submission.component').then(c => c.ReviewSubmissionComponent) 
+        path: '', 
+        loadComponent: () => import('./pages/reviews/reviews.component').then(c => c.ReviewsComponent) 
       }
     ]
   },

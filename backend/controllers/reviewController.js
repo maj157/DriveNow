@@ -275,88 +275,65 @@ const reviewController = {
 
   createReview: async (req, res) => {
     try {
-      const { bookingId, rating, comment } = req.body;
-      const userId = req.user.id; // Assuming authorization middleware sets req.user
+      const { carId, rating, comment } = req.body;
+      const userId = req.user.uid; // From Firebase auth
+      const userName = req.user.displayName || req.user.email;
 
-      // Validate booking exists and belongs to the user
-      const booking = await Booking.findById(bookingId);
-      if (!booking) {
-        return res.status(404).json({
-          success: false,
-          message: "Booking not found",
-        });
-      }
-
-      if (booking.userId !== userId) {
-        return res.status(403).json({
-          success: false,
-          message: "You can only review your own bookings",
-        });
-      }
-
-      // Check if booking is completed
-      if (booking.status !== "completed") {
+      // Validate input
+      if (!carId || !rating || !comment) {
         return res.status(400).json({
           success: false,
-          message: "You can only review completed bookings",
+          message: "Missing required fields"
         });
       }
 
-      // Check if a review already exists for this booking
-      const existingReview = await Review.findOne({
-        userId,
-        car: booking.carId,
-        bookingId,
-      });
-
-      if (existingReview) {
+      if (rating < 1 || rating > 5) {
         return res.status(400).json({
           success: false,
-          message: "You have already reviewed this booking",
+          message: "Rating must be between 1 and 5"
         });
       }
 
-      // Get user's name (assuming from auth middleware)
-      const userName = req.user.name || "Anonymous User";
+      // Check if user has already reviewed this car
+      const existingReview = await reviewsCollection
+        .where("userId", "==", userId)
+        .where("carId", "==", carId)
+        .get();
 
-      // Create the review
+      if (!existingReview.empty) {
+        return res.status(400).json({
+          success: false,
+          message: "You have already reviewed this car"
+        });
+      }
+
+      // Create review document
       const reviewData = {
+        id: uuidv4(),
         userId,
         userName,
-        car: booking.carId,
-        bookingId,
-        rating: parseInt(rating),
+        carId,
+        rating,
         comment,
         date: new Date(),
-        status: "published",
+        status: "approved",
+        createdAt: new Date(),
+        updatedAt: new Date()
       };
 
-      const review = await Review.createReview(reviewData);
-
-      // Update booking with reviewId
-      await Booking.updateBooking(bookingId, { reviewId: review.id });
-
-      // Update car's average rating
-      const carReviews = await Review.find({ car: booking.carId });
-      const totalRating = carReviews.reduce(
-        (sum, review) => sum + review.rating,
-        0
-      );
-      const avgRating = totalRating / carReviews.length;
-
-      await Car.updateCar(booking.carId, { avgRating });
+      // Add to Firestore
+      await reviewsCollection.doc(reviewData.id).set(reviewData);
 
       res.status(201).json({
         success: true,
-        message: "Review created successfully",
-        data: review,
+        data: reviewData
       });
     } catch (error) {
       console.error("Error creating review:", error);
       res.status(500).json({
         success: false,
         message: "Error creating review",
-        error: error.message,
+        error: error.message
       });
     }
   },
@@ -430,63 +407,41 @@ const reviewController = {
 
   deleteReview: async (req, res) => {
     try {
-      const userId = req.user.id; // Assuming authorization middleware sets req.user
+      const { reviewId } = req.params;
+      const userId = req.user.uid;
 
-      // Get the existing review
-      const existingReview = await Review.findById(req.params.id);
-      if (!existingReview) {
+      // Get the review
+      const reviewDoc = await reviewsCollection.doc(reviewId).get();
+      if (!reviewDoc.exists) {
         return res.status(404).json({
           success: false,
-          message: "Review not found",
+          message: "Review not found"
         });
       }
 
-      // Check if user owns the review or is an admin
-      if (existingReview.userId !== userId && req.user.role !== "admin") {
+      const review = reviewDoc.data();
+
+      // Check if user is authorized to delete
+      if (review.userId !== userId) {
         return res.status(403).json({
           success: false,
-          message: "You can only delete your own reviews",
+          message: "Not authorized to delete this review"
         });
       }
 
       // Delete the review
-      await Review.deleteReview(req.params.id);
-
-      // Update booking to remove reviewId
-      if (existingReview.bookingId) {
-        const booking = await Booking.findById(existingReview.bookingId);
-        if (booking) {
-          await Booking.updateBooking(existingReview.bookingId, {
-            reviewId: null,
-          });
-        }
-      }
-
-      // Update car's average rating
-      const carReviews = await Review.find({
-        car: existingReview.car,
-      });
-      let avgRating = 0;
-      if (carReviews.length > 0) {
-        const totalRating = carReviews.reduce(
-          (sum, review) => sum + review.rating,
-          0
-        );
-        avgRating = totalRating / carReviews.length;
-      }
-
-      await Car.updateCar(existingReview.car, { avgRating });
+      await reviewsCollection.doc(reviewId).delete();
 
       res.status(200).json({
         success: true,
-        message: "Review deleted successfully",
+        message: "Review deleted successfully"
       });
     } catch (error) {
-      console.error(`Error deleting review with ID ${req.params.id}:`, error);
+      console.error("Error deleting review:", error);
       res.status(500).json({
         success: false,
         message: "Error deleting review",
-        error: error.message,
+        error: error.message
       });
     }
   },

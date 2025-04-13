@@ -1,0 +1,61 @@
+<div class="car-details">
+  <!-- Loading state -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="loading-spinner"></div>
+    <p>Loading car details...</p>
+  </div>
+
+  <!-- Error state -->
+  <div *ngIf="error" class="error">
+    {{ error }}
+    <button (click)="loadCarDetails(carId!)">Try Again</button>
+  </div>
+
+  <!-- Car details section -->
+  <div *ngIf="car && !isLoading" class="car-info">
+    <h1>{{ car.brand }} {{ car.model }}</h1>
+    <div class="car-details-grid">
+      <div class="car-image">
+        <img [src]="car.imageURL || 'assets/images/car-placeholder.jpg'" [alt]="car.brand + ' ' + car.model">
+      </div>
+      <div class="car-specs">
+        <p><strong>Year:</strong> {{ car.year }}</p>
+        <p><strong>Category:</strong> {{ car.category }}</p>
+        <p><strong>Transmission:</strong> {{ car.specs.gearbox }}</p>
+        <p><strong>Fuel Type:</strong> {{ car.specs.fuelType }}</p>
+        <p><strong>Seats:</strong> {{ car.specs.seats }}</p>
+        <p><strong>Daily Rate:</strong> ${{ car.pricePerDay }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reviews section -->
+  <div class="reviews-section">
+    <h2>Customer Reviews</h2>
+    
+    <!-- Review submission form (only for logged-in users) -->
+    <div *ngIf="isLoggedIn" class="review-submission-section">
+      <app-review-submission
+        [carId]="carId!"
+        (reviewSubmitted)="onReviewSubmitted($event)">
+      </app-review-submission>
+    </div>
+
+    <!-- Login prompt for non-logged-in users -->
+    <div *ngIf="!isLoggedIn" class="login-prompt">
+      <p>Please <a routerLink="/login" [queryParams]="{returnUrl: '/cars/' + carId}">log in</a> to submit a review.</p>
+    </div>
+
+    <!-- Reviews list -->
+    <div *ngIf="reviews.length === 0" class="no-reviews">
+      <p>No reviews yet. Be the first to review this car!</p>
+    </div>
+
+    <div class="reviews-list">
+      <app-review-card
+        *ngFor="let review of reviews"
+        [review]="review">
+      </app-review-card>
+    </div>
+  </div>
+</div> 
