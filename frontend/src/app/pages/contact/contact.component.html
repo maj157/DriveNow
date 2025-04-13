@@ -29,7 +29,30 @@
 
     <div class="contact-form">
       <h2>Send us a Message</h2>
-      <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
+      
+      <!-- Success message -->
+      <div class="success-message" *ngIf="formSubmitted">
+        <i class="fas fa-check-circle"></i>
+        <h3>Thank You!</h3>
+        <p>Your message has been sent successfully. We'll get back to you as soon as possible.</p>
+        <button type="button" (click)="formSubmitted = false">Send Another Message</button>
+        
+        <!-- Preview URL for development mode (Ethereal) -->
+        <div class="preview-link" *ngIf="previewUrl">
+          <p>Development mode: <a [href]="previewUrl" target="_blank">Preview the email</a></p>
+        </div>
+      </div>
+      
+      <!-- Error message -->
+      <div class="error-message" *ngIf="formError">
+        <i class="fas fa-exclamation-circle"></i>
+        <h3>Something Went Wrong</h3>
+        <p>{{ formError }}</p>
+        <button type="button" (click)="formError = null">Try Again</button>
+      </div>
+      
+      <!-- Contact form -->
+      <form (ngSubmit)="onSubmit()" #contactForm="ngForm" *ngIf="!formSubmitted && !formError">
         <div class="form-group">
           <label for="name">Full Name</label>
           <input 
@@ -79,7 +102,12 @@
             required></textarea>
         </div>
 
-        <button type="submit" [disabled]="!contactForm.form.valid">Send Message</button>
+        <button type="submit" [disabled]="!contactForm.form.valid || isSubmitting">
+          <span *ngIf="!isSubmitting">Send Message</span>
+          <span *ngIf="isSubmitting">
+            <i class="fas fa-spinner fa-spin"></i> Sending...
+          </span>
+        </button>
       </form>
     </div>
   </div>

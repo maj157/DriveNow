@@ -121,6 +121,121 @@ button[type="submit"]:disabled {
   cursor: not-allowed;
 }
 
+/* Success Message Styles */
+.success-message {
+  text-align: center;
+  padding: 30px 20px;
+  background-color: #e8f5e9;
+  border-radius: 8px;
+  border-left: 5px solid #43a047;
+  margin-bottom: 20px;
+}
+
+.success-message i {
+  font-size: 3rem;
+  color: #43a047;
+  margin-bottom: 15px;
+}
+
+.success-message h3 {
+  color: #2e7d32;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.success-message p {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.success-message button {
+  background-color: #43a047;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.success-message button:hover {
+  background-color: #2e7d32;
+}
+
+.preview-link {
+  margin-top: 20px;
+  padding-top: 15px;
+  border-top: 1px solid #c8e6c9;
+}
+
+.preview-link p {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.preview-link a {
+  color: #2e7d32;
+  text-decoration: none;
+}
+
+.preview-link a:hover {
+  text-decoration: underline;
+}
+
+/* Error Message Styles */
+.error-message {
+  text-align: center;
+  padding: 30px 20px;
+  background-color: #ffebee;
+  border-radius: 8px;
+  border-left: 5px solid #e53935;
+  margin-bottom: 20px;
+}
+
+.error-message i {
+  font-size: 3rem;
+  color: #e53935;
+  margin-bottom: 15px;
+}
+
+.error-message h3 {
+  color: #c62828;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+}
+
+.error-message p {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.error-message button {
+  background-color: #e53935;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.error-message button:hover {
+  background-color: #c62828;
+}
+
+/* Loading spinner for button */
+button[type="submit"] i.fa-spinner {
+  margin-right: 8px;
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .contact-content {
@@ -134,4 +249,9 @@ button[type="submit"]:disabled {
   .contact-header h1 {
     font-size: 2rem;
   }
-}
+  
+  .success-message,
+  .error-message {
+    padding: 20px 15px;
+  }
+} 
