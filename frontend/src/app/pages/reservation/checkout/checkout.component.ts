@@ -194,10 +194,15 @@ export class CheckoutComponent implements OnInit {
   }
   
   private finalizeReservation(): void {
+    // Show that we're attempting to finalize
+    console.log('Attempting to finalize reservation...');
+    
     this.reservationService.finalizeReservation().subscribe({
       next: (result) => {
         this.processingPayment = false;
         this.showSuccessMessage = true;
+        
+        console.log('Reservation finalized successfully, result:', result);
         
         // If we have a result ID, use it, otherwise use a placeholder
         const reservationId = result && result.id ? result.id : 'new';
@@ -214,7 +219,17 @@ export class CheckoutComponent implements OnInit {
       error: (err) => {
         this.processingPayment = false;
         console.error('Error finalizing reservation:', err);
-        this.errorMessage = 'There was an error finalizing your reservation. Please try again.';
+        
+        // Provide more helpful error messages based on error type
+        if (err.status === 401) {
+          this.errorMessage = 'Your session has expired. Please log in again before completing your reservation.';
+        } else if (err.status === 400) {
+          this.errorMessage = `Validation error: ${err.error?.message || 'Please check your reservation details.'}`;
+        } else if (err.status === 0) {
+          this.errorMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+        } else {
+          this.errorMessage = 'There was an error finalizing your reservation. Please try again.';
+        }
       }
     });
   }

@@ -165,31 +165,25 @@ exports.login = async (req, res) => {
  */
 exports.getProfile = async (req, res) => {
   try {
-    // The user is already verified by the middleware
-    const { uid } = req.firebaseUser;
-
-    // Get user data from Firestore
-    const userDoc = await usersCollection.doc(uid).get();
-
-    if (!userDoc.exists) {
-      return res.status(404).json({
+    // The user is already verified and attached by the middleware
+    if (!req.user || !req.user.uid) {
+      return res.status(401).json({
         success: false,
-        message: "User profile not found",
+        message: "Authentication required",
       });
     }
 
-    const userData = userDoc.data();
-
+    // We already have all the user data from the middleware
     return res.status(200).json({
       success: true,
       user: {
-        id: uid,
-        email: req.firebaseUser.email,
-        firstName: userData.firstName,
-        lastName: userData.lastName,
-        phone: userData.phone,
-        role: userData.role || "customer",
-        createdAt: userData.createdAt,
+        id: req.user.id,
+        email: req.user.email,
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+        phone: req.user.phone,
+        role: req.user.role || "customer",
+        createdAt: req.user.createdAt,
       },
     });
   } catch (error) {

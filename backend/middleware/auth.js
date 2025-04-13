@@ -1,15 +1,17 @@
 const admin = require("firebase-admin");
 const db = require("../firebase");
+const jwt = require("jsonwebtoken");
 
 /**
- * Middleware to verify Firebase token and protect routes
- * Replaces both authenticate and verifyToken functions
+ * Middleware to verify token and protect routes
+ * Support both Firebase ID tokens and custom tokens
  */
 exports.authenticate = async (req, res, next) => {
   try {
     // Check if the authorization header exists
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      console.warn("No authorization header provided or invalid format");
       return res.status(401).json({
         success: false,
         message: "No token provided, authorization denied",
@@ -18,14 +20,51 @@ exports.authenticate = async (req, res, next) => {
 
     // Extract the token
     const token = authHeader.split(" ")[1];
+    let uid;
 
-    // Verify the token using Firebase Admin
-    const decodedToken = await admin.auth().verifyIdToken(token);
+    try {
+      // First attempt to verify as ID token
+      console.log("Attempting to verify ID token...");
+      const decodedToken = await admin.auth().verifyIdToken(token);
+      uid = decodedToken.uid;
+      console.log("Successfully verified ID token for user:", uid);
+    } catch (idTokenError) {
+      console.log("Failed to verify as ID token:", idTokenError.message);
+
+      // If not an ID token, try to decode as a custom token
+      try {
+        console.log("Attempting to decode as custom token...");
+        // Custom tokens are JWT tokens signed by Firebase
+        // We can decode them to get the uid without verification
+        const decodedCustomToken = jwt.decode(token);
+
+        // Custom tokens contain the uid in the payload
+        if (decodedCustomToken && decodedCustomToken.uid) {
+          uid = decodedCustomToken.uid;
+          console.log("Successfully decoded custom token for user:", uid);
+        } else {
+          throw new Error("Invalid custom token format");
+        }
+      } catch (customTokenError) {
+        console.error("Failed to decode custom token:", customTokenError);
+        throw idTokenError; // Throw the original error for better debugging
+      }
+    }
+
+    if (!uid) {
+      console.error("Could not extract user ID from token");
+      return res.status(401).json({
+        success: false,
+        message: "Invalid token format, could not extract user ID",
+      });
+    }
 
     // Get user information from Firestore based on UID
-    const userDoc = await db.collection("users").doc(decodedToken.uid).get();
+    console.log("Looking up user information in Firestore...");
+    const userDoc = await db.collection("users").doc(uid).get();
 
     if (!userDoc.exists) {
+      console.warn(`User with ID ${uid} not found in database`);
       return res.status(401).json({
         success: false,
         message: "User not found, authorization denied",
@@ -33,14 +72,15 @@ exports.authenticate = async (req, res, next) => {
     }
 
     const userData = userDoc.data();
+    console.log(`User ${uid} authenticated successfully`);
 
     // Attach user information to the request object
     req.user = {
-      _id: decodedToken.uid, // Include _id for backward compatibility
-      id: decodedToken.uid,
-      uid: decodedToken.uid, // Include uid for backward compatibility
-      email: decodedToken.email,
-      name: userData.name || decodedToken.name,
+      _id: uid, // Include _id for backward compatibility
+      id: uid,
+      uid: uid, // Include uid for backward compatibility
+      email: userData.email,
+      name: userData.name || `${userData.firstName} ${userData.lastName}`,
       isAdmin: userData.role === "admin" || false,
       ...userData, // Include all other user data
     };

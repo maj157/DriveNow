@@ -6,6 +6,9 @@ const bookingController = require("../controllers/bookingController");
 // POST /api/bookings - Create a new booking
 router.post("/", authenticate, bookingController.createBooking);
 
+// GET /api/bookings/check-availability - Check vehicle availability
+router.get("/check-availability", bookingController.checkAvailability);
+
 // GET /api/bookings/:id - Get booking details
 router.get("/:id", authenticate, bookingController.getBookingById);
 
@@ -14,9 +17,6 @@ router.put("/:id", authenticate, bookingController.updateBooking);
 
 // POST /api/bookings/:id/payment - Process payment for a booking
 router.post("/:id/payment", authenticate, bookingController.processPayment);
-
-// GET /api/bookings/check-availability - Check vehicle availability
-router.get("/check-availability", bookingController.checkAvailability);
 
 // POST /api/bookings/:id/extend - Extend booking duration
 router.post("/:id/extend", authenticate, bookingController.extendBooking);

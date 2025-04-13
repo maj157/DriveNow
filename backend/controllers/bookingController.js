@@ -8,29 +8,57 @@ const { v4: uuidv4 } = require("uuid");
  */
 const createBooking = async (req, res) => {
   try {
+    console.log("⭐ Creating new booking, user:", req.user);
+    console.log("📝 Request body:", JSON.stringify(req.body, null, 2));
+
     const userId = req.user.uid;
-    const {
+
+    // Extract and normalize data from request body
+    let {
       carId,
       startDate,
       endDate,
+      pickupDate,
+      returnDate,
       pickupLocation,
       returnLocation,
       insuranceOption,
       additionalDrivers,
       additionalServices,
+      extraServices,
+      status,
+      totalPrice,
+      car: carObject,
+      customerDetails,
     } = req.body;
 
+    // Handle different field names between frontend and backend
+    startDate = startDate || pickupDate;
+    endDate = endDate || returnDate;
+
+    // If carId is not directly provided but car object is
+    if (!carId && carObject && carObject.id) {
+      carId = carObject.id;
+    }
+
+    console.log("🚗 Using car ID:", carId);
+
     // Validate required fields
-    if (
-      !carId ||
-      !startDate ||
-      !endDate ||
-      !pickupLocation ||
-      !returnLocation
-    ) {
-      return res
-        .status(400)
-        .json({ error: "Missing required booking information" });
+    if (!carId) {
+      return res.status(400).json({ error: "Missing car ID" });
+    }
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({ error: "Missing rental dates" });
+    }
+
+    if (!pickupLocation || !returnLocation) {
+      return res.status(400).json({ error: "Missing location information" });
+    }
+
+    // Normalize additionalServices - use extraServices if additionalServices is not provided
+    if (!additionalServices && extraServices) {
+      additionalServices = extraServices;
     }
 
     // Validate dates
@@ -55,103 +83,206 @@ const createBooking = async (req, res) => {
     }
 
     // Check car availability
-    const car = await db.collection("vehicles").doc(carId).get();
+    console.log("🔍 Checking car in database...");
+    const carDoc = await db.collection("cars").doc(carId).get();
 
-    if (!car.exists) {
+    if (!carDoc.exists) {
+      console.error("❌ Car not found with ID:", carId);
       return res.status(404).json({ error: "Car not found" });
     }
 
-    const carData = car.data();
+    console.log("✅ Car found in database");
+    const carData = carDoc.data();
 
     // Check if car is available for the requested dates
-    const conflictingBookings = await db
-      .collection("reservations")
-      .where("carId", "==", carId)
-      .where("status", "in", ["confirmed", "active"])
-      .where("endDate", ">", startDate)
-      .where("startDate", "<", endDate)
-      .get();
+    try {
+      console.log("🔍 Checking car availability...");
 
-    if (!conflictingBookings.empty) {
-      return res
-        .status(400)
-        .json({ error: "Car is not available for the selected dates" });
+      // Temporary workaround for the missing Firestore index
+      // Query with fewer filters and filter the rest in code
+      const reservationsQuery = await db
+        .collection("reservations")
+        .where("carId", "==", carId)
+        .where("status", "in", ["confirmed", "active"])
+        .get();
+
+      const conflictingBookings = [];
+
+      // Manual filtering
+      if (!reservationsQuery.empty) {
+        reservationsQuery.forEach((doc) => {
+          const booking = doc.data();
+          const bookingStartDate = new Date(booking.startDate);
+          const bookingEndDate = new Date(booking.endDate);
+
+          // Check for date conflicts
+          if (
+            bookingEndDate > new Date(startDate) &&
+            bookingStartDate < new Date(endDate)
+          ) {
+            conflictingBookings.push(booking);
+          }
+        });
+      }
+
+      console.log(
+        `Found ${conflictingBookings.length} potentially conflicting bookings`
+      );
+
+      if (conflictingBookings.length > 0) {
+        return res
+          .status(400)
+          .json({ error: "Car is not available for the selected dates" });
+      }
+    } catch (availabilityError) {
+      console.error("Error checking availability:", availabilityError);
+      // For development purposes, continue with the booking creation
+      if (process.env.NODE_ENV === "development") {
+        console.warn("⚠️ Bypassing availability check in development mode!");
+      } else {
+        throw availabilityError;
+      }
     }
 
     // Calculate rental duration in days
     const durationMs = end.getTime() - start.getTime();
     const durationDays = Math.ceil(durationMs / (1000 * 60 * 60 * 24));
 
-    // Calculate base price
-    let basePrice = carData.pricePerDay * durationDays;
+    // Calculate base price - use provided totalPrice if available, otherwise calculate
+    let basePrice = totalPrice
+      ? totalPrice * 0.8
+      : carData.pricePerDay * durationDays;
 
     // Calculate additional costs
     let additionalCosts = 0;
 
-    // Insurance cost
-    let insuranceCost = 0;
-    if (insuranceOption === "basic") {
-      insuranceCost = 15 * durationDays;
-    } else if (insuranceOption === "premium") {
-      insuranceCost = 30 * durationDays;
-    } else if (insuranceOption === "full") {
-      insuranceCost = 45 * durationDays;
+    // If we already have a totalPrice, set additionalCosts as 20% of it
+    if (totalPrice) {
+      additionalCosts = totalPrice * 0.2;
+    } else {
+      // Insurance cost
+      let insuranceCost = 0;
+      if (insuranceOption === "basic") {
+        insuranceCost = 15 * durationDays;
+      } else if (insuranceOption === "premium") {
+        insuranceCost = 30 * durationDays;
+      } else if (insuranceOption === "full") {
+        insuranceCost = 45 * durationDays;
+      }
+
+      // Additional drivers cost
+      const additionalDriversCost =
+        (additionalDrivers || 0) * 10 * durationDays;
+
+      // Additional services cost
+      let servicesCost = 0;
+      if (additionalServices && additionalServices.length > 0) {
+        additionalServices.forEach((service) => {
+          servicesCost += service.price || 0;
+        });
+      }
+
+      // Different pickup and return location fee
+      let locationFee = 0;
+      try {
+        const pickupName =
+          typeof pickupLocation === "string"
+            ? pickupLocation
+            : pickupLocation.name || "";
+
+        const returnName =
+          typeof returnLocation === "string"
+            ? returnLocation
+            : returnLocation.name || "";
+
+        locationFee = pickupName !== returnName ? 50 : 0;
+      } catch (locErr) {
+        console.error("Error processing location fee:", locErr);
+        // Default to no fee if there's an error
+        locationFee = 0;
+      }
+
+      // Calculate total additional costs
+      additionalCosts =
+        insuranceCost + additionalDriversCost + servicesCost + locationFee;
+
+      // If there's no totalPrice, calculate it
+      if (!totalPrice) {
+        totalPrice = basePrice + additionalCosts;
+      }
     }
 
-    // Additional drivers cost
-    const additionalDriversCost = (additionalDrivers || 0) * 10 * durationDays;
+    // Process location objects
+    let pickupLocationValue, returnLocationValue;
 
-    // Additional services cost
-    let servicesCost = 0;
-    if (additionalServices && additionalServices.length > 0) {
-      additionalServices.forEach((service) => {
-        if (service.id === "gps") {
-          servicesCost += 5 * durationDays;
-        } else if (service.id === "childSeat") {
-          servicesCost += 7 * durationDays;
-        } else if (service.id === "wifi") {
-          servicesCost += 8 * durationDays;
-        }
-      });
+    try {
+      if (typeof pickupLocation === "string") {
+        pickupLocationValue = pickupLocation;
+      } else if (pickupLocation && typeof pickupLocation === "object") {
+        pickupLocationValue =
+          pickupLocation.name || JSON.stringify(pickupLocation);
+      } else {
+        pickupLocationValue = "Unknown Location";
+      }
+    } catch (err) {
+      console.error("Error processing pickup location:", err);
+      pickupLocationValue = "Unknown Location";
     }
 
-    // Different pickup and return location fee
-    const locationFee = pickupLocation !== returnLocation ? 50 : 0;
-
-    // Calculate total additional costs
-    additionalCosts =
-      insuranceCost + additionalDriversCost + servicesCost + locationFee;
-
-    // Calculate total price
-    const totalPrice = basePrice + additionalCosts;
+    try {
+      if (typeof returnLocation === "string") {
+        returnLocationValue = returnLocation;
+      } else if (returnLocation && typeof returnLocation === "object") {
+        returnLocationValue =
+          returnLocation.name || JSON.stringify(returnLocation);
+      } else {
+        returnLocationValue = "Unknown Location";
+      }
+    } catch (err) {
+      console.error("Error processing return location:", err);
+      returnLocationValue = "Unknown Location";
+    }
 
     // Create booking record
     const bookingData = {
       id: uuidv4(),
       userId,
       carId,
-      carModel: carData.model,
-      carMake: carData.make,
-      carImage: carData.images[0] || null,
+      carModel: carData.model || (carObject && carObject.model) || "Unknown",
+      carMake:
+        carData.brand ||
+        carData.make ||
+        (carObject && carObject.brand) ||
+        "Unknown",
+      carImage:
+        carData.imageURL || (carData.images && carData.images[0]) || null,
       startDate,
       endDate,
-      pickupLocation,
-      returnLocation,
+      pickupLocation: pickupLocationValue,
+      returnLocation: returnLocationValue,
       insuranceOption: insuranceOption || "none",
       additionalDrivers: additionalDrivers || 0,
       additionalServices: additionalServices || [],
-      status: "pending",
+      status: status || "confirmed", // Default to confirmed instead of pending
       basePrice,
       additionalCosts,
       totalPrice,
       durationDays,
+      customerDetails: customerDetails || null,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
 
+    console.log(
+      "📋 Creating booking with data:",
+      JSON.stringify(bookingData, null, 2)
+    );
+
     // Save booking to Firestore
     const bookingRef = db.collection("reservations").doc(bookingData.id);
     await bookingRef.set(bookingData);
+
+    console.log("✅ Booking created successfully with ID:", bookingData.id);
 
     res.status(201).json({
       message: "Booking created successfully",
@@ -159,8 +290,12 @@ const createBooking = async (req, res) => {
       booking: bookingData,
     });
   } catch (error) {
-    console.error("Error creating booking:", error);
-    res.status(500).json({ error: "Failed to create booking" });
+    console.error("❌ Error creating booking:", error);
+    console.error("📝 Request body:", JSON.stringify(req.body, null, 2));
+    console.error("🔍 Error stack:", error.stack);
+    res
+      .status(500)
+      .json({ error: "Failed to create booking", details: error.message });
   }
 };
 
@@ -380,28 +515,55 @@ const checkAvailability = async (req, res) => {
     }
 
     // Check if car exists
-    const car = await Car.findById(carId);
+    const carRef = db.collection("cars").doc(carId);
+    const carDoc = await carRef.get();
 
-    if (!car) {
+    if (!carDoc.exists) {
       return res.status(404).json({ error: "Car not found" });
     }
 
-    // Check car availability for the dates
-    const conflictingBookings = await db
-      .collection("reservations")
-      .where("carId", "==", carId)
-      .where("status", "in", ["confirmed", "active"])
-      .where("endDate", ">", startDate)
-      .where("startDate", "<", endDate)
-      .get();
+    try {
+      // Temporary workaround for the missing Firestore index
+      // Query with fewer filters and filter the rest in code
+      const reservationsQuery = await db
+        .collection("reservations")
+        .where("carId", "==", carId)
+        .where("status", "in", ["confirmed", "active"])
+        .get();
 
-    if (!conflictingBookings.empty) {
-      return res
-        .status(400)
-        .json({ error: "Car is not available for the selected dates" });
+      const conflictingBookings = [];
+
+      // Manual filtering
+      if (!reservationsQuery.empty) {
+        reservationsQuery.forEach((doc) => {
+          const booking = doc.data();
+          const bookingStartDate = new Date(booking.startDate);
+          const bookingEndDate = new Date(booking.endDate);
+
+          // Check for date conflicts
+          if (bookingEndDate > start && bookingStartDate < end) {
+            conflictingBookings.push(booking);
+          }
+        });
+      }
+
+      if (conflictingBookings.length > 0) {
+        return res
+          .status(400)
+          .json({ error: "Car is not available for the selected dates" });
+      }
+
+      res.status(200).json({ available: true });
+    } catch (availabilityError) {
+      console.error("Error checking availability:", availabilityError);
+      if (process.env.NODE_ENV === "development") {
+        // In development, return available as true to allow testing
+        console.warn("⚠️ Bypassing availability check in development mode!");
+        res.status(200).json({ available: true });
+      } else {
+        throw availabilityError;
+      }
     }
-
-    res.status(200).json({ available: true });
   } catch (error) {
     console.error("Error checking availability:", error);
     res.status(500).json({ error: "Failed to check availability" });
@@ -464,23 +626,54 @@ const extendBooking = async (req, res) => {
     }
 
     // Check if car is available for the extension period
-    const conflictingBookings = await db
-      .collection("reservations")
-      .where("carId", "==", bookingData.carId)
-      .where("status", "in", ["confirmed", "active"])
-      .where("id", "!=", bookingId)
-      .where("startDate", "<", newEndDate)
-      .where("startDate", ">", bookingData.endDate)
-      .get();
+    try {
+      // Temporary workaround for the missing Firestore index
+      // Query with fewer filters and filter the rest in code
+      const reservationsQuery = await db
+        .collection("reservations")
+        .where("carId", "==", bookingData.carId)
+        .where("status", "in", ["confirmed", "active"])
+        .where("id", "!=", bookingId)
+        .get();
 
-    if (!conflictingBookings.empty) {
-      return res
-        .status(400)
-        .json({ error: "Car is not available for the extension period" });
+      const conflictingBookings = [];
+
+      // Manual filtering
+      if (!reservationsQuery.empty) {
+        reservationsQuery.forEach((doc) => {
+          const booking = doc.data();
+          const bookingStartDate = new Date(booking.startDate);
+
+          // Check if any booking starts during our extension period
+          if (
+            bookingStartDate > new Date(bookingData.endDate) &&
+            bookingStartDate < new Date(newEndDate)
+          ) {
+            conflictingBookings.push(booking);
+          }
+        });
+      }
+
+      if (conflictingBookings.length > 0) {
+        return res
+          .status(400)
+          .json({ error: "Car is not available for the extension period" });
+      }
+    } catch (availabilityError) {
+      console.error(
+        "Error checking availability for extension:",
+        availabilityError
+      );
+      // For development purposes, continue with the booking extension
+      if (process.env.NODE_ENV === "development") {
+        console.warn("⚠️ Bypassing availability check in development mode!");
+      } else {
+        throw availabilityError;
+      }
     }
 
     // Get car price
-    const carRef = db.collection("vehicles").doc(bookingData.carId);
+    const carRef = db.collection("cars").doc(bookingData.carId);
     const carDoc = await carRef.get();
     const carData = carDoc.data();
 

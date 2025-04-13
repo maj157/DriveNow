@@ -86,9 +86,9 @@
                 <h5 class="mb-1">{{ reservation.car.brand }} {{ reservation.car.model }}</h5>
                 <span class="badge bg-secondary">{{ reservation.car.group }}</span>
                 <ul class="list-unstyled mt-2">
-                  <li><i class="bi bi-people"></i> {{ reservation.car.specs?.seats || 'N/A' }} seats</li>
-                  <li><i class="bi bi-gear"></i> {{ reservation.car.specs?.gearbox || 'N/A' }}</li>
-                  <li><i class="bi bi-fuel-pump"></i> {{ reservation.car.specs?.fuelType || 'N/A' }}</li>
+                  <li><i class="bi bi-people"></i> {{ reservation.car.specs.seats }} seats</li>
+                  <li><i class="bi bi-gear"></i> {{ reservation.car.specs.gearbox }}</li>
+                  <li><i class="bi bi-fuel-pump"></i> {{ reservation.car.specs.fuelType }}</li>
                   <li class="text-primary"><strong>${{ reservation.car.pricePerDay }} per day</strong></li>
                 </ul>
               </div>
@@ -267,4 +267,4 @@
       <button type="button" class="btn btn-danger" routerLink="/reservation/locations">Start New Reservation</button>
     </div>
   </div>
-</div> 
+</div>

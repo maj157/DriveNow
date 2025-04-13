@@ -242,11 +242,27 @@ export class ReservationService {
     // Format data for API
     const bookingData = this.prepareBookingData('Confirmed');
     
+    console.log('Finalizing reservation with data:', JSON.stringify(bookingData, null, 2));
+    
     return this.http.post<Reservation>(this.apiUrl, bookingData).pipe(
-      tap(() => this.resetReservation()),
+      tap(response => {
+        console.log('Reservation finalized successfully:', response);
+        this.resetReservation();
+      }),
       catchError(error => {
-        console.error('Error finalizing reservation', error);
-        return of({} as Reservation);
+        console.error('Error finalizing reservation:', error);
+        
+        // Log more details about the error
+        if (error.status === 401) {
+          console.error('Authentication error - Please login again before completing reservation');
+        } else if (error.status === 400) {
+          console.error('Invalid reservation data:', error.error?.message || 'Unknown validation error');
+        } else if (error.status === 500) {
+          console.error('Server error when finalizing reservation');
+        }
+        
+        // Throw the error so it can be handled by the component
+        throw error;
       })
     );
   }
