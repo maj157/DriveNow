@@ -13,6 +13,14 @@
       <span>{{ errorMessage }}</span>
     </div>
   </div>
+  
+  <!-- Saved Transaction Notice -->
+  <div *ngIf="hasSavedTransaction" class="message saved-transaction-notice">
+    <div class="message-content">
+      <i class="fas fa-info-circle"></i>
+      <span>You already have a saved transaction. Only one transaction can be saved at a time. View your <a [routerLink]="['/bookings']">saved booking</a> or continue with this reservation.</span>
+    </div>
+  </div>
 
   <h2 class="section-title">Complete Your Reservation</h2>
 
@@ -210,6 +218,8 @@
                   id="saveTransaction" 
                   formControlName="saveTransaction" 
                   class="form-check-input"
+                  [disabled]="hasSavedTransaction"
+                  [title]="hasSavedTransaction ? 'You already have a saved transaction. Only one transaction can be saved at a time.' : ''"
                 >
                 <label for="saveTransaction" class="form-check-label">
                   Save this transaction for later
@@ -226,7 +236,7 @@
                 {{ processingPayment ? 'Processing...' : 'Complete Reservation' }}
               </button>
               
-              <button type="button" class="btn btn-outline" (click)="saveReservation()" [disabled]="processingPayment || showSuccessMessage">
+              <button type="button" class="btn btn-outline" (click)="saveReservation()" [disabled]="processingPayment || showSuccessMessage || hasSavedTransaction">
                 Save for Later
               </button>
               

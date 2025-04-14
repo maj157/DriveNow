@@ -1,17 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { ReservationService } from '../../../core/services/reservation.service';
 import { UserService } from '../../../core/services/user.service';
 import { Reservation } from '../../../core/models/reservation.model';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule]
+  imports: [CommonModule, ReactiveFormsModule, RouterModule]
 })
 export class CheckoutComponent implements OnInit {
   reservation: Partial<Reservation> = {};
@@ -28,6 +29,7 @@ export class CheckoutComponent implements OnInit {
   discountAmount = 0;
   userPoints = 0;
   processingPayment = false;
+  hasSavedTransaction = false;
   
   // Add error handling state
   errorMessage: string | null = null;
@@ -44,6 +46,7 @@ export class CheckoutComponent implements OnInit {
     this.reservation = this.reservationService.getCurrentReservation();
     this.getUserPoints();
     this.initForms();
+    this.checkForSavedTransaction();
     
     // Make sure we have all the necessary data
     this.validateReservationData();
@@ -68,6 +71,21 @@ export class CheckoutComponent implements OnInit {
     });
   }
 
+  private checkForSavedTransaction(): void {
+    this.reservationService.hasSavedTransaction().subscribe({
+      next: (hasSaved) => {
+        this.hasSavedTransaction = hasSaved;
+        if (hasSaved) {
+          // Update the UI to display a message about existing saved transaction
+          console.log('User already has a saved transaction');
+        }
+      },
+      error: (err) => {
+        console.error('Error checking for saved transactions:', err);
+      }
+    });
+  }
+
   private initForms(): void {
     this.discountForm = this.fb.group({
       code: ['', Validators.required]
@@ -75,8 +93,13 @@ export class CheckoutComponent implements OnInit {
     
     this.paymentForm = this.fb.group({
       paymentMethod: ['card', Validators.required],
-      saveTransaction: [false]
+      saveTransaction: [{value: false, disabled: this.hasSavedTransaction}]
     });
+
+    // Watch for changes to hasSavedTransaction and update form control accordingly
+    if (this.hasSavedTransaction) {
+      this.paymentForm.get('saveTransaction')?.disable();
+    }
   }
 
   applyDiscount(): void {
@@ -120,6 +143,11 @@ export class CheckoutComponent implements OnInit {
   }
 
   saveReservation(): void {
+    if (this.hasSavedTransaction) {
+      this.errorMessage = 'You already have a saved transaction. Only one transaction can be saved at a time.';
+      return;
+    }
+    
     this.processingPayment = true;
     this.errorMessage = null;
     
@@ -136,7 +164,13 @@ export class CheckoutComponent implements OnInit {
       error: (err) => {
         this.processingPayment = false;
         console.error('Error saving reservation:', err);
-        this.errorMessage = 'There was an error saving your reservation. Please try again.';
+        
+        if (err.message && err.message.includes('saved transaction')) {
+          this.errorMessage = err.message;
+          this.hasSavedTransaction = true;
+        } else {
+          this.errorMessage = 'There was an error saving your reservation. Please try again.';
+        }
       }
     });
   }
@@ -176,15 +210,18 @@ export class CheckoutComponent implements OnInit {
     const paymentMethod = this.paymentForm.get('paymentMethod')?.value;
     const saveTransaction = this.paymentForm.get('saveTransaction')?.value;
     
+    // If user wants to save for later, handle it as a dedicated action
+    if (saveTransaction) {
+      this.saveReservation();
+      return;
+    }
+    
     this.processingPayment = true;
     this.errorMessage = null;
     
     if (paymentMethod === 'location') {
       // Process with payment at location
       this.finalizeReservation();
-    } else if (saveTransaction) {
-      // Save transaction without processing payment
-      this.saveReservation();
     } else {
       // Simulate payment processing and redirect
       setTimeout(() => {
@@ -197,41 +234,45 @@ export class CheckoutComponent implements OnInit {
     // Show that we're attempting to finalize
     console.log('Attempting to finalize reservation...');
     
-    this.reservationService.finalizeReservation().subscribe({
-      next: (result) => {
-        this.processingPayment = false;
-        this.showSuccessMessage = true;
-        
-        console.log('Reservation finalized successfully, result:', result);
-        
-        // If we have a result ID, use it, otherwise use a placeholder
-        const reservationId = result && result.id ? result.id : 'new';
-        
-        setTimeout(() => {
-          this.router.navigate(['/bookings'], { 
-            queryParams: { 
-              reservationId: reservationId,
-              success: true
-            } 
-          });
-        }, 2000);
-      },
-      error: (err) => {
-        this.processingPayment = false;
-        console.error('Error finalizing reservation:', err);
-        
-        // Provide more helpful error messages based on error type
-        if (err.status === 401) {
-          this.errorMessage = 'Your session has expired. Please log in again before completing your reservation.';
-        } else if (err.status === 400) {
-          this.errorMessage = `Validation error: ${err.error?.message || 'Please check your reservation details.'}`;
-        } else if (err.status === 0) {
-          this.errorMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
-        } else {
-          this.errorMessage = 'There was an error finalizing your reservation. Please try again.';
+    this.reservationService.finalizeReservation()
+      .pipe(
+        finalize(() => {
+          this.processingPayment = false;
+        })
+      )
+      .subscribe({
+        next: (result) => {
+          this.showSuccessMessage = true;
+          
+          console.log('Reservation finalized successfully, result:', result);
+          
+          // If we have a result ID, use it, otherwise use a placeholder
+          const reservationId = result && result.id ? result.id : 'new';
+          
+          setTimeout(() => {
+            this.router.navigate(['/bookings'], { 
+              queryParams: { 
+                reservationId: reservationId,
+                success: true
+              } 
+            });
+          }, 2000);
+        },
+        error: (err) => {
+          console.error('Error finalizing reservation:', err);
+          
+          // Provide more helpful error messages based on error type
+          if (err.status === 401) {
+            this.errorMessage = 'Your session has expired. Please log in again before completing your reservation.';
+          } else if (err.status === 400) {
+            this.errorMessage = `Validation error: ${err.error?.message || 'Please check your reservation details.'}`;
+          } else if (err.status === 0) {
+            this.errorMessage = 'Unable to connect to the server. Please check your internet connection and try again.';
+          } else {
+            this.errorMessage = 'There was an error finalizing your reservation. Please try again.';
+          }
         }
-      }
-    });
+      });
   }
 
   goBack(): void {

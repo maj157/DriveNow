@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
-import { tap, catchError } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
+import { tap, catchError, map, switchMap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Car } from '../models/car.model';
 import { ExtraService, Location, Reservation } from '../models/reservation.model';
@@ -12,6 +12,7 @@ import { ExtraService, Location, Reservation } from '../models/reservation.model
 export class ReservationService {
   private apiUrl = `${environment.apiUrl}/bookings`;
   private readonly STORAGE_KEY = 'current_reservation';
+  private readonly SAVED_TRANSACTION_KEY = 'saved_transaction';
   
   // Current reservation data
   private reservationDataSubject = new BehaviorSubject<Partial<Reservation>>(this.loadFromStorage() || {
@@ -216,23 +217,101 @@ export class ReservationService {
     });
   }
 
+  // Check if user has a saved transaction
+  hasSavedTransaction(): Observable<boolean> {
+    return this.http.get<any[]>(`${this.apiUrl}/drafts`).pipe(
+      map(drafts => drafts.length > 0),
+      catchError(() => of(false))
+    );
+  }
+
+  // Get saved transaction details
+  getSavedTransaction(): Observable<Reservation | null> {
+    return this.http.get<any[]>(`${this.apiUrl}/drafts`).pipe(
+      map(drafts => drafts.length > 0 ? drafts[0] : null),
+      catchError(() => of(null))
+    );
+  }
+
+  // Load saved transaction into current reservation
+  loadSavedTransaction(transactionId: string): Observable<boolean> {
+    return this.http.get<Reservation>(`${this.apiUrl}/${transactionId}`).pipe(
+      tap(reservation => {
+        // Convert string dates to Date objects
+        const pickupDate = reservation.pickupDate ? new Date(reservation.pickupDate) : undefined;
+        const returnDate = reservation.returnDate ? new Date(reservation.returnDate) : undefined;
+        
+        const reservationData = {
+          id: reservation.id,
+          car: reservation.car,
+          pickupLocation: reservation.pickupLocation,
+          returnLocation: reservation.returnLocation,
+          pickupDate,
+          returnDate,
+          customerDetails: reservation.customerDetails,
+          extraServices: reservation.extraServices || [],
+          totalPrice: reservation.totalPrice,
+          status: reservation.status
+        };
+        
+        this.updateReservationState(reservationData);
+      }),
+      map(() => true),
+      catchError(err => {
+        console.error('Error loading saved transaction', err);
+        return of(false);
+      })
+    );
+  }
+
   // Save reservation (draft)
   saveReservation(): Observable<Reservation> {
-    // Format data for API
+    // First check if user already has a saved transaction
+    return this.hasSavedTransaction().pipe(
+      switchMap(hasSaved => {
+        if (hasSaved) {
+          return throwError(() => new Error('You already have a saved transaction. Only one transaction can be saved at a time.'));
+        }
+        
+        // Format data for API
+        const bookingData = this.prepareBookingData('Draft');
+        
+        return this.http.post<Reservation>(this.apiUrl, bookingData).pipe(
+          tap(response => {
+            // Update the state with the response from the server (including generated ID)
+            const currentData = this.reservationDataSubject.value;
+            this.updateReservationState({
+              ...currentData,
+              id: response.id
+            });
+          }),
+          catchError(error => {
+            console.error('Error saving reservation', error);
+            return throwError(() => error);
+          })
+        );
+      })
+    );
+  }
+
+  // Update a saved transaction
+  updateSavedTransaction(reservationId: string): Observable<Reservation> {
     const bookingData = this.prepareBookingData('Draft');
     
-    return this.http.post<Reservation>(this.apiUrl, bookingData).pipe(
-      tap(response => {
-        // Update the state with the response from the server (including generated ID)
-        const currentData = this.reservationDataSubject.value;
-        this.updateReservationState({
-          ...currentData,
-          id: response.id
-        });
-      }),
+    return this.http.put<Reservation>(`${this.apiUrl}/${reservationId}`, bookingData).pipe(
       catchError(error => {
-        console.error('Error saving reservation', error);
-        return of({} as Reservation);
+        console.error('Error updating saved transaction', error);
+        return throwError(() => error);
+      })
+    );
+  }
+
+  // Delete a saved transaction
+  deleteSavedTransaction(reservationId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${reservationId}`).pipe(
+      catchError(error => {
+        console.error('Error deleting saved transaction', error);
+        return throwError(() => error);
       })
     );
   }
@@ -289,12 +368,12 @@ export class ReservationService {
       ...reservationData,
       status: status,
       carId: reservationData.car?.id,
-      startDate: reservationData.pickupDate,
-      endDate: reservationData.returnDate,
+      pickupDate: reservationData.pickupDate,
+      returnDate: reservationData.returnDate,
       pickupLocationId: reservationData.pickupLocation?.id,
       returnLocationId: reservationData.returnLocation?.id,
       // Include only selected extra services
-      additionalServices: (reservationData.extraServices || [])
+      extraServices: (reservationData.extraServices || [])
         .filter(service => service.selected)
         .map(service => ({
           id: service.id,
