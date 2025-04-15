@@ -60,4 +60,82 @@
       </div>
     </div>
   </section>
+  
+  <!-- Rental Statistics Section -->
+  <section class="rental-stats" *ngIf="!statsLoading && rentalStats && !statsError">
+    <h2>DriveNow by the Numbers</h2>
+    <div class="stats-container">
+      <div class="stats-box popular-car" *ngIf="rentalStats.mostPopularCar">
+        <h3>Most Popular Car</h3>
+        <div class="popular-car-content">
+          <div class="car-image" [style.backgroundImage]="'url(' + (rentalStats.mostPopularCar.imageURL || 'assets/images/car-placeholder.jpg') + ')'"></div>
+          <div class="car-info">
+            <h4>{{ rentalStats.mostPopularCar.brand }} {{ rentalStats.mostPopularCar.model }}</h4>
+            <p>
+              <span class="stat-highlight">{{ rentalStats.mostPopularCar.bookingCount }}</span> bookings 
+              ({{ rentalStats.mostPopularCar.bookingPercentage }}% of all rentals)
+            </p>
+            <button [routerLink]="['/cars', rentalStats.mostPopularCar.id]" class="btn-outline">View Car</button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-box pricing">
+        <h3>Rental Pricing</h3>
+        <div class="price-stats">
+          <div class="price-stat">
+            <span class="stat-label">Average</span>
+            <span class="price-value">${{ rentalStats.averageDailyRental.toFixed(2) }}</span>
+            <span class="price-label">per day</span>
+          </div>
+          <div class="price-stat">
+            <span class="stat-label">Median</span>
+            <span class="price-value">${{ rentalStats.medianDailyRental.toFixed(2) }}</span>
+            <span class="price-label">per day</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-box">
+        <h3>Rental Activity</h3>
+        <div class="activity-stats">
+          <div class="stat-row">
+            <div class="stat-label">Total Bookings</div>
+            <div class="stat-value">{{ rentalStats.totalBookings }}</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">Unique Customers</div>
+            <div class="stat-value">{{ rentalStats.totalUniqueUsers }}</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">Car Models Rented</div>
+            <div class="stat-value">{{ rentalStats.totalCarModels }}</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">Average Rental Duration</div>
+            <div class="stat-value">{{ rentalStats.averageDuration }} days</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="stats-note">*Statistics based on completed and confirmed rentals</p>
+  </section>
+  
+  <!-- Stats Loading State -->
+  <section class="rental-stats loading" *ngIf="statsLoading">
+    <h2>DriveNow by the Numbers</h2>
+    <div class="stats-loading">
+      <div class="spinner"></div>
+      <p>Loading statistics...</p>
+    </div>
+  </section>
+  
+  <!-- Stats Error State -->
+  <section class="rental-stats error" *ngIf="statsError">
+    <h2>DriveNow by the Numbers</h2>
+    <div class="stats-error">
+      <p>{{ statsError }}</p>
+      <button (click)="loadRentalStats()" class="retry-button">Try Again</button>
+    </div>
+  </section>
 </div>

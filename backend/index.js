@@ -23,6 +23,7 @@ const invoiceRoutes = require("./routes/invoiceRoutes");
 const locationRoutes = require("./routes/locations");
 const contactRoutes = require("./routes/contact");
 const discountRoutes = require("./routes/discounts");
+const statsRoutes = require("./routes/stats");
 
 const app = express();
 
@@ -59,6 +60,7 @@ app.use("/api/invoices", invoiceRoutes);
 app.use("/api/locations", locationRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/discountCoupons", discountRoutes);
+app.use("/api/stats", statsRoutes);
 
 // Health check route
 app.get("/", (req, res) => {

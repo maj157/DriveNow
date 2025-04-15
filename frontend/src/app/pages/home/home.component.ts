@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { CarService } from '../../core/services/car.service';
+import { StatsService } from '../../core/services/stats.service';
 import { Car } from '../../core/models/car.model';
+import { RentalStats } from '../../core/services/stats.service';
 
 @Component({
   selector: 'app-home',
@@ -16,10 +18,19 @@ export class HomeComponent implements OnInit {
   isLoading = true;
   error: string | null = null;
   
-  constructor(private carService: CarService) {}
+  // Rental statistics
+  rentalStats: RentalStats | null = null;
+  statsLoading = true;
+  statsError: string | null = null;
+  
+  constructor(
+    private carService: CarService,
+    private statsService: StatsService
+  ) {}
   
   ngOnInit(): void {
     this.loadFeaturedCars();
+    this.loadRentalStats();
   }
   
   loadFeaturedCars(): void {
@@ -33,6 +44,21 @@ export class HomeComponent implements OnInit {
         console.error('Error loading featured cars:', err);
         this.error = 'Failed to load featured cars';
         this.isLoading = false;
+      }
+    });
+  }
+
+  loadRentalStats(): void {
+    this.statsLoading = true;
+    this.statsService.getRentalStats().subscribe({
+      next: (stats) => {
+        this.rentalStats = stats;
+        this.statsLoading = false;
+      },
+      error: (err) => {
+        console.error('Error loading rental statistics:', err);
+        this.statsError = 'Failed to load rental statistics';
+        this.statsLoading = false;
       }
     });
   }
