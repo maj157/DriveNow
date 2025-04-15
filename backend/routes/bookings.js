@@ -18,6 +18,9 @@ router.get("/:id", authenticate, bookingController.getBookingById);
 // PUT /api/bookings/:id - Update booking details
 router.put("/:id", authenticate, bookingController.updateBooking);
 
+// DELETE /api/bookings/:id - Delete draft booking
+router.delete("/:id", authenticate, bookingController.deleteBooking);
+
 // POST /api/bookings/:id/payment - Process payment for a booking
 router.post("/:id/payment", authenticate, bookingController.processPayment);
 

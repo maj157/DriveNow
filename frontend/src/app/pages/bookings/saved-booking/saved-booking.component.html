@@ -1,0 +1,70 @@
+<div class="saved-booking-container">
+  <h2>Saved Booking</h2>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Loading your saved booking...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-message">
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
+    <button class="btn btn-primary" (click)="loadSavedBooking()">Try Again</button>
+  </div>
+
+  <!-- No Saved Booking -->
+  <div *ngIf="!isLoading && !error && !savedBooking" class="no-booking">
+    <div class="alert alert-info" role="alert">
+      You don't have any saved bookings.
+    </div>
+    <button class="btn btn-primary" routerLink="/reservation">Start New Booking</button>
+  </div>
+
+  <!-- Saved Booking Details -->
+  <div *ngIf="!isLoading && !error && savedBooking" class="booking-details">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title" *ngIf="savedBooking.car">
+          {{ savedBooking.car.brand }} {{ savedBooking.car.model }}
+        </h3>
+        
+        <div class="booking-info">
+          <div class="info-item" *ngIf="savedBooking.pickupLocation">
+            <strong>Pickup Location:</strong>
+            <span>{{ savedBooking.pickupLocation.name }}</span>
+          </div>
+          <div class="info-item" *ngIf="savedBooking.returnLocation">
+            <strong>Return Location:</strong>
+            <span>{{ savedBooking.returnLocation.name }}</span>
+          </div>
+          <div class="info-item" *ngIf="savedBooking.pickupDate">
+            <strong>Pickup Date:</strong>
+            <span>{{ savedBooking.pickupDate | date:'medium' }}</span>
+          </div>
+          <div class="info-item" *ngIf="savedBooking.returnDate">
+            <strong>Return Date:</strong>
+            <span>{{ savedBooking.returnDate | date:'medium' }}</span>
+          </div>
+          <div class="info-item" *ngIf="savedBooking.totalPrice">
+            <strong>Total Price:</strong>
+            <span>${{ savedBooking.totalPrice }}</span>
+          </div>
+          <div class="info-item" *ngIf="savedBooking.status">
+            <strong>Status:</strong>
+            <span>{{ savedBooking.status }}</span>
+          </div>
+        </div>
+
+        <div class="booking-actions">
+          <button class="btn btn-primary" (click)="continueBooking()">Continue Booking</button>
+          <button class="btn btn-outline-danger" (click)="deleteBooking()">Delete Booking</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

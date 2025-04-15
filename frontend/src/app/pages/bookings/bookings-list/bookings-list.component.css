@@ -1,7 +1,38 @@
 .bookings-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem;
+}
+
+.bookings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.saved-booking-banner {
+  margin-bottom: 2rem;
+}
+
+.saved-booking-banner .alert {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.saved-booking-banner .alert i {
+  font-size: 1.2rem;
+}
+
+.saved-booking-banner .alert a {
+  color: #0d6efd;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.saved-booking-banner .alert a:hover {
+  color: #0a58ca;
 }
 
 .page-header {
@@ -180,5 +211,17 @@
   
   .filter-group {
     width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .bookings-container {
+    padding: 1rem;
+  }
+
+  .bookings-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
   }
 }

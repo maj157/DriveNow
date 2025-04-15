@@ -1,9 +1,18 @@
 <div class="bookings-container">
-  <div class="page-header">
-    <h1>My Bookings</h1>
-    <p>Manage your car rental bookings and reservations</p>
+  <div class="bookings-header">
+    <h2>My Bookings</h2>
+    <button class="btn btn-primary" routerLink="/reservation">New Booking</button>
   </div>
-  
+
+  <!-- Check for saved booking -->
+  <div class="saved-booking-banner" *ngIf="hasSavedBooking">
+    <div class="alert alert-info">
+      <i class="fas fa-info-circle"></i>
+      You have a saved booking. 
+      <a routerLink="/bookings/saved">Click here</a> to continue or complete it.
+    </div>
+  </div>
+
   <div class="filters-section">
     <div class="filters">
       <div class="filter-group">

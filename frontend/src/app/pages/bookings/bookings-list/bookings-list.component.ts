@@ -7,6 +7,7 @@ import { Booking, BookingFilter, BookingStatus } from '../../../core/models/book
 import { BookingCardComponent } from '../booking-card/booking-card.component';
 import { Observable, catchError, finalize, of, tap } from 'rxjs';
 import { Router } from '@angular/router';
+import { ReservationService } from '../../../core/services/reservation.service';
 
 @Component({
   selector: 'app-bookings-list',
@@ -19,6 +20,7 @@ export class BookingsListComponent implements OnInit {
   bookings: Booking[] = [];
   isLoading = false;
   error: string | null = null;
+  hasSavedBooking = false;
   
   // Filters
   filter: BookingFilter = {
@@ -46,11 +48,13 @@ export class BookingsListComponent implements OnInit {
   
   constructor(
     private bookingService: BookingService,
-    private router: Router
+    private router: Router,
+    private reservationService: ReservationService
   ) {}
   
   ngOnInit(): void {
     this.loadBookings();
+    this.checkForSavedBooking();
   }
   
   loadBookings(): void {
@@ -181,5 +185,16 @@ export class BookingsListComponent implements OnInit {
       sort: 'newest'
     };
     this.loadBookings();
+  }
+
+  private checkForSavedBooking(): void {
+    this.reservationService.hasSavedTransaction().subscribe({
+      next: (hasSaved) => {
+        this.hasSavedBooking = hasSaved;
+      },
+      error: (err) => {
+        console.error('Error checking for saved booking:', err);
+      }
+    });
   }
 }

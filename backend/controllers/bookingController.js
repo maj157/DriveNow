@@ -1010,6 +1010,51 @@ const getBookingInvoice = async (req, res) => {
   }
 };
 
+// Delete a booking (draft)
+const deleteBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.user.id;
+
+    // Get the booking
+    const bookingRef = db.collection("reservations").doc(id);
+    const booking = await bookingRef.get();
+
+    if (!booking.exists) {
+      return res
+        .status(404)
+        .json({ error: true, message: "Booking not found" });
+    }
+
+    const bookingData = booking.data();
+
+    // Check if the booking belongs to the user
+    if (bookingData.userId !== userId) {
+      return res
+        .status(403)
+        .json({
+          error: true,
+          message: "Not authorized to delete this booking",
+        });
+    }
+
+    // Check if the booking is a draft
+    if (bookingData.status !== "Draft") {
+      return res
+        .status(400)
+        .json({ error: true, message: "Only draft bookings can be deleted" });
+    }
+
+    // Delete the booking
+    await bookingRef.delete();
+
+    res.status(200).json({ message: "Booking deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting booking:", error);
+    res.status(500).json({ error: true, message: "Error deleting booking" });
+  }
+};
+
 module.exports = {
   createBooking,
   getBookingById,
@@ -1020,4 +1065,5 @@ module.exports = {
   cancelBooking,
   getBookingInvoice,
   getUserBookings,
+  deleteBooking,
 };

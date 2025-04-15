@@ -219,7 +219,7 @@ export class ReservationService {
 
   // Check if user has a saved transaction
   hasSavedTransaction(): Observable<boolean> {
-    return this.http.get<any[]>(`${this.apiUrl}/drafts`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/user?status=Draft`).pipe(
       map(drafts => drafts.length > 0),
       catchError(() => of(false))
     );
@@ -227,7 +227,7 @@ export class ReservationService {
 
   // Get saved transaction details
   getSavedTransaction(): Observable<Reservation | null> {
-    return this.http.get<any[]>(`${this.apiUrl}/drafts`).pipe(
+    return this.http.get<any[]>(`${this.apiUrl}/user?status=Draft`).pipe(
       map(drafts => drafts.length > 0 ? drafts[0] : null),
       catchError(() => of(null))
     );
@@ -235,25 +235,53 @@ export class ReservationService {
 
   // Load saved transaction into current reservation
   loadSavedTransaction(transactionId: string): Observable<boolean> {
-    return this.http.get<Reservation>(`${this.apiUrl}/${transactionId}`).pipe(
-      tap(reservation => {
-        // Convert string dates to Date objects
-        const pickupDate = reservation.pickupDate ? new Date(reservation.pickupDate) : undefined;
-        const returnDate = reservation.returnDate ? new Date(reservation.returnDate) : undefined;
-        
-        const reservationData = {
-          id: reservation.id,
-          car: reservation.car,
-          pickupLocation: reservation.pickupLocation,
-          returnLocation: reservation.returnLocation,
-          pickupDate,
-          returnDate,
-          customerDetails: reservation.customerDetails,
-          extraServices: reservation.extraServices || [],
-          totalPrice: reservation.totalPrice,
-          status: reservation.status
+    return this.http.get<any>(`${this.apiUrl}/${transactionId}`).pipe(
+      tap(booking => {
+        // Map the API response to our Reservation model
+        const reservationData: Partial<Reservation> = {
+          id: booking.id,
+          car: {
+            id: booking.carId,
+            brand: booking.carMake,
+            model: booking.carModel,
+            images: [booking.carImage],
+            pricePerDay: booking.basePrice / booking.durationDays,
+            group: 'Standard', // Default group since not provided in API
+            specs: {
+              engineSize: 1.6,
+              seats: 5,
+              doors: 4,
+              gearbox: 'Automatic',
+              fuelType: 'Gasoline',
+              trunkCapacity: 400,
+              ac: true,
+              electricWindows: true,
+              mileage: 50000
+            }
+          },
+          pickupLocation: {
+            name: booking.pickupLocation,
+            address: booking.pickupLocation // Using location name as address for now
+          },
+          returnLocation: {
+            name: booking.returnLocation,
+            address: booking.returnLocation // Using location name as address for now
+          },
+          pickupDate: new Date(booking.startDate),
+          returnDate: new Date(booking.endDate),
+          customerDetails: booking.customerDetails,
+          extraServices: booking.additionalServices.map((service: any) => ({
+            id: service.id,
+            name: service.name,
+            price: service.price,
+            selected: true
+          })),
+          totalPrice: booking.totalPrice,
+          status: booking.status,
+          earnedPoints: 0 // This will be calculated when finalizing
         };
         
+        // Update the reservation state with the mapped data
         this.updateReservationState(reservationData);
       }),
       map(() => true),
@@ -262,6 +290,23 @@ export class ReservationService {
         return of(false);
       })
     );
+  }
+
+  // Get the current step in the reservation process
+  getCurrentStep(): string {
+    const data = this.reservationDataSubject.value;
+    
+    if (!data.car) {
+      return 'vehicle';
+    } else if (!data.pickupLocation || !data.returnLocation) {
+      return 'locations';
+    } else if (!data.pickupDate || !data.returnDate) {
+      return 'dates';
+    } else if (!data.customerDetails) {
+      return 'customer';
+    } else {
+      return 'checkout';
+    }
   }
 
   // Save reservation (draft)
@@ -282,7 +327,8 @@ export class ReservationService {
             const currentData = this.reservationDataSubject.value;
             this.updateReservationState({
               ...currentData,
-              id: response.id
+              id: response.id,
+              status: 'Draft'
             });
           }),
           catchError(error => {
@@ -326,6 +372,13 @@ export class ReservationService {
     return this.http.post<Reservation>(this.apiUrl, bookingData).pipe(
       tap(response => {
         console.log('Reservation finalized successfully:', response);
+        // Delete the saved draft if it exists
+        if (this.reservationDataSubject.value.id) {
+          this.deleteSavedTransaction(this.reservationDataSubject.value.id).subscribe({
+            next: () => console.log('Saved draft deleted successfully'),
+            error: (err) => console.error('Error deleting saved draft:', err)
+          });
+        }
         this.resetReservation();
       }),
       catchError(error => {
