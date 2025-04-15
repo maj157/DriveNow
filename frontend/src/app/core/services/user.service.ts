@@ -5,6 +5,26 @@ import { environment } from '../../../environments/environment';
 import { User } from '../models/user.model';
 import { Reservation } from '../models/reservation.model';
 
+export interface PointsHistory {
+  type: string;
+  amount: number;
+  date: string;
+  description: string;
+}
+
+export interface PointsData {
+  points: number;
+  pointsHistory: PointsHistory[];
+}
+
+export interface PointsRedemptionResponse {
+  message: string;
+  pointsRedeemed: number;
+  discountAmount: number;
+  newTotalPrice: number;
+  remainingPoints: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -24,8 +44,16 @@ export class UserService {
   }
 
   // Get user points
-  getUserPoints(): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/points`);
+  getUserPoints(): Observable<PointsData> {
+    return this.http.get<PointsData>(`${this.apiUrl}/points`);
+  }
+
+  // Redeem points for a reservation
+  redeemPoints(points: number, reservationId: string): Observable<PointsRedemptionResponse> {
+    return this.http.post<PointsRedemptionResponse>(`${this.apiUrl}/redeem-points`, {
+      points,
+      reservationId
+    });
   }
 
   // Get user's previous bookings

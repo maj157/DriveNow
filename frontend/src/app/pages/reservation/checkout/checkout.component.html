@@ -255,13 +255,44 @@
 
             <!-- Use Points -->
             <div class="points-section" *ngIf="userPoints > 0">
-              <p>You have {{ userPoints }} points available</p>
+              <div class="points-header">
+                <i class="fas fa-coins"></i>
+                <h5>Your Rewards Points</h5>
+              </div>
+              <div class="points-info">
+                <div class="points-balance">
+                  <span class="points-count">{{ userPoints }}</span>
+                  <span class="points-label">points available</span>
+                </div>
+                <div class="points-value">
+                  <span>Value: ${{ (userPoints / 10).toFixed(2) }}</span>
+                </div>
+              </div>
+              
+              <div class="points-slider-container">
+                <label for="pointsSlider">Select points to redeem:</label>
+                <input 
+                  type="range" 
+                  id="pointsSlider" 
+                  class="form-range" 
+                  min="0" 
+                  max="{{ userPoints }}" 
+                  step="10" 
+                  [(ngModel)]="pointsToRedeem" 
+                  (input)="updatePointsDiscount()">
+                <div class="slider-values">
+                  <span>0</span>
+                  <span>{{ pointsToRedeem }} points = ${{ (pointsToRedeem / 10).toFixed(2) }}</span>
+                  <span>{{ userPoints }}</span>
+                </div>
+              </div>
+              
               <button
                 type="button"
-                class="btn btn-outline"
-                (click)="usePoints()"
-              >
-                Use Points for Discount
+                class="btn btn-primary"
+                [disabled]="pointsToRedeem === 0"
+                (click)="usePoints()">
+                Apply {{ pointsToRedeem }} Points
               </button>
             </div>
           </div>

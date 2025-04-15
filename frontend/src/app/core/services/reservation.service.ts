@@ -384,14 +384,20 @@ export class ReservationService {
     );
   }
 
-  // Finalize reservation (confirmed)
-  finalizeReservation(): Observable<Reservation> {
+  // Finalize a reservation (complete booking)
+  finalizeReservation(pointsInfo: { pointsRedeemed: number, discountAmount: number } | null = null): Observable<any> {
     // Format data for API
     const bookingData = this.prepareBookingData('Confirmed');
     
+    if (pointsInfo && pointsInfo.pointsRedeemed) {
+      bookingData.pointsRedeemed = pointsInfo.pointsRedeemed;
+      bookingData.pointsDiscountAmount = pointsInfo.discountAmount;
+    }
+    
     console.log('Finalizing reservation with data:', JSON.stringify(bookingData, null, 2));
     
-    return this.http.post<Reservation>(this.apiUrl, bookingData).pipe(
+    // Send to the finalize endpoint instead of the standard booking endpoint
+    return this.http.post<Reservation>(`${this.apiUrl}/finalize`, bookingData).pipe(
       tap(response => {
         console.log('Reservation finalized successfully:', response);
         // Delete the saved draft if it exists
@@ -416,7 +422,7 @@ export class ReservationService {
         }
         
         // Throw the error so it can be handled by the component
-        throw error;
+        return throwError(() => error);
       })
     );
   }

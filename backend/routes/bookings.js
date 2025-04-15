@@ -12,6 +12,9 @@ router.get("/check-availability", bookingController.checkAvailability);
 // POST /api/bookings - Create a new booking
 router.post("/", authenticate, bookingController.createBooking);
 
+// POST /api/bookings/finalize - Finalize a booking and earn points
+router.post("/finalize", authenticate, bookingController.finalizeBooking);
+
 // GET /api/bookings/:id - Get booking details
 router.get("/:id", authenticate, bookingController.getBookingById);
 

@@ -316,6 +316,13 @@ const redeemPoints = async (req, res) => {
       return res.status(400).json({ error: "Invalid points value" });
     }
 
+    // Points must be in multiples of 10
+    if (pointsToRedeem % 10 !== 0) {
+      return res
+        .status(400)
+        .json({ error: "Points must be in multiples of 10" });
+    }
+
     // Get user data
     const userRef = db.collection("users").doc(userId);
     const userDoc = await userRef.get();
@@ -349,8 +356,9 @@ const redeemPoints = async (req, res) => {
         .json({ error: "Unauthorized to redeem points for this reservation" });
     }
 
-    // Calculate discount amount (1 point = $1)
-    const discountAmount = pointsToRedeem;
+    // Calculate discount amount (10 points = $1)
+    const conversionRate = 10;
+    const discountAmount = pointsToRedeem / conversionRate;
 
     // Calculate new total price
     const newTotalPrice = Math.max(
@@ -367,7 +375,9 @@ const redeemPoints = async (req, res) => {
           type: "redeem",
           amount: pointsToRedeem,
           date: new Date().toISOString(),
-          description: `Redeemed for reservation ${reservationId}`,
+          description: `Redeemed ${pointsToRedeem} points ($${discountAmount.toFixed(
+            2
+          )}) for reservation`,
         },
       ],
     });
@@ -375,6 +385,7 @@ const redeemPoints = async (req, res) => {
     // Update reservation with points redemption
     await reservationRef.update({
       pointsRedeemed: pointsToRedeem,
+      pointsDiscountAmount: discountAmount,
       totalPrice: newTotalPrice,
       updatedAt: new Date().toISOString(),
     });
@@ -382,6 +393,7 @@ const redeemPoints = async (req, res) => {
     res.status(200).json({
       message: "Points redeemed successfully",
       pointsRedeemed: pointsToRedeem,
+      discountAmount: discountAmount,
       newTotalPrice,
       remainingPoints: userPoints - pointsToRedeem,
     });

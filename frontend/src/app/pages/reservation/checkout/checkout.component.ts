@@ -7,13 +7,14 @@ import { UserService } from '../../../core/services/user.service';
 import { Reservation } from '../../../core/models/reservation.model';
 import { finalize } from 'rxjs/operators';
 import { DiscountService } from '../../../core/services/discount.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-checkout',
   templateUrl: './checkout.component.html',
   styleUrls: ['./checkout.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule]
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule]
 })
 export class CheckoutComponent implements OnInit {
   reservation: Partial<Reservation> = {};
@@ -28,10 +29,11 @@ export class CheckoutComponent implements OnInit {
   paymentMethods = [
     { id: 'card', name: 'Credit/Debit Card' },
     { id: 'paypal', name: 'PayPal' },
-    { id: 'location', name: 'Pay at Location' }
+    { id: 'location', name: 'Pay at Pickup Location' }
   ];
   
   userPoints = 0;
+  pointsToRedeem = 0;
   processingPayment = false;
   hasSavedTransaction = false;
   
@@ -71,8 +73,8 @@ export class CheckoutComponent implements OnInit {
 
   private getUserPoints(): void {
     this.userService.getUserPoints().subscribe({
-      next: (points) => {
-        this.userPoints = points;
+      next: (data) => {
+        this.userPoints = data.points || 0;
       },
       error: (err) => {
         console.error('Error fetching user points:', err);
@@ -161,8 +163,13 @@ export class CheckoutComponent implements OnInit {
       return;
     }
     
-    // Calculate discount based on points (example: 100 points = $10 discount)
-    const pointsDiscount = this.userPoints / 10;
+    if (this.pointsToRedeem <= 0) {
+      this.couponError = 'Please select at least 10 points to redeem';
+      return;
+    }
+    
+    // Calculate discount based on points selected on the slider
+    const pointsDiscount = this.pointsToRedeem / 10;
     
     this.reservationService.applyDiscount({
       code: 'POINTS',
@@ -171,8 +178,16 @@ export class CheckoutComponent implements OnInit {
     this.reservation = this.reservationService.getCurrentReservation();
     
     // Show success message
-    this.couponSuccess = `Points applied successfully! You saved $${pointsDiscount.toFixed(2)}`;
+    this.couponSuccess = `${this.pointsToRedeem} points applied successfully! You saved $${pointsDiscount.toFixed(2)}`;
     this.couponError = null;
+    
+    // Update user points
+    this.getUserPoints();
+  }
+
+  updatePointsDiscount(): void {
+    // Round pointsToRedeem to nearest 10
+    this.pointsToRedeem = Math.floor(this.pointsToRedeem / 10) * 10;
   }
 
   saveReservation(): void {
@@ -252,22 +267,31 @@ export class CheckoutComponent implements OnInit {
     this.processingPayment = true;
     this.errorMessage = null;
     
+    // If points are being redeemed, store in the finalization data
+    let pointsInfo: { pointsRedeemed: number, discountAmount: number } | null = null;
+    if (this.reservation.appliedDiscount && this.reservation.appliedDiscount.code === 'POINTS') {
+      pointsInfo = {
+        pointsRedeemed: this.pointsToRedeem,
+        discountAmount: this.reservation.appliedDiscount.amount
+      };
+    }
+    
     if (paymentMethod === 'location') {
       // Process with payment at location
-      this.finalizeReservation();
+      this.finalizeReservation(pointsInfo);
     } else {
       // Simulate payment processing and redirect
       setTimeout(() => {
-        this.finalizeReservation();
+        this.finalizeReservation(pointsInfo);
       }, 1500);
     }
   }
   
-  private finalizeReservation(): void {
+  private finalizeReservation(pointsInfo: { pointsRedeemed: number, discountAmount: number } | null = null): void {
     // Show that we're attempting to finalize
-    console.log('Attempting to finalize reservation...');
+    console.log('Attempting to finalize reservation...', pointsInfo);
     
-    this.reservationService.finalizeReservation()
+    this.reservationService.finalizeReservation(pointsInfo)
       .pipe(
         finalize(() => {
           this.processingPayment = false;

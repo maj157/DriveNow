@@ -13,6 +13,7 @@ export class ProfileComponent {
   tabs = [
     { label: 'Personal Information', route: 'personal-info', icon: 'person' },
     { label: 'Payment Methods', route: 'payment-methods', icon: 'credit_card' },
-    { label: 'Security', route: 'security', icon: 'security' }
+    { label: 'Security', route: 'security', icon: 'security' },
+    { label: 'Rewards Points', route: 'rewards-points', icon: 'stars' }
   ];
 }

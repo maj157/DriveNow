@@ -1,0 +1,119 @@
+<div class="rewards-container">
+  <h2 class="section-title">Your Rewards Points</h2>
+  
+  <!-- Loading state -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Loading your rewards data...</p>
+  </div>
+  
+  <!-- Error state -->
+  <div class="error-container" *ngIf="error">
+    <div class="alert alert-danger">
+      <i class="fas fa-exclamation-circle"></i>
+      <span>{{ error }}</span>
+    </div>
+    <button class="btn btn-outline-primary" (click)="fetchPointsData()">
+      Try Again
+    </button>
+  </div>
+  
+  <!-- Points data -->
+  <div class="rewards-content" *ngIf="!loading && !error">
+    <!-- Points summary card -->
+    <div class="points-summary-card">
+      <div class="points-balance">
+        <div class="points-icon">
+          <i class="fas fa-coins"></i>
+        </div>
+        <div class="points-details">
+          <h3>Current Balance</h3>
+          <div class="points-value">
+            <span class="points-number">{{ userPoints }}</span>
+            <span class="points-label">points</span>
+          </div>
+          <div class="points-conversion">
+            Worth <span class="dollar-value">${{ getPointsValue().toFixed(2) }}</span> on your next reservation
+          </div>
+        </div>
+      </div>
+      
+      <div class="points-info">
+        <h4>How to Use Your Points</h4>
+        <ul>
+          <li>10 points = $1 off your reservation</li>
+          <li>Apply points at checkout for instant discounts</li>
+          <li>Points can be combined with select promotions</li>
+          <li>Points expire after 12 months from earning date</li>
+        </ul>
+      </div>
+    </div>
+    
+    <!-- Earnings information -->
+    <div class="earnings-card">
+      <h3>How to Earn More Points</h3>
+      <div class="earning-methods">
+        <div class="earning-item">
+          <div class="earning-icon">
+            <i class="fas fa-car"></i>
+          </div>
+          <div class="earning-details">
+            <h4>Complete a Rental</h4>
+            <p>Earn 1 point for every $1 spent on rentals</p>
+          </div>
+        </div>
+        
+        <div class="earning-item">
+          <div class="earning-icon">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <div class="earning-details">
+            <h4>Book in Advance</h4>
+            <p>Earn 50 bonus points for bookings made 7+ days in advance</p>
+          </div>
+        </div>
+        
+        <div class="earning-item">
+          <div class="earning-icon">
+            <i class="fas fa-user-plus"></i>
+          </div>
+          <div class="earning-details">
+            <h4>Refer a Friend</h4>
+            <p>Earn 200 points when your referral completes their first rental</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Points History -->
+    <div class="points-history-card">
+      <h3>Points History</h3>
+      
+      <div class="history-empty" *ngIf="pointsHistory.length === 0">
+        <p>You don't have any points activity yet.</p>
+        <p>Complete your first rental to start earning points!</p>
+      </div>
+      
+      <div class="history-list" *ngIf="pointsHistory.length > 0">
+        <div class="history-item" *ngFor="let item of pointsHistory" [ngClass]="getHistoryItemClass(item.type)">
+          <div class="history-item-icon">
+            <i class="fas" [ngClass]="item.type === 'earn' ? 'fa-plus-circle' : 'fa-minus-circle'"></i>
+          </div>
+          <div class="history-item-details">
+            <div class="history-item-description">
+              {{ item.description }}
+            </div>
+            <div class="history-item-date">
+              {{ formatDate(item.date) }}
+            </div>
+          </div>
+          <div class="history-item-points" [ngClass]="{'points-earned': item.type === 'earn', 'points-redeemed': item.type === 'redeem'}">
+            {{ item.type === 'earn' ? '+' : '-' }}{{ item.amount }} points
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

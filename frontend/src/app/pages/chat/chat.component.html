@@ -1,1 +1,85 @@
-<p>chat works!</p>
+<div class="chat-container">
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="header-content">
+      <div class="agent-avatar">
+        <i class="fas fa-headset"></i>
+      </div>
+      <div class="agent-info">
+        <h3>DriveNow Support</h3>
+        <span class="agent-status" [class.online]="agentIsOnline">
+          {{ agentIsOnline ? 'Online' : 'Offline' }}
+        </span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Messages Container -->
+  <div class="chat-messages" #chatMessages>
+    <!-- Loading State -->
+    <div class="loading-container" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Loading messages...</p>
+    </div>
+    
+    <!-- Error State -->
+    <div class="error-container" *ngIf="error">
+      <div class="error-message">
+        <i class="fas fa-exclamation-circle"></i>
+        <p>{{ error }}</p>
+      </div>
+      <button class="retry-button" (click)="ngOnInit()">Retry</button>
+    </div>
+    
+    <!-- Messages -->
+    <ng-container *ngIf="!loading && !error">
+      <div *ngIf="messages.length === 0" class="empty-chat">
+        <div class="empty-illustration">
+          <i class="far fa-comments"></i>
+        </div>
+        <p>No messages yet. Start a conversation with our team!</p>
+      </div>
+      
+      <ng-container *ngFor="let message of messages; let i = index">
+        <!-- Date separator -->
+        <div class="date-separator" *ngIf="shouldShowDate(i)">
+          <span>{{ formatDate(message.timestamp) }}</span>
+        </div>
+        
+        <!-- Message bubble -->
+        <div class="message-container" [class.outgoing]="isUserMessage(message)" [class.incoming]="!isUserMessage(message)">
+          <div class="message-bubble">
+            <div class="message-content">
+              {{ message.message }}
+            </div>
+            <div class="message-meta">
+              <span class="message-time">{{ formatTimestamp(message.timestamp) }}</span>
+              <span class="message-status" *ngIf="isUserMessage(message)">
+                <i class="fas fa-check" [class.read]="message.read"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+  
+  <!-- Input Area -->
+  <div class="chat-input">
+    <div class="input-container">
+      <textarea 
+        placeholder="Type a message..." 
+        [(ngModel)]="newMessage" 
+        (keypress)="onKeyPress($event)"
+        [disabled]="!agentIsOnline"
+      ></textarea>
+      <button class="send-button" (click)="sendMessage()" [disabled]="!newMessage.trim() || !agentIsOnline">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </div>
+    <div class="typing-hint" *ngIf="!agentIsOnline">
+      <i class="fas fa-clock"></i>
+      Our agents are currently offline. Please try again later.
+    </div>
+  </div>
+</div>
