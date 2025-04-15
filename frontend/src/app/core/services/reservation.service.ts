@@ -66,12 +66,19 @@ export class ReservationService {
   // Set car selection
   selectCar(car: Car): void {
     const currentData = this.reservationDataSubject.value;
+    
+    // When selecting a car, we're usually starting a new reservation
+    // So let's clear extras and discount
     const updatedData = {
       ...currentData,
       car,
+      extraServices: [],
+      appliedDiscount: undefined,
       totalPrice: this.calculateTotalPrice({
         ...currentData,
-        car
+        car,
+        extraServices: [],
+        appliedDiscount: undefined
       })
     };
     this.updateReservationState(updatedData);
@@ -167,6 +174,21 @@ export class ReservationService {
       totalPrice: this.calculateTotalPrice({
         ...currentData,
         appliedDiscount: discount
+      })
+    };
+    this.updateReservationState(updatedData);
+  }
+
+  // Remove applied discount
+  removeDiscount(): void {
+    const currentData = this.reservationDataSubject.value;
+    const { appliedDiscount, ...dataWithoutDiscount } = currentData;
+    const updatedData = {
+      ...dataWithoutDiscount,
+      appliedDiscount: undefined,
+      totalPrice: this.calculateTotalPrice({
+        ...dataWithoutDiscount,
+        appliedDiscount: undefined
       })
     };
     this.updateReservationState(updatedData);

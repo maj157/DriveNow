@@ -6,6 +6,7 @@ import { ReservationService } from '../../../core/services/reservation.service';
 import { UserService } from '../../../core/services/user.service';
 import { Reservation } from '../../../core/models/reservation.model';
 import { finalize } from 'rxjs/operators';
+import { DiscountService } from '../../../core/services/discount.service';
 
 @Component({
   selector: 'app-checkout',
@@ -18,6 +19,11 @@ export class CheckoutComponent implements OnInit {
   reservation: Partial<Reservation> = {};
   discountForm!: FormGroup;
   paymentForm!: FormGroup;
+  couponForm: FormGroup;
+  couponCode: string = '';
+  couponError: string | null = null;
+  couponSuccess: string | null = null;
+  appliedCoupon: any = null;
   
   paymentMethods = [
     { id: 'card', name: 'Credit/Debit Card' },
@@ -25,8 +31,6 @@ export class CheckoutComponent implements OnInit {
     { id: 'location', name: 'Pay at Location' }
   ];
   
-  discountApplied = false;
-  discountAmount = 0;
   userPoints = 0;
   processingPayment = false;
   hasSavedTransaction = false;
@@ -39,8 +43,13 @@ export class CheckoutComponent implements OnInit {
     private fb: FormBuilder,
     private reservationService: ReservationService,
     private userService: UserService,
-    private router: Router
-  ) { }
+    private router: Router,
+    private discountService: DiscountService
+  ) {
+    this.couponForm = this.fb.group({
+      couponCode: ['', Validators.required]
+    });
+  }
 
   ngOnInit(): void {
     this.reservation = this.reservationService.getCurrentReservation();
@@ -103,33 +112,55 @@ export class CheckoutComponent implements OnInit {
   }
 
   applyDiscount(): void {
+    if (this.reservation.appliedDiscount && this.reservation.appliedDiscount.amount > 0) {
+      this.couponError = 'A discount has already been applied to this reservation';
+      return;
+    }
+    
     if (this.discountForm.valid) {
       const discountCode = this.discountForm.get('code')?.value;
+      const currentReservation = this.reservationService.getCurrentReservation();
+      const orderAmount = this.calculateBasePrice() + this.calculateExtrasPrice();
       
-      this.userService.applyDiscount(discountCode).subscribe({
-        next: (result) => {
-          if (result.valid) {
-            this.discountApplied = true;
-            this.discountAmount = result.amount;
-            this.reservationService.applyDiscount({
-              code: discountCode,
-              amount: result.amount
-            });
-            this.reservation = this.reservationService.getCurrentReservation();
-          } else {
-            // Handle invalid discount code
-            this.discountForm.get('code')?.setErrors({ invalid: true });
-          }
+      this.discountService.validateCoupon(discountCode, orderAmount).subscribe({
+        next: (coupon) => {
+          // Calculate discount amount
+          const discountAmount = this.discountService.calculateDiscount(coupon, orderAmount);
+          
+          this.reservationService.applyDiscount({
+            code: discountCode,
+            amount: discountAmount
+          });
+          this.reservation = this.reservationService.getCurrentReservation();
+          
+          // Show success message
+          this.couponSuccess = `Coupon applied successfully! You saved $${discountAmount.toFixed(2)}`;
+          this.couponError = null;
+          
+          // Apply the coupon in the backend to increment usage
+          this.discountService.applyCoupon(coupon.id).subscribe({
+            error: (err) => {
+              console.error('Error incrementing coupon usage:', err);
+              // Don't show error to user, as the discount is already applied
+            }
+          });
         },
         error: (err) => {
           console.error('Error applying discount:', err);
-          this.discountForm.get('code')?.setErrors({ error: true });
+          this.discountForm.get('code')?.setErrors({ invalid: true });
+          this.couponError = err.message || 'Invalid discount code';
+          this.couponSuccess = null;
         }
       });
     }
   }
 
   usePoints(): void {
+    if (this.reservation.appliedDiscount && this.reservation.appliedDiscount.amount > 0) {
+      this.couponError = 'A discount has already been applied to this reservation';
+      return;
+    }
+    
     // Calculate discount based on points (example: 100 points = $10 discount)
     const pointsDiscount = this.userPoints / 10;
     
@@ -137,9 +168,11 @@ export class CheckoutComponent implements OnInit {
       code: 'POINTS',
       amount: pointsDiscount
     });
-    this.discountApplied = true;
-    this.discountAmount = pointsDiscount;
     this.reservation = this.reservationService.getCurrentReservation();
+    
+    // Show success message
+    this.couponSuccess = `Points applied successfully! You saved $${pointsDiscount.toFixed(2)}`;
+    this.couponError = null;
   }
 
   saveReservation(): void {
@@ -277,5 +310,102 @@ export class CheckoutComponent implements OnInit {
 
   goBack(): void {
     this.router.navigate(['/reservation/review']);
+  }
+
+  // Apply discount coupon
+  applyCoupon(): void {
+    this.couponError = null;
+    this.couponSuccess = null;
+    
+    if (this.couponForm.invalid) {
+      this.couponError = 'Please enter a valid coupon code';
+      return;
+    }
+    
+    const code = this.couponForm.get('couponCode')?.value;
+    const orderAmount = this.reservationService.getCurrentReservation().totalPrice || 0;
+    
+    this.discountService.validateCoupon(code, orderAmount).subscribe({
+      next: (coupon) => {
+        // Calculate discount amount
+        const discountAmount = this.discountService.calculateDiscount(coupon, orderAmount);
+        
+        // Apply discount to reservation
+        this.reservationService.applyDiscount({
+          code: coupon.code,
+          amount: discountAmount
+        });
+        
+        // Store applied coupon details
+        this.appliedCoupon = {
+          ...coupon,
+          appliedAmount: discountAmount
+        };
+        
+        // Update coupon usage in database
+        this.discountService.applyCoupon(coupon.id).subscribe();
+        
+        // Show success message
+        this.couponSuccess = coupon.discountPercentage 
+          ? `Coupon applied! ${coupon.discountPercentage}% discount ($${discountAmount.toFixed(2)})` 
+          : `Coupon applied! $${discountAmount.toFixed(2)} discount`;
+          
+        // Reset form
+        this.couponForm.reset();
+      },
+      error: (error) => {
+        this.couponError = error.message || 'Invalid coupon code';
+      }
+    });
+  }
+  
+  // Remove applied coupon
+  removeCoupon(): void {
+    if (this.appliedCoupon) {
+      this.removeDiscount();
+      this.appliedCoupon = null;
+    }
+  }
+
+  // Remove an applied discount
+  removeDiscount(): void {
+    this.reservationService.removeDiscount();
+    this.reservation = this.reservationService.getCurrentReservation();
+    this.couponSuccess = null;
+    this.couponError = null;
+  }
+  
+  // Helper methods for price calculation
+  calculateBasePrice(): number {
+    if (!this.reservation.car || !this.reservation.pickupDate || !this.reservation.returnDate) {
+      return 0;
+    }
+    
+    const days = this.calculateDays(this.reservation.pickupDate, this.reservation.returnDate);
+    return this.reservation.car.pricePerDay * days;
+  }
+  
+  calculateExtrasPrice(): number {
+    if (!this.reservation.extraServices || this.reservation.extraServices.length === 0) {
+      return 0;
+    }
+    
+    return this.reservation.extraServices
+      .filter(service => service.selected)
+      .reduce((total, service) => total + service.price, 0);
+  }
+  
+  hasExtraServices(): boolean {
+    return Boolean(this.reservation.extraServices) && 
+           this.reservation.extraServices!.length > 0 && 
+           this.reservation.extraServices!.some(service => service.selected);
+  }
+  
+  private calculateDays(pickupDate: Date, returnDate: Date): number {
+    const pickup = new Date(pickupDate);
+    const returnD = new Date(returnDate);
+    const diffTime = Math.abs(returnD.getTime() - pickup.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return Math.max(1, diffDays); // Minimum 1 day
   }
 } 

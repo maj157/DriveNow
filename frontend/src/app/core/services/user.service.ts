@@ -46,7 +46,7 @@ export class UserService {
   // Apply a discount to a user's points
   applyDiscount(discountCode: string): Observable<{ valid: boolean, amount: number }> {
     return this.http.post<{ valid: boolean, amount: number }>(
-      `${this.apiUrl}/apply-discount`, 
+      `${this.apiUrl}/discount`, 
       { code: discountCode }
     );
   }
