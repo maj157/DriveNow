@@ -1,17 +1,17 @@
 <div class="review-card">
   <div class="review-header">
     <div class="user-info">
-      <div class="avatar" [style.backgroundImage]="review.profileImage ? 'url(' + review.profileImage + ')' : 'none'">
-        <span *ngIf="!review.profileImage">{{ review.userName.charAt(0) }}</span>
+      <div class="avatar">
+        <span>{{ review.user?.name?.charAt(0) || '?' }}</span>
       </div>
       <div class="user-details">
-        <h3 class="user-name">{{ review.userName }}</h3>
-        <span class="review-date">{{ formatDate(review.date) }}</span>
+        <h3 class="user-name">{{ review.user?.name || 'Anonymous' }}</h3>
+        <span class="review-date">{{ review.createdAt ? formatDate(review.createdAt) : 'Unknown date' }}</span>
       </div>
     </div>
     
     <div class="rating">
-      <span class="star" *ngFor="let star of getStarsArray(review.stars)">
+      <span class="star" *ngFor="let star of getStarsArray(review.rating)">
         <i [class]="star === 1 ? 'filled' : 'empty'">★</i>
       </span>
     </div>

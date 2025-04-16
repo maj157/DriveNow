@@ -33,6 +33,11 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
+  // Get all users (for admin)
+  getAllUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}`);
+  }
+
   // Get user profile
   getUserProfile(): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/profile`);
@@ -41,6 +46,11 @@ export class UserService {
   // Update user profile
   updateUserProfile(userData: Partial<User>): Observable<User> {
     return this.http.put<User>(`${this.apiUrl}/profile`, userData);
+  }
+
+  // Update user status (for admin)
+  updateUserStatus(userId: string, status: string): Observable<void> {
+    return this.http.put<void>(`${this.apiUrl}/${userId}/status`, { status });
   }
 
   // Get user points

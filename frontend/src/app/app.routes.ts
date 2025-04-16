@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { adminGuard } from './core/guards/admin.guard';
+import { AdminLayoutComponent } from './admin/layout/admin-layout.component';
+import { ReviewModerationComponent } from './admin/reviews/review-moderation.component';
 
 export const routes: Routes = [
   // Public routes
@@ -71,6 +74,49 @@ export const routes: Routes = [
     path: 'invoices', 
     canActivate: [authGuard],
     loadChildren: () => import('./pages/invoices/invoices.module').then(m => m.InvoicesModule)
+  },
+  
+  // Admin routes - directly imported instead of using the spreader operator
+  {
+    path: 'admin',
+    component: AdminLayoutComponent,
+    canActivate: [adminGuard],
+    children: [
+      {
+        path: '',
+        redirectTo: 'dashboard',
+        pathMatch: 'full'
+      },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./admin/dashboard/admin-dashboard.component')
+          .then(c => c.AdminDashboardComponent),
+      },
+      {
+        path: 'reviews',
+        component: ReviewModerationComponent
+      },
+      {
+        path: 'cars',
+        loadComponent: () => import('./admin/cars/car-management.component')
+          .then(c => c.CarManagementComponent),
+      },
+      {
+        path: 'users',
+        loadComponent: () => import('./admin/users/user-management.component')
+          .then(c => c.UserManagementComponent),
+      },
+      {
+        path: 'bookings',
+        loadComponent: () => import('./admin/bookings/booking-management.component')
+          .then(c => c.BookingManagementComponent),
+      },
+      {
+        path: 'discounts',
+        loadComponent: () => import('./admin/discounts/discount-management.component')
+          .then(c => c.DiscountManagementComponent),
+      }
+    ]
   },
   
   // Fallback route

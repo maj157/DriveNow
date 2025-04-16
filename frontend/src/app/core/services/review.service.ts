@@ -14,39 +14,55 @@ export class ReviewService {
   private mockReviews: Review[] = [
     {
       id: '1',
-      userId: 'user1',
-      name: 'John Doe',
-      userName: 'John Doe',
-      stars: 5,
-      rating: 5,
       comment: 'Excellent service! The car was in perfect condition and the staff was very helpful.',
+      rating: 5,
+      status: 'approved',
       carId: 'car1',
-      date: new Date('2024-03-01'),
-      status: 'approved'
+      userId: 'user1',
+      moderationComment: 'Great feedback, approved!',
+      car: {
+        id: 'car1',
+        name: 'Toyota Camry'
+      },
+      user: {
+        id: 'user1',
+        name: 'John Doe'
+      },
+      createdAt: new Date('2024-03-01')
     },
     {
       id: '2',
-      userId: 'user2',
-      name: 'Jane Smith',
-      userName: 'Jane Smith',
-      stars: 4,
-      rating: 4,
       comment: 'Great experience overall. Would definitely rent again.',
+      rating: 4,
+      status: 'approved',
       carId: 'car2',
-      date: new Date('2024-02-28'),
-      status: 'approved'
+      userId: 'user2',
+      car: {
+        id: 'car2',
+        name: 'Honda Accord'
+      },
+      user: {
+        id: 'user2',
+        name: 'Jane Smith'
+      },
+      createdAt: new Date('2024-02-28')
     },
     {
       id: '3',
-      userId: 'user3',
-      name: 'Mike Johnson',
-      userName: 'Mike Johnson',
-      stars: 5,
-      rating: 5,
       comment: 'Very professional service and competitive prices.',
+      rating: 5,
+      status: 'approved',
       carId: 'car3',
-      date: new Date('2024-02-25'),
-      status: 'approved'
+      userId: 'user3',
+      car: {
+        id: 'car3',
+        name: 'Ford Mustang'
+      },
+      user: {
+        id: 'user3',
+        name: 'Mike Johnson'
+      },
+      createdAt: new Date('2024-02-25')
     }
   ];
 

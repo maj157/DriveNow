@@ -1,14 +1,16 @@
 export interface User {
-  id: string;
+  id?: string;
   email: string;
   firstName: string;
   lastName: string;
-  token: string;
+  token?: string;
   role?: string;
   phone?: string;
   points?: number; // Optional loyalty points
   profileImage?: string; // Optional profile image URL
   createdAt?: Date;
+  isActive?: boolean; // For Firebase integration
+  updatedAt?: Date;
 }
 
 // Helper interface for registration

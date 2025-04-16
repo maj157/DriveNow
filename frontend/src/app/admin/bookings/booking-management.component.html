@@ -1,0 +1,182 @@
+<div class="admin-page-container">
+  <div class="admin-page-header">
+    <h1>Booking Management</h1>
+    <p>View and manage customer reservations</p>
+  </div>
+
+  <div class="search-filter">
+    <mat-form-field appearance="outline">
+      <mat-label>Search Bookings</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search by name, car, etc." #input>
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <div class="filter-buttons">
+    <button mat-button [class.active]="currentFilter === 'all'" (click)="setFilter('all')">
+      <mat-icon>list</mat-icon> All Bookings
+    </button>
+    <button mat-button [class.active]="currentFilter === 'active'" (click)="setFilter('active')">
+      <mat-icon>directions_car</mat-icon> Active
+    </button>
+    <button mat-button [class.active]="currentFilter === 'pending'" (click)="setFilter('pending')">
+      <mat-icon>schedule</mat-icon> Pending
+    </button>
+    <button mat-button [class.active]="currentFilter === 'completed'" (click)="setFilter('completed')">
+      <mat-icon>check_circle</mat-icon> Completed
+    </button>
+    <button mat-button [class.active]="currentFilter === 'cancelled'" (click)="setFilter('cancelled')">
+      <mat-icon>cancel</mat-icon> Cancelled
+    </button>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading bookings...</p>
+  </div>
+
+  <div class="table-container booking-table-container" *ngIf="!isLoading && !error && bookings.length > 0">
+    <table mat-table [dataSource]="dataSource" matSort>
+      
+      <!-- Booking ID Column -->
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Booking ID </th>
+        <td mat-cell *matCellDef="let booking"> {{booking.id.substring(0, 8)}}... </td>
+      </ng-container>
+
+      <!-- User Column -->
+      <ng-container matColumnDef="user">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Customer </th>
+        <td mat-cell *matCellDef="let booking"> 
+          <ng-container *ngIf="booking.user?.firstName || booking.user?.lastName; else unknownUser">
+            {{booking.user?.firstName}} {{booking.user?.lastName}}
+          </ng-container>
+          <ng-template #unknownUser>
+            <span class="text-muted">Unknown User</span>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- Car Column -->
+      <ng-container matColumnDef="car">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Car </th>
+        <td mat-cell *matCellDef="let booking"> 
+          <ng-container *ngIf="booking.car?.brand || booking.car?.model; else unknownCar">
+            {{booking.car?.brand}} {{booking.car?.model}}
+          </ng-container>
+          <ng-template #unknownCar>
+            <span class="text-muted">Unknown Vehicle</span>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- Dates Column -->
+      <ng-container matColumnDef="dates">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Rental Period </th>
+        <td mat-cell *matCellDef="let booking"> 
+          <span class="date-range">
+            <mat-icon class="small-icon">event</mat-icon> {{booking.startDate | date:'MMM d, y'}} - {{booking.endDate | date:'MMM d, y'}}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Price Column -->
+      <ng-container matColumnDef="price">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Total Price </th>
+        <td mat-cell *matCellDef="let booking">
+          <span class="price">${{booking.totalPrice | number:'1.2-2'}}</span>
+        </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+        <td mat-cell *matCellDef="let booking">
+          <span class="status-chip" [ngClass]="booking.status">
+            {{booking.status | titlecase}}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let booking"> 
+          <div class="action-buttons">
+            <button mat-icon-button color="primary" matTooltip="View Details" (click)="viewBookingDetails(booking)">
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" matTooltip="Approve Booking"
+                    *ngIf="booking.status === 'pending'"
+                    (click)="updateBookingStatus(booking, 'active')">
+              <mat-icon>check_circle</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" matTooltip="Cancel Booking"
+                    *ngIf="booking.status === 'pending' || booking.status === 'active'"
+                    (click)="updateBookingStatus(booking, 'cancelled')">
+              <mat-icon>cancel</mat-icon>
+            </button>
+            <button mat-icon-button color="primary" matTooltip="Mark as Completed"
+                    *ngIf="booking.status === 'active'"
+                    (click)="updateBookingStatus(booking, 'completed')">
+              <mat-icon>done_all</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- When there is no data matching the filter -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-data-cell" colspan="7">No bookings matching your filter criteria</td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of bookings"></mat-paginator>
+  </div>
+
+  <!-- Error message if data can't be loaded -->
+  <div class="error-message" *ngIf="error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadBookings()">Retry</button>
+  </div>
+
+  <!-- No bookings message -->
+  <div class="no-data-message" *ngIf="!isLoading && !error && bookings.length === 0">
+    <mat-icon>event_busy</mat-icon>
+    <p>No bookings found</p>
+  </div>
+</div>
+
+<style>
+  .small-icon {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+    margin-right: 4px;
+  }
+  
+  .date-range {
+    display: flex;
+    align-items: center;
+  }
+
+  .price {
+    font-weight: 500;
+  }
+  
+  .text-muted {
+    color: #999;
+    font-style: italic;
+  }
+  
+  .no-data-cell {
+    padding: 2rem !important;
+    text-align: center;
+    color: #666;
+  }
+</style> 

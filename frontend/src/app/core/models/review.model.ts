@@ -1,14 +1,21 @@
 export interface Review {
   id?: string;
-  userId: string;
-  userName: string;
-  name?: string; // Optional alias for userName
-  stars: number; // 1-5 stars
-  rating?: number; // Optional alias or duplicate of stars
-  profileImage?: string;
   comment: string;
-  carId: string;
-  date: Date;
-  status?: 'pending' | 'approved' | 'rejected';
+  rating: number;
+  status: 'pending' | 'approved' | 'rejected';
+  carId?: string;
+  userId?: string;
   moderationComment?: string;
+  car?: {
+    id: string;
+    name: string;
+    // other car properties
+  };
+  user?: {
+    id: string;
+    name: string;
+    // other user properties
+  };
+  createdAt?: Date;
+  updatedAt?: Date;
 }

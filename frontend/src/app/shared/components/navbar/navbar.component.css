@@ -305,16 +305,40 @@
 }
 
 .support-link {
-  color: #3498db !important;
+  color: #16a085;
   display: flex;
   align-items: center;
-  gap: 6px;
 }
 
 .support-link i {
-  font-size: 1.1rem;
+  margin-right: 5px;
 }
 
 .support-link:hover {
-  transform: translateY(-2px);
+  background-color: rgba(22, 160, 133, 0.1);
+}
+
+/* Admin Link Styling */
+.admin-link {
+  color: #e74c3c;
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+}
+
+.admin-link i {
+  margin-right: 5px;
+}
+
+.admin-link:hover {
+  background-color: rgba(231, 76, 60, 0.1);
+}
+
+.admin-item {
+  color: #e74c3c;
+  font-weight: bold;
+}
+
+.admin-item:hover {
+  background-color: rgba(231, 76, 60, 0.1);
 }

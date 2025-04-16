@@ -34,6 +34,11 @@
             <i class="fas fa-headset"></i> Support Chat
           </a>
         </li>
+        <li class="nav-item" *ngIf="(currentUser$ | async) && isAdmin()">
+          <a routerLink="/admin" routerLinkActive="active" class="nav-link admin-link">
+            <i class="fas fa-shield-alt"></i> Admin
+          </a>
+        </li>
       </ul>
 
       <!-- Auth Buttons -->
@@ -51,6 +56,13 @@
                 <a routerLink="/reservation" class="dropdown-item" (click)="closeDropdown()">New Reservation</a>
                 <a routerLink="/reviews" class="dropdown-item" (click)="closeDropdown()">Submit Review</a>
                 <a routerLink="/chat" class="dropdown-item" (click)="closeDropdown()">Support Chat</a>
+                <!-- Admin dashboard link in dropdown menu too -->
+                <ng-container *ngIf="isAdmin()">
+                  <div class="dropdown-divider"></div>
+                  <a routerLink="/admin" class="dropdown-item admin-item" (click)="closeDropdown()">
+                    <i class="fas fa-shield-alt"></i> Admin Dashboard
+                  </a>
+                </ng-container>
                 <div class="dropdown-divider"></div>
                 <a (click)="logout(); closeDropdown()" class="dropdown-item">Logout</a>
               </div>

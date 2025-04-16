@@ -1,0 +1,55 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function to check if user is admin
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Users collection rules
+    match /users/{userId} {
+      // Users can read and write their own documents
+      // Admins can read all user documents and write to any user document
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+    }
+
+    // Cars collection rules
+    match /cars/{carId} {
+      // Anyone can read car documents
+      // Only admins can create, update, or delete car documents
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Bookings collection rules
+    match /bookings/{bookingId} {
+      // Users can read and write their own bookings
+      // Admins can read and write all bookings
+      allow read: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // Reviews collection rules
+    match /reviews/{reviewId} {
+      // Anyone can read reviews
+      // Users can write their own reviews
+      // Admins can write to any review
+      allow read: if true;
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // All other collections - only admins have access
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+} 

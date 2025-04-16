@@ -1,0 +1,98 @@
+<div class="admin-page-container">
+  <div class="admin-page-header">
+    <h1>Review Moderation</h1>
+    <p>Review and moderate customer feedback</p>
+  </div>
+
+  <div class="filter-section">
+    <mat-form-field appearance="outline">
+      <mat-label>Filter by Status</mat-label>
+      <mat-select [(value)]="selectedFilter" (selectionChange)="onFilterChange()">
+        <mat-option value="all">
+          <mat-icon>list</mat-icon> All Reviews
+        </mat-option>
+        <mat-option value="pending">
+          <mat-icon>schedule</mat-icon> Pending Reviews
+        </mat-option>
+        <mat-option value="approved">
+          <mat-icon>check_circle</mat-icon> Approved Reviews
+        </mat-option>
+        <mat-option value="rejected">
+          <mat-icon>cancel</mat-icon> Rejected Reviews
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Error message display -->
+  <div *ngIf="error" class="error-message">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadReviews()">
+      <mat-icon>refresh</mat-icon> Try Again
+    </button>
+  </div>
+
+  <div class="reviews-list" *ngIf="!isLoading && !error; else loadingState">
+    <div *ngFor="let review of filteredReviews" class="review-wrapper">
+      <app-review-card [review]="review" [showModeration]="true"></app-review-card>
+      
+      <div class="moderation-actions">
+        <mat-form-field appearance="outline" *ngIf="review.status === 'pending'" class="moderation-input">
+          <mat-label>Moderation Comments (Optional)</mat-label>
+          <textarea matInput [(ngModel)]="moderationComments[review.id!]" placeholder="Enter any moderation notes here..."></textarea>
+        </mat-form-field>
+        
+        <div class="action-buttons">
+          <button mat-raised-button color="primary" (click)="moderateReview(review, 'approved')" 
+                  [disabled]="isModeratingReview || review.status === 'approved'">
+            <mat-icon>thumb_up</mat-icon> Approve
+          </button>
+          <button mat-raised-button color="warn" (click)="moderateReview(review, 'rejected')" 
+                  [disabled]="isModeratingReview || review.status === 'rejected'">
+            <mat-icon>thumb_down</mat-icon> Reject
+          </button>
+          <button mat-raised-button (click)="resetModeration(review)" 
+                  [disabled]="isModeratingReview || review.status === 'pending'">
+            <mat-icon>refresh</mat-icon> Reset
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="no-reviews" *ngIf="filteredReviews.length === 0">
+      <mat-icon>comment_off</mat-icon>
+      <p>No reviews found matching your filter criteria.</p>
+      <button mat-raised-button color="primary" (click)="selectedFilter = 'all'; onFilterChange()">
+        <mat-icon>list</mat-icon> View All Reviews
+      </button>
+    </div>
+  </div>
+  
+  <ng-template #loadingState>
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading reviews...</p>
+    </div>
+  </ng-template>
+</div>
+
+<style>
+  /* Additional component-specific styles */
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .action-buttons {
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .action-buttons button {
+      width: 100%;
+    }
+  }
+</style> 

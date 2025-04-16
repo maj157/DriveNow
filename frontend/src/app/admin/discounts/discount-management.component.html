@@ -1,0 +1,189 @@
+<div class="admin-page-container">
+  <div class="admin-page-header">
+    <h1>Discount Management</h1>
+    <p>Manage discount coupons and promotional offers</p>
+  </div>
+
+  <div class="admin-actions">
+    <button mat-raised-button color="primary" (click)="openCouponForm()">
+      <mat-icon>add</mat-icon> Create New Coupon
+    </button>
+  </div>
+
+  <div class="filter-section">
+    <mat-form-field appearance="outline">
+      <mat-label>Search Coupons</mat-label>
+      <input matInput (input)="applyFilter($event)" placeholder="Search by code">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <div class="filter-buttons">
+      <button mat-button [class.active]="statusFilter === 'all'" (click)="filterByStatus('all')">All</button>
+      <button mat-button [class.active]="statusFilter === 'active'" (click)="filterByStatus('active')">Active</button>
+      <button mat-button [class.active]="statusFilter === 'inactive'" (click)="filterByStatus('inactive')">Inactive</button>
+      <button mat-button [class.active]="statusFilter === 'expired'" (click)="filterByStatus('expired')">Expired</button>
+    </div>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading coupons...</p>
+  </div>
+
+  <div class="coupons-table mat-elevation-z8" *ngIf="!isLoading">
+    <table mat-table [dataSource]="dataSource" matSort>
+      <!-- Code Column -->
+      <ng-container matColumnDef="code">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Code</th>
+        <td mat-cell *matCellDef="let coupon">{{coupon.code}}</td>
+      </ng-container>
+
+      <!-- Discount Column -->
+      <ng-container matColumnDef="discount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Discount</th>
+        <td mat-cell *matCellDef="let coupon">
+          <span *ngIf="coupon.discountPercentage > 0">{{coupon.discountPercentage}}%</span>
+          <span *ngIf="coupon.discountAmount > 0">${{coupon.discountAmount}}</span>
+        </td>
+      </ng-container>
+
+      <!-- Expiry Column -->
+      <ng-container matColumnDef="expiry">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Expiry Date</th>
+        <td mat-cell *matCellDef="let coupon">
+          {{coupon.expiryDate | date:'mediumDate'}}
+          <span class="expiry-status" *ngIf="isExpired(coupon)">(Expired)</span>
+        </td>
+      </ng-container>
+
+      <!-- Min Amount Column -->
+      <ng-container matColumnDef="minAmount">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Min Amount</th>
+        <td mat-cell *matCellDef="let coupon">
+          {{coupon.minimumOrderAmount > 0 ? '$' + coupon.minimumOrderAmount : 'No minimum'}}
+        </td>
+      </ng-container>
+
+      <!-- Usage Column -->
+      <ng-container matColumnDef="usage">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Usage</th>
+        <td mat-cell *matCellDef="let coupon">
+          {{coupon.currentUsage}} / {{coupon.maxUsage ? coupon.maxUsage : '∞'}}
+        </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Status</th>
+        <td mat-cell *matCellDef="let coupon">
+          <span class="status-chip"
+                [ngClass]="{'active': coupon.isActive && !isExpired(coupon),
+                            'inactive': !coupon.isActive,
+                            'expired': isExpired(coupon)}">
+            {{coupon.isActive && !isExpired(coupon) ? 'Active' : 
+              (!coupon.isActive ? 'Inactive' : 'Expired')}}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let coupon">
+          <button mat-icon-button color="primary" (click)="editCoupon(coupon)" matTooltip="Edit Coupon">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" (click)="toggleStatus(coupon)" 
+                  matTooltip="{{coupon.isActive ? 'Deactivate' : 'Activate'}} Coupon">
+            <mat-icon>{{coupon.isActive ? 'toggle_off' : 'toggle_on'}}</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteCoupon(coupon)" matTooltip="Delete Coupon">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- No data row -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-data-cell" [attr.colspan]="displayedColumns.length">
+          No coupons found
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of coupons"></mat-paginator>
+  </div>
+
+  <!-- Coupon Form -->
+  <div class="coupon-form-container" *ngIf="showForm">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>{{ isEditing ? 'Edit Coupon' : 'Create New Coupon' }}</mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <form [formGroup]="couponForm" (ngSubmit)="saveCoupon()">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Coupon Code</mat-label>
+              <input matInput formControlName="code" placeholder="e.g. SUMMER20">
+              <mat-error *ngIf="couponForm.get('code')?.hasError('required')">
+                Code is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row form-row-split">
+            <mat-form-field appearance="outline">
+              <mat-label>Discount Amount ($)</mat-label>
+              <input matInput type="number" formControlName="discountAmount" placeholder="e.g. 10">
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Discount Percentage (%)</mat-label>
+              <input matInput type="number" formControlName="discountPercentage" placeholder="e.g. 15">
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row form-row-split">
+            <mat-form-field appearance="outline">
+              <mat-label>Minimum Order Amount</mat-label>
+              <input matInput type="number" formControlName="minimumOrderAmount" placeholder="e.g. 50">
+            </mat-form-field>
+            
+            <mat-form-field appearance="outline">
+              <mat-label>Maximum Usage</mat-label>
+              <input matInput type="number" formControlName="maxUsage" placeholder="Leave empty for unlimited">
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Expiry Date</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="expiryDate">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="couponForm.get('expiryDate')?.hasError('required')">
+                Expiry date is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+          
+          <div class="form-row">
+            <mat-slide-toggle formControlName="isActive">Active</mat-slide-toggle>
+          </div>
+          
+          <div class="form-actions">
+            <button mat-button type="button" (click)="cancelForm()">Cancel</button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="couponForm.invalid">
+              Save Coupon
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div> 

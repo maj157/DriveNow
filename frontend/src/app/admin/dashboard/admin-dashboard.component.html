@@ -1,0 +1,268 @@
+<div class="admin-page-container">
+  <div class="admin-page-header">
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, {{ username }} | <span class="role-chip admin">Admin</span></p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" routerLink="/auth/login">Go to Login</button>
+  </div>
+
+  <div *ngIf="!error">
+    <!-- Stats Cards -->
+    <div class="admin-stats">
+      <div class="stat-card">
+        <mat-icon>directions_car</mat-icon>
+        <h3>Active Bookings</h3>
+        <div class="stat-value">{{ stats.activeBookings }}</div>
+        <div class="stat-trend">
+          <mat-icon class="trend-up">trending_up</mat-icon>
+          <span>2.4% from last week</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <mat-icon>rate_review</mat-icon>
+        <h3>Pending Reviews</h3>
+        <div class="stat-value">{{ stats.pendingReviews }}</div>
+        <div class="stat-trend">
+          <mat-icon class="trend-down">trending_down</mat-icon>
+          <span>1.8% from last week</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <mat-icon>commute</mat-icon>
+        <h3>Available Cars</h3>
+        <div class="stat-value">{{ stats.availableCars }}</div>
+        <div class="stat-trend">
+          <mat-icon class="trend-stable">trending_flat</mat-icon>
+          <span>Same as last week</span>
+        </div>
+      </div>
+      
+      <div class="stat-card">
+        <mat-icon>people</mat-icon>
+        <h3>Total Users</h3>
+        <div class="stat-value">{{ stats.totalUsers }}</div>
+        <div class="stat-trend">
+          <mat-icon class="trend-up">trending_up</mat-icon>
+          <span>5.7% from last week</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions-section">
+      <h2>Quick Actions</h2>
+      <div class="quick-actions">
+        <button mat-raised-button color="primary" routerLink="/admin/cars/add">
+          <mat-icon>add_circle</mat-icon>
+          Add New Car
+        </button>
+        <button mat-raised-button color="accent" routerLink="/admin/reviews?filter=pending">
+          <mat-icon>rate_review</mat-icon>
+          Moderate Reviews
+        </button>
+        <button mat-raised-button color="warn" routerLink="/admin/discounts/create">
+          <mat-icon>local_offer</mat-icon>
+          Create Discount
+        </button>
+        <button mat-raised-button routerLink="/admin/bookings">
+          <mat-icon>assignment</mat-icon>
+          Manage Bookings
+        </button>
+      </div>
+    </div>
+
+    <!-- Admin Navigation Tiles -->
+    <div class="admin-section-header">
+      <h2>Administration</h2>
+      <p>Manage your car rental platform</p>
+    </div>
+    
+    <div class="admin-nav-tiles">
+      <div class="admin-nav-tile">
+        <a routerLink="/admin/reviews">
+          <mat-icon>rate_review</mat-icon>
+          <h3>Review Management</h3>
+          <p>Moderate customer reviews</p>
+        </a>
+      </div>
+      
+      <div class="admin-nav-tile">
+        <a routerLink="/admin/cars">
+          <mat-icon>directions_car</mat-icon>
+          <h3>Car Management</h3>
+          <p>Add, edit, and remove vehicles</p>
+        </a>
+      </div>
+      
+      <div class="admin-nav-tile">
+        <a routerLink="/admin/users">
+          <mat-icon>people</mat-icon>
+          <h3>User Management</h3>
+          <p>Manage user accounts</p>
+        </a>
+      </div>
+      
+      <div class="admin-nav-tile">
+        <a routerLink="/admin/bookings">
+          <mat-icon>book_online</mat-icon>
+          <h3>Booking Management</h3>
+          <p>View and manage reservations</p>
+        </a>
+      </div>
+      
+      <div class="admin-nav-tile">
+        <a routerLink="/admin/discounts">
+          <mat-icon>local_offer</mat-icon>
+          <h3>Discount Management</h3>
+          <p>Create and manage promotional offers</p>
+        </a>
+      </div>
+      
+      <div class="admin-nav-tile">
+        <a routerLink="/admin/settings">
+          <mat-icon>settings</mat-icon>
+          <h3>System Settings</h3>
+          <p>Configure application settings</p>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Additional Dashboard Styles */
+  .admin-badge {
+    background-color: #3949ab;
+    color: white;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+  
+  .admin-page-header p {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .stat-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .stat-card mat-icon {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    color: #3f51b5;
+    opacity: 0.2;
+    font-size: 2rem;
+    height: 2rem;
+    width: 2rem;
+  }
+  
+  .stat-trend {
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #78909c;
+    margin-top: 0.5rem;
+  }
+  
+  .stat-trend mat-icon {
+    position: static;
+    font-size: 1.2rem;
+    height: 1.2rem;
+    width: 1.2rem;
+    opacity: 1;
+    margin-right: 0.3rem;
+  }
+  
+  .trend-up {
+    color: #43a047;
+  }
+  
+  .trend-down {
+    color: #e53935;
+  }
+  
+  .trend-stable {
+    color: #fb8c00;
+  }
+  
+  .quick-actions-section {
+    margin: 2rem 0 3rem;
+  }
+  
+  .quick-actions-section h2 {
+    color: #1a237e;
+    font-size: 1.5rem;
+    margin-bottom: 1.2rem;
+    font-weight: 600;
+  }
+  
+  .quick-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .quick-actions button {
+    min-width: 150px;
+    padding: 0.5rem 1.2rem;
+  }
+  
+  .quick-actions button mat-icon {
+    margin-right: 0.5rem;
+  }
+  
+  .admin-section-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  .admin-section-header h2 {
+    color: #1a237e;
+    font-size: 1.5rem;
+    margin-bottom: 0.3rem;
+    font-weight: 600;
+  }
+  
+  .admin-section-header p {
+    color: #7986cb;
+    font-size: 1rem;
+  }
+  
+  .admin-nav-tile a {
+    position: relative;
+    padding-left: 4rem;
+  }
+  
+  .admin-nav-tile mat-icon {
+    position: absolute;
+    left: 1.8rem;
+    top: 1.8rem;
+    font-size: 1.8rem;
+    height: 1.8rem;
+    width: 1.8rem;
+    color: #3f51b5;
+  }
+  
+  @media (max-width: 768px) {
+    .quick-actions {
+      flex-direction: column;
+    }
+    
+    .quick-actions button {
+      width: 100%;
+    }
+  }
+</style> 

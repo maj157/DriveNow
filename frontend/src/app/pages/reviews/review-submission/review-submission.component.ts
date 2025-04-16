@@ -59,13 +59,16 @@ export class ReviewSubmissionComponent implements OnInit {
       }
 
       const reviewData: Omit<Review, 'id'> = {
-        userId: currentUser.id,
-        userName: `${currentUser.firstName} ${currentUser.lastName}`,
-        stars: this.reviewForm.value.stars,
+        userId: currentUser.id || '',
+        rating: this.reviewForm.value.stars,
         comment: this.reviewForm.value.comment,
         carId: this.reviewForm.value.carId,
         status: 'pending', // All new reviews start as pending
-        date: new Date() // Add the current date
+        createdAt: new Date(), // Add the current date
+        user: {
+          id: currentUser.id || '',
+          name: `${currentUser.firstName} ${currentUser.lastName}`
+        }
       };
 
       this.reviewService.postReview(reviewData)

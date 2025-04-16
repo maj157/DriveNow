@@ -1,5 +1,5 @@
 export interface Car {
-  id: string;
+  id?: string;
   brand: string;
   model: string;
   group: string;  // Changed from 'type' to match Firebase
@@ -29,8 +29,11 @@ export interface Car {
   discountPrice?: number;
   features?: string[];
   availability?: boolean;
+  available?: boolean; // For Firebase integration
   averageRating?: number;
   reviewCount?: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // Car rental options (e.g., GPS, Child Seat, etc.)

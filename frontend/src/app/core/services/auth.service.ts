@@ -56,7 +56,7 @@ export class AuthService {
   // Get the current user ID
   getCurrentUserId(): string | null {
     const user = this.currentUserValue;
-    return user ? user.id : null;
+    return user && user.id ? user.id : null;
   }
 
   // Get the user's full name
@@ -144,9 +144,30 @@ export class AuthService {
     return !!token; // Return true if token exists
   }
 
+  // Check if user has admin role
+  isAdmin(): boolean {
+    const user = this.currentUserValue;
+    return user ? user.role === 'admin' : false;
+  }
+
   // Get the authentication token
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    // First try to get the token from localStorage
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    if (token) {
+      return token;
+    }
+    
+    // If not found in localStorage, try to get it from the current user
+    const user = this.currentUserValue;
+    if (user && user.token) {
+      // Save it to localStorage for future use
+      localStorage.setItem(this.TOKEN_KEY, user.token);
+      return user.token;
+    }
+    
+    // No token available
+    return null;
   }
 
   // Get user profile
@@ -200,10 +221,13 @@ export class AuthService {
 
   // Set user data in localStorage and update the BehaviorSubject
   private setUserData(user: User): void {
-    console.log('Setting user data in local storage');
-    localStorage.setItem(this.TOKEN_KEY, user.token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
     this.currentUserSubject.next(user);
+    
+    // Save token separately if available
+    if (user.token) {
+      localStorage.setItem(this.TOKEN_KEY, user.token);
+    }
   }
 
   // Clear user data from localStorage and update the BehaviorSubject
@@ -228,5 +252,27 @@ export class AuthService {
           return of(false);
         })
       );
+  }
+
+  // Check if the user is logged in and prompt for login if not
+  ensureLoggedIn(): Observable<boolean> {
+    if (this.isAuthenticated()) {
+      return of(true);
+    }
+    
+    console.warn('User is not authenticated. Redirecting to login page.');
+    // You can add redirection logic here or handle it in components
+    return of(false);
+  }
+  
+  // For admin pages - check if user is logged in and has admin role
+  ensureAdmin(): Observable<boolean> {
+    if (this.isAuthenticated() && this.isAdmin()) {
+      return of(true);
+    }
+    
+    console.warn('User is not authenticated as admin.');
+    // You can add redirection logic here or handle it in components
+    return of(false);
   }
 }

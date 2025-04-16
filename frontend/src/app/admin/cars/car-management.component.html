@@ -1,0 +1,179 @@
+<div class="admin-page-container">
+  <div class="admin-page-header">
+    <h1>Car Management</h1>
+    <p>Add, edit, and manage vehicles in the fleet</p>
+  </div>
+
+  <div class="actions-row">
+    <div class="search-filter">
+      <mat-form-field appearance="outline">
+        <mat-label>Search Cars</mat-label>
+        <input matInput (input)="search($event)" placeholder="Search by brand, model...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="filter-buttons">
+      <button mat-button [class.active]="currentFilter === 'all'" (click)="setFilter('all')">
+        <mat-icon>list</mat-icon> All Cars
+      </button>
+      <button mat-button [class.active]="currentFilter === 'available'" (click)="setFilter('available')">
+        <mat-icon>check_circle</mat-icon> Available
+      </button>
+      <button mat-button [class.active]="currentFilter === 'unavailable'" (click)="setFilter('unavailable')">
+        <mat-icon>cancel</mat-icon> Unavailable
+      </button>
+    </div>
+
+    <button mat-raised-button color="primary" class="add-button" (click)="addNewCar()">
+      <mat-icon>add</mat-icon> Add New Car
+    </button>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading cars...</p>
+  </div>
+
+  <div class="error-message" *ngIf="error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadCars()">Retry</button>
+  </div>
+
+  <div class="car-grid" *ngIf="!isLoading && !error">
+    <div class="car-card" *ngFor="let car of filteredCars">
+      <div class="car-image" [style.background-image]="'url(' + (car.imageURL || 'assets/images/car-placeholder.jpg') + ')'">
+        <div class="car-availability" [ngClass]="car.availability ? 'available' : 'unavailable'">
+          {{ car.availability ? 'Available' : 'Unavailable' }}
+        </div>
+      </div>
+      
+      <div class="car-details">
+        <div class="car-title">{{ car.brand }} {{ car.model }}</div>
+        <div class="car-price">${{ car.pricePerDay }} / day</div>
+        
+        <div class="car-specs">
+          <div class="car-spec">
+            <mat-icon>airline_seat_recline_normal</mat-icon>
+            <span>{{ car.specs.seats || 'N/A' }} seats</span>
+          </div>
+          <div class="car-spec">
+            <mat-icon>settings</mat-icon>
+            <span>{{ car.specs.gearbox || 'N/A' }}</span>
+          </div>
+          <div class="car-spec">
+            <mat-icon>local_gas_station</mat-icon>
+            <span>{{ car.specs.fuelType || 'N/A' }}</span>
+          </div>
+        </div>
+        
+        <div class="car-actions">
+          <button mat-mini-fab color="primary" (click)="viewCar(car)" matTooltip="View Details">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-mini-fab color="accent" (click)="editCar(car)" matTooltip="Edit Car">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-mini-fab color="warn" (click)="deleteCar(car)" matTooltip="Delete Car">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <button mat-mini-fab [color]="car.availability ? 'warn' : 'primary'" 
+                  (click)="toggleAvailability(car)" 
+                  [matTooltip]="car.availability ? 'Disable Car' : 'Enable Car'">
+            <mat-icon>{{ car.availability ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-data-message" *ngIf="filteredCars.length === 0">
+      <mat-icon>commute</mat-icon>
+      <p>No cars found matching your criteria</p>
+      <button mat-raised-button color="primary" (click)="setFilter('all')">
+        Show All Cars
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .actions-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  
+  .search-filter {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .add-button {
+    height: 48px;
+    box-shadow: 0 4px 12px rgba(63, 81, 181, 0.2);
+    transition: all 0.3s ease;
+  }
+  
+  .add-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(63, 81, 181, 0.3);
+  }
+  
+  .car-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.8rem;
+  }
+  
+  .car-specs {
+    margin: 1.2rem 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .car-spec {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    color: #546e7a;
+  }
+  
+  .car-spec mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+    color: #3f51b5;
+  }
+  
+  .car-actions {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    justify-content: center;
+  }
+  
+  @media (max-width: 768px) {
+    .actions-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    
+    .search-filter {
+      min-width: auto;
+    }
+    
+    .filter-buttons {
+      width: 100%;
+      justify-content: center;
+    }
+    
+    .add-button {
+      width: 100%;
+    }
+  }
+</style> 
