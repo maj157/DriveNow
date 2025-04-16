@@ -121,6 +121,10 @@
                     (click)="updateBookingStatus(booking, 'completed')">
               <mat-icon>done_all</mat-icon>
             </button>
+            <button mat-icon-button color="primary" matTooltip="Generate Invoice" 
+                    (click)="generateInvoice(booking)">
+              <mat-icon>receipt</mat-icon>
+            </button>
           </div>
         </td>
       </ng-container>

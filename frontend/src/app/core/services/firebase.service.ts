@@ -641,8 +641,13 @@ export class FirebaseService {
 
   // Update the ensureAdminAuth method at the end of the class to fix authentication issue
   private async ensureAdminAuth(): Promise<string | null> {
-    if (!this.authService.isAuthenticated() || !this.authService.isAdmin()) {
-      console.warn('User is not authenticated as admin');
+    if (!this.authService.isAuthenticated()) {
+      console.warn('User is not authenticated');
+      return null;
+    }
+    
+    if (!this.authService.isAdmin()) {
+      console.warn('User is not an admin');
       return null;
     }
 

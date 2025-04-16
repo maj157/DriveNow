@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "@angular/cdk": "^19.2.9",
-    "@angular/material": "^19.2.9"
+    "@angular/material": "^19.2.9",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2"
   }
 }
