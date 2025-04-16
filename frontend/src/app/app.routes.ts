@@ -11,6 +11,12 @@ export const routes: Routes = [
   { path: 'about', loadComponent: () => import('./pages/about/about.component').then(c => c.AboutComponent) },
   { path: 'contact', loadComponent: () => import('./pages/contact/contact.component').then(c => c.ContactComponent) },
   
+  // Chat support route
+  { 
+    path: 'chat', 
+    loadComponent: () => import('./pages/chat-page/chat-page.component').then(c => c.ChatPageComponent)
+  },
+  
   // Cars section with specific routes first
   {
     path: 'cars/filter',

@@ -1,0 +1,39 @@
+<div class="chat-container">
+  <div class="chat-header">
+    <h1>DriveNow Support</h1>
+    <div class="chat-actions">
+      <button class="clear-button" (click)="clearChat()" title="Clear chat">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="message-container" #messageContainer>
+    <div *ngFor="let message of messages" 
+         [ngClass]="{'message': true, 'user-message': message.sender === 'user', 'agent-message': message.sender === 'agent'}">
+      <div class="message-content">
+        <p>{{ message.text }}</p>
+        <span class="message-time">{{ formatTimestamp(message.timestamp) }}</span>
+      </div>
+    </div>
+    
+    <div *ngIf="isAgentTyping" class="agent-typing">
+      <div class="typing-indicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <p>Agent is typing...</p>
+    </div>
+  </div>
+
+  <div class="message-input">
+    <textarea 
+      [(ngModel)]="newMessage" 
+      placeholder="Type your message here..." 
+      (keydown)="handleKeyDown($event)"></textarea>
+    <button (click)="sendMessage()" [disabled]="!newMessage.trim()">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+</div> 

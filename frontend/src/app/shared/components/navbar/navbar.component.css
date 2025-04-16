@@ -303,3 +303,18 @@
     transform: none;
   }
 }
+
+.support-link {
+  color: #3498db !important;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.support-link i {
+  font-size: 1.1rem;
+}
+
+.support-link:hover {
+  transform: translateY(-2px);
+}
