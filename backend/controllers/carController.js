@@ -192,7 +192,39 @@ const deleteCar = async (req, res) => {
  */
 const getCarsByGroup = async (req, res) => {
   try {
-    const cars = await Car.find({ groupId: req.params.groupId });
+    const groupId = req.params.groupId;
+
+    // First get the group to get its groupName
+    const groupDoc = await db.collection("carGroups").doc(groupId).get();
+
+    if (!groupDoc.exists) {
+      return res.status(404).json({
+        success: false,
+        error: "Group not found",
+      });
+    }
+
+    const groupData = groupDoc.data();
+    const groupName = groupData.groupName;
+
+    // Now get cars with matching group field
+    const carsSnapshot = await db
+      .collection("cars")
+      .where("group", "==", groupName)
+      .get();
+
+    if (carsSnapshot.empty) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+      });
+    }
+
+    const cars = carsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
     res.status(200).json({
       success: true,
       data: cars,

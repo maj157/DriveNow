@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { CarService } from '../../core/services/car.service';
-import { Car } from '../../core/models/car.model';
+import { Car, CarGroup } from '../../core/models/car.model';
 import { CarCardComponent } from '../../shared/components/car-card/car-card.component';
 import { CarFilterComponent, CarFilters } from '../../shared/components/car-filter/car-filter.component';
 
@@ -22,14 +22,32 @@ export class CarsComponent implements OnInit {
   availableCategories: string[] = ['Economy', 'Compact', 'Mid-size', 'Full-size', 'SUV', 'Luxury', 'Van'];
   minPrice = 0;
   maxPrice = 500;
+  
+  // Tab navigation
+  activeView: 'cars' | 'groups' = 'cars';
+  carGroups: CarGroup[] = [];
+  loadingGroups = false;
 
   constructor(
     private carService: CarService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.loadCars();
+    this.route.queryParams.subscribe(params => {
+      this.activeView = params['view'] === 'groups' ? 'groups' : 'cars';
+      if (this.activeView === 'cars') {
+        this.loadCars();
+      } else {
+        this.loadCarGroups();
+      }
+    });
+  }
+
+  setActiveView(view: 'cars' | 'groups'): void {
+    this.activeView = view;
+    this.router.navigate(['/cars'], { queryParams: { view } });
   }
 
   loadCars(): void {
@@ -49,6 +67,20 @@ export class CarsComponent implements OnInit {
       error: (error) => {
         console.error('Error loading cars:', error);
         this.loading = false;
+      }
+    });
+  }
+
+  loadCarGroups(): void {
+    this.loadingGroups = true;
+    this.carService.getCarGroups().subscribe({
+      next: (groups) => {
+        this.carGroups = groups;
+        this.loadingGroups = false;
+      },
+      error: (err) => {
+        console.error('Error loading car groups:', err);
+        this.loadingGroups = false;
       }
     });
   }
@@ -101,6 +133,10 @@ export class CarsComponent implements OnInit {
 
   onViewDetails(car: Car): void {
     this.router.navigate(['/cars', car.id]);
+  }
+
+  viewGroupDetails(group: CarGroup): void {
+    this.router.navigate(['/cars/groups', group.id]);
   }
 
   clearFilters(): void {

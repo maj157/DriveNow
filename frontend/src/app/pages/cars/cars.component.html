@@ -4,10 +4,27 @@
     <div class="col-12 cars-page-header">
       <h1>Our Vehicles</h1>
       <p>Choose from our wide selection of high-quality rental cars</p>
+      
+      <!-- Tab Navigation -->
+      <div class="view-switcher">
+        <button 
+          (click)="setActiveView('cars')" 
+          class="btn" 
+          [class.active]="activeView === 'cars'">
+          All Vehicles
+        </button>
+        <button 
+          (click)="setActiveView('groups')" 
+          class="btn" 
+          [class.active]="activeView === 'groups'">
+          Vehicle Categories
+        </button>
+      </div>
     </div>
   </div>
 
-  <div class="row">
+  <!-- Cars View -->
+  <div class="row" *ngIf="activeView === 'cars'">
     <!-- Filters Sidebar -->
     <div class="col-md-3">
       <app-car-filter 
@@ -44,6 +61,42 @@
             (viewDetails)="onViewDetails($event)">
           </app-car-card>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Groups View -->
+  <div class="row" *ngIf="activeView === 'groups'">
+    <div class="col-12">
+      <!-- Loading Indicator -->
+      <div *ngIf="loadingGroups" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Groups Grid -->
+      <div class="row g-4" *ngIf="!loadingGroups && carGroups.length > 0">
+        <div class="col-md-6 col-lg-4" *ngFor="let group of carGroups">
+          <div class="car-group-card" (click)="viewGroupDetails(group)">
+            <div class="car-group-image">
+              <img [src]="'assets/images/car-placeholder.jpg'" [alt]="group.groupName">
+            </div>
+            <div class="car-group-info">
+              <h3>{{ group.groupName }}</h3>
+              <p>{{ group.fuel }} Vehicle</p>
+              <div class="d-flex justify-content-between align-items-center">
+                <span class="car-count">{{ group.passengers }} passengers</span>
+                <span class="min-price">{{ group.engineSize }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- No Groups Message -->
+      <div *ngIf="!loadingGroups && carGroups.length === 0" class="text-center my-5">
+        <p>No vehicle categories available at the moment.</p>
       </div>
     </div>
   </div>

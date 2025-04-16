@@ -10,22 +10,29 @@ export const routes: Routes = [
   { path: 'locations', loadChildren: () => import('./features/locations/locations.module').then(m => m.LocationsModule) },
   { path: 'about', loadComponent: () => import('./pages/about/about.component').then(c => c.AboutComponent) },
   { path: 'contact', loadComponent: () => import('./pages/contact/contact.component').then(c => c.ContactComponent) },
-  { 
-    path: 'cars',
-    loadComponent: () => import('./pages/cars/cars.component').then(c => c.CarsComponent)
-  },
-  {
-    path: 'cars/:id',
-    loadComponent: () => import('./pages/cars/cars.component').then(c => c.CarsComponent)
-  },
+  
+  // Cars section with specific routes first
   {
     path: 'cars/filter',
     loadComponent: () => import('./vehicles/filter/filter.component').then(c => c.FilterComponent)
   },
   {
+    path: 'cars/groups/:id',
+    loadComponent: () => import('./vehicles/group-details/group-details.component').then(c => c.GroupDetailsComponent)
+  },
+  {
     path: 'cars/groups',
     loadComponent: () => import('./vehicles/groups/groups.component').then(c => c.GroupsComponent)
   },
+  {
+    path: 'cars/:id',
+    loadComponent: () => import('./pages/cars/cars.component').then(c => c.CarsComponent)
+  },
+  { 
+    path: 'cars',
+    loadComponent: () => import('./pages/cars/cars.component').then(c => c.CarsComponent)
+  },
+  
   { 
     path: 'reviews',
     children: [

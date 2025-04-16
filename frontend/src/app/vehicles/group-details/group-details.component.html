@@ -1,0 +1,118 @@
+<div class="container group-details-container">
+  <!-- Back button -->
+  <div class="back-link mb-4">
+    <a (click)="goBack()" class="btn btn-link p-0">
+      <i class="fas fa-arrow-left"></i> Back to All Vehicles
+    </a>
+  </div>
+
+  <!-- Loading indicator -->
+  <div *ngIf="loading" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3">Loading group details...</p>
+  </div>
+
+  <!-- Error message -->
+  <div *ngIf="error && !loading" class="alert alert-danger">
+    <p>{{ error }}</p>
+    <button class="btn btn-outline-danger" (click)="loadGroupData()">
+      Try Again
+    </button>
+  </div>
+
+  <!-- Group details -->
+  <div *ngIf="group && !loading" class="group-details">
+    <div class="row mb-5">
+      <div class="col-md-4">
+        <div class="group-image-container">
+          <img src="assets/images/car-placeholder.jpg" [alt]="group.groupName" class="img-fluid rounded">
+        </div>
+      </div>
+      <div class="col-md-8">
+        <h1 class="group-name">{{ group.groupName }}</h1>
+        <p class="group-description">{{ group.fuel }} Vehicles</p>
+        <p class="car-count">{{ cars.length }} vehicles available</p>
+      </div>
+    </div>
+
+    <!-- Group specs -->
+    <div class="specs-grid mb-5">
+      <h2 class="section-title">Group Specifications</h2>
+      <div class="row">
+        <div class="col-6 col-md-3 mb-4">
+          <div class="spec-card">
+            <i class="fas fa-car-side"></i>
+            <h3>Engine</h3>
+            <p>{{ group.engineSize }}</p>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-4">
+          <div class="spec-card">
+            <i class="fas fa-door-open"></i>
+            <h3>Doors</h3>
+            <p>{{ group.doors }}</p>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-4">
+          <div class="spec-card">
+            <i class="fas fa-users"></i>
+            <h3>Passengers</h3>
+            <p>{{ group.passengers }}</p>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-4">
+          <div class="spec-card">
+            <i class="fas fa-gas-pump"></i>
+            <h3>Fuel</h3>
+            <p>{{ group.fuel }}</p>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-4">
+          <div class="spec-card">
+            <i class="fas fa-cog"></i>
+            <h3>Gearbox</h3>
+            <p>{{ group.gearbox }}</p>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-4">
+          <div class="spec-card">
+            <i class="fas fa-snowflake"></i>
+            <h3>A/C</h3>
+            <p>{{ group.ac ? 'Yes' : 'No' }}</p>
+          </div>
+        </div>
+        <div class="col-6 col-md-3 mb-4">
+          <div class="spec-card">
+            <i class="fas fa-window-maximize"></i>
+            <h3>Electric Windows</h3>
+            <p>{{ group.electricWindows ? 'Yes' : 'No' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cars in group -->
+    <div class="cars-in-group">
+      <h2 class="section-title">Vehicles in This Group</h2>
+      
+      <!-- No cars message -->
+      <div *ngIf="cars.length === 0" class="no-cars-message">
+        <p>No vehicles are currently available in this group.</p>
+      </div>
+      
+      <!-- Cars grid -->
+      <div class="row g-4" *ngIf="cars.length > 0">
+        <div class="col-md-6 col-lg-4" *ngFor="let car of cars">
+          <app-car-card
+            [car]="car"
+            [showActions]="true"
+            (select)="selectCar($event)"
+            (viewDetails)="onViewDetails($event)">
+          </app-car-card>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -45,11 +45,21 @@ export interface CarOption {
 // Car category/group (e.g., Economy, Luxury, SUV)
 export interface CarGroup {
   id: string;
-  name: string;
+  groupName: string;
+  engineSize: string;
+  doors: number;
+  passengers: number;
+  fuel: string;
+  gearbox: string;
+  ac: boolean;
+  electricWindows: boolean;
+  
+  // Keep these for backward compatibility
+  name?: string;
   description?: string;
   imageUrl?: string;
   basePrice?: number;
-  carCount: number;
-  minPrice: number;
+  carCount?: number;
+  minPrice?: number;
   cars?: Car[];
 }
