@@ -66,28 +66,27 @@
     <button 
       class="action-button view-details"
       [routerLink]="['/bookings', booking.id]">
-      View Details
+      <i class="fas fa-eye"></i> View Details
     </button>
     
     <button 
       *ngIf="canCancel(booking)"
       class="action-button cancel"
       (click)="onCancelRequest()">
-      Cancel Booking
+      <i class="fas fa-ban"></i> Cancel Booking
     </button>
     
     <button 
-      *ngIf="canDownloadInvoice(booking)"
       class="action-button invoice"
       (click)="onDownloadInvoice()">
-      Download Invoice
+      <i class="fas fa-file-invoice"></i> Download Invoice
     </button>
     
     <button 
       *ngIf="canLeaveReview(booking)"
       class="action-button review"
       (click)="onLeaveReview()">
-      Leave Review
+      <i class="fas fa-star"></i> Leave Review
     </button>
   </div>
 </div>

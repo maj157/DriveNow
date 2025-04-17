@@ -1,7 +1,16 @@
 <div class="bookings-container">
   <div class="bookings-header">
     <h2>My Bookings</h2>
-    <button class="btn btn-primary" routerLink="/reservation">New Booking</button>
+    <div class="header-buttons">
+      <button 
+        *ngIf="hasInvoiceEligibleBookings()" 
+        class="btn btn-secondary" 
+        (click)="generateAllInvoices()"
+        [disabled]="isLoading">
+        <i class="fas fa-file-invoice"></i> Generate All Invoices
+      </button>
+      <button class="btn btn-primary" routerLink="/reservation">New Booking</button>
+    </div>
   </div>
 
   <!-- Check for saved booking -->

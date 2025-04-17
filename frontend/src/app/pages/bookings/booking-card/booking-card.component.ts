@@ -76,7 +76,8 @@ export class BookingCardComponent {
   }
   
   canDownloadInvoice(booking: Booking): boolean {
-    return ['confirmed', 'active', 'completed'].includes(booking.status);
+    // Allow invoice generation for all bookings regardless of status
+    return true;
   }
   
   canLeaveReview(booking: Booking): boolean {

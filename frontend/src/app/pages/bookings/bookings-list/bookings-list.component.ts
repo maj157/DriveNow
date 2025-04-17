@@ -8,11 +8,12 @@ import { BookingCardComponent } from '../booking-card/booking-card.component';
 import { Observable, catchError, finalize, of, tap } from 'rxjs';
 import { Router } from '@angular/router';
 import { ReservationService } from '../../../core/services/reservation.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-bookings-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, BookingCardComponent],
+  imports: [CommonModule, FormsModule, RouterModule, BookingCardComponent, MatSnackBarModule],
   templateUrl: './bookings-list.component.html',
   styleUrl: './bookings-list.component.css'
 })
@@ -49,7 +50,8 @@ export class BookingsListComponent implements OnInit {
   constructor(
     private bookingService: BookingService,
     private router: Router,
-    private reservationService: ReservationService
+    private reservationService: ReservationService,
+    private snackBar: MatSnackBar
   ) {}
   
   ngOnInit(): void {
@@ -152,26 +154,30 @@ export class BookingsListComponent implements OnInit {
   onDownloadInvoice(bookingId: string): void {
     this.isLoading = true;
     
-    this.bookingService.getBookingInvoice(bookingId)
-      .pipe(
-        tap(blob => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `invoice-${bookingId}.pdf`;
-          document.body.appendChild(a);
-          a.click();
-          window.URL.revokeObjectURL(url);
-          a.remove();
-        }),
-        catchError(err => {
-          this.error = 'Failed to download invoice. Please try again.';
-          console.error('Error downloading invoice:', err);
-          return of(null);
-        }),
-        finalize(() => this.isLoading = false)
-      )
-      .subscribe();
+    // Find the booking
+    const booking = this.bookings.find(b => b.id === bookingId);
+    
+    if (!booking) {
+      this.error = 'Booking not found.';
+      this.isLoading = false;
+      return;
+    }
+    
+    try {
+      // Generate the invoice PDF directly in the browser
+      this.bookingService.generateInvoicePdf(booking);
+      
+      // Show success message
+      this.snackBar.open(`Invoice for ${booking.carMake} ${booking.carModel} generated successfully!`, 'Close', {
+        duration: 3000
+      });
+      
+      this.isLoading = false;
+    } catch (err) {
+      this.error = 'Failed to generate invoice. Please try again.';
+      console.error('Error generating invoice:', err);
+      this.isLoading = false;
+    }
   }
   
   onLeaveReview(bookingId: string): void {
@@ -196,5 +202,70 @@ export class BookingsListComponent implements OnInit {
         console.error('Error checking for saved booking:', err);
       }
     });
+  }
+
+  /**
+   * Check if there are bookings eligible for invoice generation
+   */
+  hasInvoiceEligibleBookings(): boolean {
+    // Any booking can have an invoice generated, so return true if there are any bookings
+    return this.bookings.length > 0;
+  }
+  
+  /**
+   * Generate invoices for all bookings
+   */
+  generateAllInvoices(): void {
+    // Get all bookings regardless of status
+    const allBookings = this.bookings;
+    
+    if (allBookings.length === 0) {
+      this.snackBar.open('No bookings available for invoice generation', 'Close', {
+        duration: 3000
+      });
+      return;
+    }
+    
+    try {
+      // Notify the user
+      this.snackBar.open(`Generating ${allBookings.length} invoices...`, 'Close', {
+        duration: 2000
+      });
+      
+      // Process in a small timeout to allow the UI to update
+      setTimeout(() => {
+        let successCount = 0;
+        
+        // Generate invoice for each booking
+        allBookings.forEach(booking => {
+          try {
+            this.bookingService.generateInvoicePdf(booking);
+            successCount++;
+          } catch (error) {
+            console.error(`Failed to generate invoice for booking ${booking.id}:`, error);
+          }
+        });
+        
+        // Show result notification
+        if (successCount === 0) {
+          this.snackBar.open('Failed to generate invoices', 'Close', {
+            duration: 3000
+          });
+        } else if (successCount < allBookings.length) {
+          this.snackBar.open(`Generated ${successCount} out of ${allBookings.length} invoices`, 'Close', {
+            duration: 3000
+          });
+        } else {
+          this.snackBar.open(`Successfully generated ${successCount} invoices`, 'Close', {
+            duration: 3000
+          });
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Error generating invoices:', error);
+      this.snackBar.open('An error occurred while generating invoices', 'Close', {
+        duration: 3000
+      });
+    }
   }
 }

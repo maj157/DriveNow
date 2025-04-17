@@ -664,4 +664,121 @@ export class FirebaseService {
       return null;
     }
   }
+
+  // Reviews Methods - for user reviews with stars rating
+  submitReview(reviewData: any): Observable<string> {
+    return from(this.authService.ensureLoggedIn()).pipe(
+      switchMap(isLoggedIn => {
+        if (!isLoggedIn) {
+          return throwError(() => new Error('You must be logged in to submit a review'));
+        }
+        
+        // Format the review data to match Firebase schema
+        const formattedReview = {
+          ...reviewData,
+          date: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+          status: 'pending', // New reviews start as pending for moderation
+          userId: this.authService.getCurrentUserId()
+        };
+        
+        const reviewsRef = collection(this.db, 'reviews');
+        return from(addDoc(reviewsRef, formattedReview));
+      }),
+      map(docRef => docRef.id),
+      catchError(error => {
+        console.error('Error submitting review:', error);
+        return throwError(() => new Error(`Failed to submit review: ${error.message}`));
+      })
+    );
+  }
+
+  // Get all approved reviews
+  getApprovedReviews(): Observable<any[]> {
+    const reviewsRef = collection(this.db, 'reviews');
+    const q = query(
+      reviewsRef,
+      where('status', '==', 'approved'),
+      orderBy('date', 'desc')
+    );
+    
+    return from(getDocs(q)).pipe(
+      map(snapshot => {
+        if ('docs' in snapshot) {
+          return snapshot.docs.map((doc: any) => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+        }
+        return [];
+      }),
+      catchError(error => {
+        console.error('Error getting approved reviews:', error);
+        return of([]);
+      })
+    );
+  }
+
+  // Get user's reviews
+  getUserReviews(userId?: string): Observable<any[]> {
+    // If no userId provided, use current user
+    if (!userId) {
+      userId = this.authService.getCurrentUserId();
+      if (!userId) {
+        return throwError(() => new Error('User not authenticated'));
+      }
+    }
+    
+    const reviewsRef = collection(this.db, 'reviews');
+    const q = query(
+      reviewsRef,
+      where('userId', '==', userId),
+      orderBy('date', 'desc')
+    );
+    
+    return from(getDocs(q)).pipe(
+      map(snapshot => {
+        if ('docs' in snapshot) {
+          return snapshot.docs.map((doc: any) => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+        }
+        return [];
+      }),
+      catchError(error => {
+        console.error('Error getting user reviews:', error);
+        return of([]);
+      })
+    );
+  }
+
+  // Delete a review
+  deleteReview(reviewId: string): Observable<void> {
+    // Get the current user ID
+    const userId = this.authService.getCurrentUserId();
+    if (!userId) {
+      return throwError(() => new Error('User not authenticated'));
+    }
+    
+    // First get the review to verify ownership
+    return from(getDoc(doc(this.db, 'reviews', reviewId))).pipe(
+      switchMap(reviewDoc => {
+        if (!reviewDoc.exists()) {
+          return throwError(() => new Error('Review not found'));
+        }
+        
+        const reviewData = reviewDoc.data();
+        // Check if current user is the owner of the review
+        if (reviewData && reviewData['userId'] === userId) {
+          return from(deleteDoc(doc(this.db, 'reviews', reviewId)));
+        } else {
+          return throwError(() => new Error('You can only delete your own reviews'));
+        }
+      }),
+      catchError(error => {
+        console.error('Error deleting review:', error);
+        return throwError(() => new Error(`Failed to delete review: ${error.message}`));
+      })
+    );
+  }
 } 

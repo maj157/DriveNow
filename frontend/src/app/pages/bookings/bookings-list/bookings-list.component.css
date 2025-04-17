@@ -8,7 +8,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 24px;
 }
 
 .saved-booking-banner {
@@ -196,6 +196,39 @@
 
 .action-button.primary:hover {
   background-color: #0a3880;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.btn-secondary[disabled] {
+  background-color: #a0a0a0;
+  cursor: not-allowed;
+}
+
+.btn-secondary i {
+  font-size: 16px;
 }
 
 /* Responsive adjustments */
