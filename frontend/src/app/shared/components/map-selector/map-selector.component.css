@@ -4,7 +4,7 @@
   height: 600px;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 .map-wrapper {
@@ -31,37 +31,39 @@
   margin-bottom: 15px;
   font-size: 1.2rem;
   color: #333;
+  font-weight: 500;
 }
 
 .search-box {
   margin-bottom: 15px;
 }
 
-.search-input {
+.full-width {
   width: 100%;
-  padding: 10px 15px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  font-size: 0.9rem;
 }
 
 .locations-list {
-  list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.locations-list li {
-  padding: 15px;
-  border-radius: 8px;
+/* Override Material list styles */
+::ng-deep .mat-mdc-list-item-unscoped-content {
+  width: 100%;
+}
+
+::ng-deep .locations-list .mat-mdc-list-item {
+  height: auto !important;
   margin-bottom: 10px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid #eee;
+  padding: 12px 0;
 }
 
-.locations-list li:hover {
-  background-color: #f9f9f9;
+::ng-deep .locations-list .mat-mdc-list-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
   transform: translateY(-2px);
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
@@ -70,17 +72,19 @@
   display: flex;
   flex-direction: column;
   gap: 5px;
+  width: 100%;
+  padding: 0 16px;
 }
 
 .branch-name {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 1rem;
-  color: #333;
+  color: rgba(0, 0, 0, 0.87);
 }
 
 .branch-address {
   font-size: 0.85rem;
-  color: #666;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .branch-selection-indicator {
@@ -90,16 +94,24 @@
 }
 
 .pickup-badge, .return-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .pickup-badge {
   background-color: #4caf50;
   color: white;
+}
+
+.pickup-badge mat-icon, .return-badge mat-icon {
+  font-size: 16px !important;
+  height: 16px !important;
+  width: 16px !important;
+  margin-right: 4px;
 }
 
 .return-badge {
@@ -109,12 +121,12 @@
 
 .selected-pickup {
   border-left: 4px solid #4caf50 !important;
-  background-color: rgba(76, 175, 80, 0.05);
+  background-color: rgba(76, 175, 80, 0.05) !important;
 }
 
 .selected-return {
   border-left: 4px solid #2196f3 !important;
-  background-color: rgba(33, 150, 243, 0.05);
+  background-color: rgba(33, 150, 243, 0.05) !important;
 }
 
 /* Responsive adjustments */

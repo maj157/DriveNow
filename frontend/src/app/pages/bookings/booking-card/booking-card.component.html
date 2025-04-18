@@ -5,7 +5,7 @@
       <span class="id">{{ booking.id }}</span>
     </div>
     <div class="booking-status">
-      <span class="status-icon">{{ getStatusIcon(booking.status) }}</span>
+      <mat-icon class="status-icon">{{ getStatusIcon(booking.status) }}</mat-icon>
       <span class="status-text">{{ booking.status | titlecase }}</span>
     </div>
   </div>
@@ -64,29 +64,37 @@
   
   <div class="card-actions">
     <button 
+      mat-raised-button
+      color="primary"
       class="action-button view-details"
       [routerLink]="['/bookings', booking.id]">
-      <i class="fas fa-eye"></i> View Details
+      <mat-icon>visibility</mat-icon> View Details
     </button>
     
     <button 
       *ngIf="canCancel(booking)"
+      mat-raised-button
+      color="warn"
       class="action-button cancel"
       (click)="onCancelRequest()">
-      <i class="fas fa-ban"></i> Cancel Booking
+      <mat-icon>cancel</mat-icon> Cancel Booking
     </button>
     
     <button 
+      mat-raised-button
+      color="accent"
       class="action-button invoice"
       (click)="onDownloadInvoice()">
-      <i class="fas fa-file-invoice"></i> Download Invoice
+      <mat-icon>receipt</mat-icon> Download Invoice
     </button>
     
     <button 
       *ngIf="canLeaveReview(booking)"
+      mat-raised-button
+      color="accent"
       class="action-button review"
       (click)="onLeaveReview()">
-      <i class="fas fa-star"></i> Leave Review
+      <mat-icon>star</mat-icon> Leave Review
     </button>
   </div>
 </div>

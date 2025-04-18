@@ -1,6 +1,10 @@
 import { Component, Input, Output, EventEmitter, OnInit, AfterViewInit, OnChanges, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Location } from '../../../core/models/reservation.model';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatIconModule } from '@angular/material/icon';
+import { MatListModule } from '@angular/material/list';
 
 // Import Google Maps Types
 declare const google: any;
@@ -10,7 +14,7 @@ declare const google: any;
   templateUrl: './map-selector.component.html',
   styleUrls: ['./map-selector.component.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, MatFormFieldModule, MatInputModule, MatIconModule, MatListModule]
 })
 export class MapSelectorComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
   @Input() branches: Location[] = [];

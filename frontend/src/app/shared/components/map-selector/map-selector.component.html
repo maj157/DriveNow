@@ -6,11 +6,15 @@
   <div class="branch-list">
     <h3>Available Locations</h3>
     <div class="search-box">
-      <input type="text" placeholder="Search locations..." class="search-input" #searchInput (input)="filterBranches(searchInput.value)">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Search locations</mat-label>
+        <input matInput placeholder="Search locations..." #searchInput (input)="filterBranches(searchInput.value)">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
     </div>
     
-    <ul class="locations-list">
-      <li *ngFor="let branch of filteredBranches" 
+    <mat-list class="locations-list">
+      <mat-list-item *ngFor="let branch of filteredBranches" 
           [class.selected-pickup]="branch.name === selectedPickup"
           [class.selected-return]="branch.name === selectedReturn"
           (click)="branchClicked.emit(branch)">
@@ -19,11 +23,15 @@
           <span class="branch-address">{{ branch.address }}</span>
           
           <div class="branch-selection-indicator" *ngIf="branch.name === selectedPickup || branch.name === selectedReturn">
-            <span *ngIf="branch.name === selectedPickup" class="pickup-badge">Pickup</span>
-            <span *ngIf="branch.name === selectedReturn" class="return-badge">Return</span>
+            <span *ngIf="branch.name === selectedPickup" class="pickup-badge">
+              <mat-icon>flight_takeoff</mat-icon> Pickup
+            </span>
+            <span *ngIf="branch.name === selectedReturn" class="return-badge">
+              <mat-icon>flight_land</mat-icon> Return
+            </span>
           </div>
         </div>
-      </li>
-    </ul>
+      </mat-list-item>
+    </mat-list>
   </div>
 </div>

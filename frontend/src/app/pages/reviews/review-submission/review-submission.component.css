@@ -4,14 +4,15 @@
   padding: 2rem;
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.15);
 }
 
 h2 {
-  color: #333;
+  color: rgba(0, 0, 0, 0.87);
   margin-bottom: 1.5rem;
   text-align: center;
   font-size: 1.8rem;
+  font-weight: 500;
 }
 
 .review-form {
@@ -28,25 +29,13 @@ h2 {
 
 label {
   font-weight: 500;
-  color: #555;
+  color: rgba(0, 0, 0, 0.67);
   font-size: 1rem;
+  margin-bottom: 4px;
 }
 
-textarea {
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  resize: vertical;
-  font-family: inherit;
-  font-size: 1rem;
-  min-height: 120px;
-  transition: border-color 0.2s;
-}
-
-textarea:focus {
-  outline: none;
-  border-color: #0d47a1;
-  box-shadow: 0 0 0 2px rgba(13, 71, 161, 0.1);
+.full-width {
+  width: 100%;
 }
 
 .star-rating {
@@ -57,90 +46,78 @@ textarea:focus {
 }
 
 .star {
-  font-size: 2rem;
   cursor: pointer;
-  color: #e0e0e0;
-  transition: color 0.2s, transform 0.1s;
+  transition: transform 0.1s;
+}
+
+.star mat-icon {
+  font-size: 32px;
+  height: 32px;
+  width: 32px;
 }
 
 .star:hover {
   transform: scale(1.1);
 }
 
-.star.filled {
+.star mat-icon {
+  color: #e0e0e0;
+}
+
+.star.filled mat-icon {
   color: #ffc107; /* Golden yellow color for hover */
 }
 
-.star.active {
+.star.active mat-icon {
   color: #ffc107; /* Golden yellow color for selected */
 }
 
 .rating-label {
   margin-left: 1rem;
   font-size: 0.9rem;
-  color: #666;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .submit-button {
-  background-color: #0d47a1;
-  color: white;
-  border: none;
-  padding: 1rem;
-  border-radius: 8px;
-  font-weight: 500;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.2s;
+  align-self: flex-end;
   margin-top: 1rem;
 }
 
-.submit-button:hover {
-  background-color: #083378;
-}
-
-.submit-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
 .error-message {
-  color: #d32f2f;
+  color: #f44336;
   font-size: 0.9rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  margin-top: 6px;
 }
 
-.error-message i {
-  font-size: 1rem;
+.error-message mat-icon {
+  font-size: 18px;
+  height: 18px;
+  width: 18px;
 }
 
 .success-message {
   background-color: #e8f5e9;
   color: #2e7d32;
   padding: 1rem;
-  border-radius: 8px;
+  border-radius: 4px;
   text-align: center;
   font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  margin-top: 16px;
 }
 
-.success-message i {
-  font-size: 1.5rem;
+.success-message mat-icon {
+  color: #4caf50;
 }
 
-.character-count {
-  font-size: 0.8rem;
-  color: #666;
-  text-align: right;
-  margin-top: 0.25rem;
-}
-
-.character-count.error {
-  color: #d32f2f;
+.error {
+  color: #f44336;
 }
 
 /* Responsive adjustments */
@@ -149,7 +126,13 @@ textarea:focus {
     padding: 1.5rem;
   }
   
-  .star {
-    font-size: 1.75rem;
+  .star mat-icon {
+    font-size: 28px;
+    height: 28px;
+    width: 28px;
+  }
+  
+  .submit-button {
+    align-self: stretch;
   }
 }

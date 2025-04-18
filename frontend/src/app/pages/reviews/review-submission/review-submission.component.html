@@ -15,57 +15,61 @@
           (mouseenter)="setHoverRating(i)"
           (mouseleave)="resetHoverRating()"
         >
-          ★
+          <mat-icon>{{ (hoverRating || currentRating) >= i ? 'star' : 'star_border' }}</mat-icon>
         </span>
         <span class="rating-label">
           {{ currentRating > 0 ? currentRating + ' out of 5 stars' : 'Click to rate' }}
         </span>
       </div>
       <div *ngIf="hasError('stars', 'required') && reviewForm.get('stars')?.touched" class="error-message">
-        Please select a rating
+        <mat-icon>error</mat-icon> Please select a rating
       </div>
     </div>
 
     <!-- Comment -->
     <div class="form-group">
-      <label for="comment">Your Review</label>
-      <textarea
-        id="comment"
-        formControlName="comment"
-        rows="5"
-        placeholder="Share your experience with our rental service..."
-      ></textarea>
-      <div *ngIf="hasError('comment', 'required')" class="error-message">
-        Please write a review
-      </div>
-      <div *ngIf="hasError('comment', 'minlength')" class="error-message">
-        Review must be at least 10 characters
-      </div>
-      <div *ngIf="hasError('comment', 'maxlength')" class="error-message">
-        Review cannot exceed 500 characters
-      </div>
-      <div class="character-count" [class.error]="reviewForm.get('comment')?.value?.length > 500">
-        {{ reviewForm.get('comment')?.value?.length || 0 }}/500 characters
-      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Your Review</mat-label>
+        <textarea
+          matInput
+          formControlName="comment"
+          rows="5"
+          placeholder="Share your experience with our rental service..."
+        ></textarea>
+        <mat-error *ngIf="hasError('comment', 'required')">
+          Please write a review
+        </mat-error>
+        <mat-error *ngIf="hasError('comment', 'minlength')">
+          Review must be at least 10 characters
+        </mat-error>
+        <mat-error *ngIf="hasError('comment', 'maxlength')">
+          Review cannot exceed 500 characters
+        </mat-error>
+        <mat-hint align="end" [class.error]="reviewForm.get('comment')?.value?.length > 500">
+          {{ reviewForm.get('comment')?.value?.length || 0 }}/500 characters
+        </mat-hint>
+      </mat-form-field>
     </div>
 
     <!-- Submit Button -->
     <button 
+      mat-raised-button
+      color="primary"
       type="submit" 
       [disabled]="reviewForm.invalid || isSubmitting"
       class="submit-button"
     >
-      {{ isSubmitting ? 'Submitting...' : 'Submit Review' }}
+      <mat-icon>rate_review</mat-icon> {{ isSubmitting ? 'Submitting...' : 'Submit Review' }}
     </button>
 
     <!-- Success Message -->
     <div *ngIf="success" class="success-message">
-      <i class="fas fa-check-circle"></i> Thank you for your review! It has been submitted for moderation. Redirecting...
+      <mat-icon>check_circle</mat-icon> Thank you for your review! It has been submitted for moderation. Redirecting...
     </div>
 
     <!-- Error Message -->
     <div *ngIf="error" class="error-message">
-      <i class="fas fa-exclamation-circle"></i> {{ error }}
+      <mat-icon>error</mat-icon> {{ error }}
     </div>
   </form>
 </div>

@@ -1,7 +1,7 @@
 .booking-card {
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), 0 3px 6px rgba(0, 0, 0, 0.15);
   background-color: white;
   margin-bottom: 1.5rem;
   border-left: 5px solid #ccc;
@@ -10,7 +10,7 @@
 
 .booking-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.18);
 }
 
 /* Status-specific styling */
@@ -51,14 +51,14 @@
 
 .label {
   font-size: 0.8rem;
-  color: #666;
+  color: rgba(0, 0, 0, 0.6);
   margin-right: 0.5rem;
 }
 
 .id {
   font-family: monospace;
   font-weight: 500;
-  color: #333;
+  color: rgba(0, 0, 0, 0.8);
 }
 
 .booking-status {
@@ -68,12 +68,13 @@
 }
 
 .status-icon {
-  font-family: 'Material Icons';
-  font-size: 1.2rem;
+  font-size: 20px !important;
+  height: 20px !important;
+  width: 20px !important;
 }
 
 .status-text {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.9rem;
 }
 
@@ -130,7 +131,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #999;
+  color: rgba(0, 0, 0, 0.5);
   font-size: 0.8rem;
 }
 
@@ -141,7 +142,8 @@
 .vehicle-name {
   margin: 0 0 0.75rem 0;
   font-size: 1.25rem;
-  color: #333;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 500;
 }
 
 .booking-dates {
@@ -159,18 +161,18 @@
 
 .date-label {
   font-size: 0.85rem;
-  color: #666;
+  color: rgba(0, 0, 0, 0.6);
   min-width: 60px;
 }
 
 .date-value {
   font-weight: 500;
-  color: #333;
+  color: rgba(0, 0, 0, 0.87);
 }
 
 .location {
   font-size: 0.85rem;
-  color: #666;
+  color: rgba(0, 0, 0, 0.6);
   margin-left: 0.5rem;
 }
 
@@ -190,7 +192,7 @@
 
 .value {
   font-weight: 500;
-  color: #333;
+  color: rgba(0, 0, 0, 0.87);
 }
 
 .price-section {
@@ -207,7 +209,7 @@
 }
 
 .price-label {
-  color: #666;
+  color: rgba(0, 0, 0, 0.6);
   font-size: 0.9rem;
 }
 
@@ -232,62 +234,16 @@
 }
 
 .action-button {
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  font-weight: 500;
-  cursor: pointer;
-  font-size: 0.85rem;
-  border: none;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  margin-left: 8px;
 }
 
-.action-button.view-details {
-  background-color: #f8f9fa;
-  color: #333;
-}
-
-.action-button.view-details:hover {
-  background-color: #e9ecef;
-}
-
-.action-button.cancel {
-  background-color: #ffebee;
-  color: #c62828;
-}
-
-.action-button.cancel:hover {
-  background-color: #ffcdd2;
-}
-
-.action-button.invoice {
-  background-color: #4caf50;
-  color: white;
-}
-
-.action-button.invoice:hover {
-  background-color: #388e3c;
-}
-
-.action-button.invoice i {
+.action-button mat-icon {
   margin-right: 4px;
 }
 
-.action-button.review {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-}
-
-.action-button.review:hover {
-  background-color: #c8e6c9;
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .card-content {
-    flex-direction: column;
+    padding: 1rem;
   }
   
   .vehicle-info {
@@ -297,7 +253,7 @@
   
   .vehicle-image {
     width: 100%;
-    height: 140px;
+    height: 160px;
   }
   
   .booking-details {
@@ -305,15 +261,16 @@
   }
   
   .price-section {
-    grid-column: 1;
+    grid-column: span 1;
   }
   
   .card-actions {
     justify-content: center;
+    flex-direction: column;
   }
-}
-
-.action-button i {
-  font-size: 16px;
-  margin-right: 4px;
+  
+  .action-button {
+    width: 100%;
+    margin-left: 0;
+  }
 }
