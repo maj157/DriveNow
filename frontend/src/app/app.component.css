@@ -1,3 +1,7 @@
+:root {
+  --navbar-height: 80px;
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
@@ -7,7 +11,7 @@
 .main-content {
   flex: 1;
   padding: 20px;
-  margin-top: 60px; /* Adjust based on navbar height */
+  margin-top: var(--navbar-height); /* Using the navbar height variable */
 }
 
 /* Media queries for responsive design */
