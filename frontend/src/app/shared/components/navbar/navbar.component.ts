@@ -49,4 +49,9 @@ export class NavbarComponent implements OnInit {
   isAdmin(): boolean {
     return this.authService.isAdmin();
   }
+
+  navigateToSubmitReview(): void {
+    this.closeDropdown();
+    this.router.navigate(['/reviews/submit']);
+  }
 }

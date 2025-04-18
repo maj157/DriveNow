@@ -297,3 +297,19 @@ exports.changePassword = async (req, res) => {
     });
   }
 };
+
+/**
+ * Generate a custom token for a user
+ * @param {string} userId - User ID to generate token for
+ * @returns {Promise<string>} Custom authentication token
+ */
+exports.generateCustomToken = async (userId) => {
+  try {
+    console.log(`Generating new custom token for user ${userId}`);
+    const customToken = await admin.auth().createCustomToken(userId);
+    return customToken;
+  } catch (error) {
+    console.error("Error generating custom token:", error);
+    throw new Error(`Failed to generate custom token: ${error.message}`);
+  }
+};

@@ -1,16 +1,17 @@
 .review-submission-container {
-  max-width: 600px;
-  margin: 2rem auto;
+  max-width: 800px;
+  margin: 0 auto;
   padding: 2rem;
   background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
   color: #333;
   margin-bottom: 1.5rem;
   text-align: center;
+  font-size: 1.8rem;
 }
 
 .review-form {
@@ -27,57 +28,74 @@ h2 {
 
 label {
   font-weight: 500;
-  color: #444;
-}
-
-.star-rating {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.star-button {
-  background: none;
-  border: none;
-  font-size: 2rem;
-  color: #ddd;
-  cursor: pointer;
-  padding: 0;
-  transition: color 0.2s;
-}
-
-.star-button.active {
-  color: #ffc107;
+  color: #555;
+  font-size: 1rem;
 }
 
 textarea {
-  width: 100%;
-  padding: 0.75rem;
+  padding: 1rem;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
   resize: vertical;
   font-family: inherit;
   font-size: 1rem;
+  min-height: 120px;
+  transition: border-color 0.2s;
 }
 
 textarea:focus {
   outline: none;
-  border-color: #4a90e2;
-  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+  border-color: #0d47a1;
+  box-shadow: 0 0 0 2px rgba(13, 71, 161, 0.1);
+}
+
+.star-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.star {
+  font-size: 2rem;
+  cursor: pointer;
+  color: #e0e0e0;
+  transition: color 0.2s, transform 0.1s;
+}
+
+.star:hover {
+  transform: scale(1.1);
+}
+
+.star.filled {
+  color: #ffc107; /* Golden yellow color for hover */
+}
+
+.star.active {
+  color: #ffc107; /* Golden yellow color for selected */
+}
+
+.rating-label {
+  margin-left: 1rem;
+  font-size: 0.9rem;
+  color: #666;
 }
 
 .submit-button {
-  background-color: #4a90e2;
+  background-color: #0d47a1;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 4px;
+  padding: 1rem;
+  border-radius: 8px;
+  font-weight: 500;
   font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  margin-top: 1rem;
 }
 
 .submit-button:hover {
-  background-color: #357abd;
+  background-color: #083378;
 }
 
 .submit-button:disabled {
@@ -86,17 +104,52 @@ textarea:focus {
 }
 
 .error-message {
-  color: #dc3545;
-  font-size: 0.875rem;
-  margin-top: 0.25rem;
+  color: #d32f2f;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.error-message i {
+  font-size: 1rem;
 }
 
 .success-message {
-  color: #28a745;
-  font-size: 1rem;
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 1rem;
+  border-radius: 8px;
   text-align: center;
-  margin-top: 1rem;
-  padding: 0.75rem;
-  background-color: #d4edda;
-  border-radius: 4px;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.success-message i {
+  font-size: 1.5rem;
+}
+
+.character-count {
+  font-size: 0.8rem;
+  color: #666;
+  text-align: right;
+  margin-top: 0.25rem;
+}
+
+.character-count.error {
+  color: #d32f2f;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .review-submission-container {
+    padding: 1.5rem;
+  }
+  
+  .star {
+    font-size: 1.75rem;
+  }
 }

@@ -4,9 +4,6 @@ const Review = require("../models/Review");
 const Car = require("../models/car");
 const Booking = require("../models/Booking");
 
-// Collection reference
-const reviewsCollection = db.collection("reviews");
-
 // Explicitly declare all exports at the top
 const reviewController = {
   getAllReviews: async (req, res) => {
@@ -20,34 +17,42 @@ const reviewController = {
         page = 1,
       } = req.query;
 
-      // Build the query object
-      const query = {};
-      if (carId) query.car = carId;
-      if (userId) query.userId = userId;
-      if (rating) query.rating = parseInt(rating);
+      // Create a reference to the reviews collection
+      const reviewsCollection = db.collection("reviews");
+      let query = reviewsCollection;
 
-      // Build sort object
-      const sortObj = {};
+      // Apply filters
+      if (carId) query = query.where("carId", "==", carId);
+      if (userId) query = query.where("userId", "==", userId);
+      if (rating) query = query.where("rating", "==", parseInt(rating));
+
+      // Get total count
+      const countSnapshot = await query.get();
+      const totalCount = countSnapshot.size;
+
+      // Apply sorting
       const [sortField, sortOrder] = sort.split(":");
-      sortObj[sortField] = sortOrder === "asc" ? 1 : -1;
+      query = query.orderBy(sortField, sortOrder === "asc" ? "asc" : "desc");
 
-      // Pagination
-      const skip = (parseInt(page) - 1) * parseInt(limit);
-      const options = {
-        sort: sortObj,
-        limit: parseInt(limit),
-        skip,
-      };
+      // Apply pagination
+      const pageSize = parseInt(limit);
+      const offset = (parseInt(page) - 1) * pageSize;
+      query = query.limit(pageSize).offset(offset);
 
-      // Get reviews
-      const reviews = await Review.find(query, options);
-      const totalCount = await Review.countDocuments(query);
+      // Execute query
+      const snapshot = await query.get();
+
+      // Map data
+      const reviews = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
       res.status(200).json({
         success: true,
         count: reviews.length,
         totalCount,
-        totalPages: Math.ceil(totalCount / parseInt(limit)),
+        totalPages: Math.ceil(totalCount / pageSize),
         currentPage: parseInt(page),
         data: reviews,
       });
@@ -72,34 +77,42 @@ const reviewController = {
         page = 1,
       } = req.query;
 
-      // Build the query object
-      const query = {};
-      if (carId) query.car = carId;
-      if (userId) query.userId = userId;
-      if (rating) query.rating = parseInt(rating);
+      // Create a reference to the reviews collection
+      const reviewsCollection = db.collection("reviews");
+      let query = reviewsCollection;
 
-      // Build sort object
-      const sortObj = {};
+      // Apply filters
+      if (carId) query = query.where("carId", "==", carId);
+      if (userId) query = query.where("userId", "==", userId);
+      if (rating) query = query.where("rating", "==", parseInt(rating));
+
+      // Get total count
+      const countSnapshot = await query.get();
+      const totalCount = countSnapshot.size;
+
+      // Apply sorting
       const [sortField, sortOrder] = sort.split(":");
-      sortObj[sortField] = sortOrder === "asc" ? 1 : -1;
+      query = query.orderBy(sortField, sortOrder === "asc" ? "asc" : "desc");
 
-      // Pagination
-      const skip = (parseInt(page) - 1) * parseInt(limit);
-      const options = {
-        sort: sortObj,
-        limit: parseInt(limit),
-        skip,
-      };
+      // Apply pagination
+      const pageSize = parseInt(limit);
+      const offset = (parseInt(page) - 1) * pageSize;
+      query = query.limit(pageSize).offset(offset);
 
-      // Get reviews
-      const reviews = await Review.find(query, options);
-      const totalCount = await Review.countDocuments(query);
+      // Execute query
+      const snapshot = await query.get();
+
+      // Map data
+      const reviews = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
       res.status(200).json({
         success: true,
         count: reviews.length,
         totalCount,
-        totalPages: Math.ceil(totalCount / parseInt(limit)),
+        totalPages: Math.ceil(totalCount / pageSize),
         currentPage: parseInt(page),
         data: reviews,
       });
@@ -115,9 +128,9 @@ const reviewController = {
 
   getReviewById: async (req, res) => {
     try {
-      const review = await Review.findById(req.params.id);
+      const reviewDoc = await db.collection("reviews").doc(req.params.id).get();
 
-      if (!review) {
+      if (!reviewDoc.exists) {
         return res.status(404).json({
           success: false,
           message: "Review not found",
@@ -126,7 +139,10 @@ const reviewController = {
 
       res.status(200).json({
         success: true,
-        data: review,
+        data: {
+          id: reviewDoc.id,
+          ...reviewDoc.data(),
+        },
       });
     } catch (error) {
       console.error(`Error getting review with ID ${req.params.id}:`, error);
@@ -148,64 +164,74 @@ const reviewController = {
         maxRating,
       } = req.query;
 
-      // Build the query object
-      const query = { car: req.params.carId };
+      // Create a reference to the reviews collection and filter by carId
+      const reviewsCollection = db.collection("reviews");
+      let query = reviewsCollection.where("carId", "==", req.params.carId);
 
-      // Add rating filters if provided
+      // We can't directly use complex queries with Firestore, so we'll do some filtering in memory
+      const snapshot = await query.get();
+      let reviews = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // Apply rating filters if provided
       if (minRating) {
-        query.rating = { $gte: parseInt(minRating) };
+        const minRatingValue = parseInt(minRating);
+        reviews = reviews.filter((review) => review.rating >= minRatingValue);
       }
 
       if (maxRating) {
-        if (query.rating) {
-          query.rating.$lte = parseInt(maxRating);
-        } else {
-          query.rating = { $lte: parseInt(maxRating) };
-        }
+        const maxRatingValue = parseInt(maxRating);
+        reviews = reviews.filter((review) => review.rating <= maxRatingValue);
       }
 
-      // Build sort object
-      const sortObj = {};
+      // Calculate total count after filtering
+      const totalCount = reviews.length;
+
+      // Sort reviews
       const [sortField, sortOrder] = sort.split(":");
-      sortObj[sortField] = sortOrder === "asc" ? 1 : -1;
+      reviews.sort((a, b) => {
+        if (sortOrder === "asc") {
+          return a[sortField] > b[sortField] ? 1 : -1;
+        } else {
+          return a[sortField] < b[sortField] ? 1 : -1;
+        }
+      });
 
-      // Pagination
-      const skip = (parseInt(page) - 1) * parseInt(limit);
-      const options = {
-        sort: sortObj,
-        limit: parseInt(limit),
-        skip,
-      };
-
-      // Get reviews
-      const reviews = await Review.find(query, options);
-      const totalCount = await Review.countDocuments(query);
+      // Apply pagination
+      const pageSize = parseInt(limit);
+      const offset = (parseInt(page) - 1) * pageSize;
+      const paginatedReviews = reviews.slice(offset, offset + pageSize);
 
       // Get car details
-      const car = await Car.findById(req.params.carId);
-      if (!car) {
+      const carDoc = await db.collection("cars").doc(req.params.carId).get();
+      if (!carDoc.exists) {
         return res.status(404).json({
           success: false,
           message: "Car not found",
         });
       }
+      const car = {
+        id: carDoc.id,
+        ...carDoc.data(),
+      };
 
       // Calculate average rating
       let avgRating = 0;
       if (totalCount > 0) {
-        const allReviews = await Review.find({ car: req.params.carId });
-        const totalRating = allReviews.reduce(
+        const totalRating = reviews.reduce(
           (sum, review) => sum + review.rating,
           0
         );
-        avgRating = totalRating / allReviews.length;
+        avgRating = totalRating / reviews.length;
       }
 
       res.status(200).json({
         success: true,
-        count: reviews.length,
+        count: paginatedReviews.length,
         totalCount,
-        totalPages: Math.ceil(totalCount / parseInt(limit)),
+        totalPages: Math.ceil(totalCount / pageSize),
         currentPage: parseInt(page),
         car: {
           id: car.id,
@@ -214,7 +240,7 @@ const reviewController = {
           year: car.year,
           avgRating,
         },
-        data: reviews,
+        data: paginatedReviews,
       });
     } catch (error) {
       console.error(
@@ -233,32 +259,34 @@ const reviewController = {
     try {
       const { sort = "date:desc", limit = 10, page = 1 } = req.query;
 
-      // Build sort object
-      const sortObj = {};
-      const [sortField, sortOrder] = sort.split(":");
-      sortObj[sortField] = sortOrder === "asc" ? 1 : -1;
-
-      // Pagination
-      const skip = (parseInt(page) - 1) * parseInt(limit);
-      const options = {
-        sort: sortObj,
-        limit: parseInt(limit),
-        skip,
-      };
-
       // Get reviews by user ID
-      const reviews = await Review.find({ userId: req.params.userId }, options);
-      const totalCount = await Review.countDocuments({
-        userId: req.params.userId,
-      });
+      const reviewsCollection = db.collection("reviews");
+      let query = reviewsCollection.where("userId", "==", req.params.userId);
+
+      // Apply sorting
+      const [sortField, sortOrder] = sort.split(":");
+      query = query.orderBy(sortField, sortOrder === "asc" ? "asc" : "desc");
+
+      // Execute query
+      const snapshot = await query.get();
+      const totalCount = snapshot.size;
+
+      // Apply pagination
+      const pageSize = parseInt(limit);
+      const offset = (parseInt(page) - 1) * pageSize;
+      const reviews = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      const paginatedReviews = reviews.slice(offset, offset + pageSize);
 
       res.status(200).json({
         success: true,
-        count: reviews.length,
+        count: paginatedReviews.length,
         totalCount,
-        totalPages: Math.ceil(totalCount / parseInt(limit)),
+        totalPages: Math.ceil(totalCount / pageSize),
         currentPage: parseInt(page),
-        data: reviews,
+        data: paginatedReviews,
       });
     } catch (error) {
       console.error(
@@ -647,9 +675,14 @@ const reviewController = {
 
   getRandomReviews: async (req, res) => {
     try {
-      const reviews = await Review.find({ status: "published" })
-        .limit(5)
-        .sort({ date: -1 });
+      const reviewsRef = db.collection("reviews");
+      const query = reviewsRef.where("status", "==", "approved").limit(5);
+      const snapshot = await query.get();
+
+      const reviews = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
       res.status(200).json({
         success: true,
@@ -666,7 +699,14 @@ const reviewController = {
 
   getPendingReviews: async (req, res) => {
     try {
-      const reviews = await Review.find({ status: "pending" });
+      const reviewsRef = db.collection("reviews");
+      const snapshot = await reviewsRef.where("status", "==", "pending").get();
+
+      const reviews = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
       res.status(200).json({
         success: true,
         data: reviews,
@@ -690,7 +730,14 @@ const reviewController = {
         });
       }
 
-      const reviews = await Review.find({ status });
+      const reviewsRef = db.collection("reviews");
+      const snapshot = await reviewsRef.where("status", "==", status).get();
+
+      const reviews = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
       res.status(200).json({
         success: true,
         data: reviews,

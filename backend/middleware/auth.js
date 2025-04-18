@@ -22,6 +22,9 @@ exports.authenticate = async (req, res, next) => {
     const token = authHeader.split(" ")[1];
     let uid;
 
+    // Log the extracted token (safely, without showing all of it)
+    console.log(`Auth token received: ${token.substring(0, 10)}...`);
+
     try {
       // First attempt to verify as ID token
       console.log("Attempting to verify ID token...");
@@ -30,6 +33,7 @@ exports.authenticate = async (req, res, next) => {
       console.log("Successfully verified ID token for user:", uid);
     } catch (idTokenError) {
       console.log("Failed to verify as ID token:", idTokenError.message);
+      console.log("Token verification error details:", idTokenError);
 
       // If not an ID token, try to decode as a custom token
       try {
@@ -37,6 +41,7 @@ exports.authenticate = async (req, res, next) => {
         // Custom tokens are JWT tokens signed by Firebase
         // We can decode them to get the uid without verification
         const decodedCustomToken = jwt.decode(token);
+        console.log("Decoded custom token:", decodedCustomToken);
 
         // Custom tokens contain the uid in the payload
         if (decodedCustomToken && decodedCustomToken.uid) {
@@ -79,11 +84,19 @@ exports.authenticate = async (req, res, next) => {
       _id: uid, // Include _id for backward compatibility
       id: uid,
       uid: uid, // Include uid for backward compatibility
+      userId: uid, // Add userId for consistency with frontend
       email: userData.email,
       name: userData.name || `${userData.firstName} ${userData.lastName}`,
       isAdmin: userData.role === "admin" || false,
       ...userData, // Include all other user data
     };
+
+    console.log("Request authenticated with user data:", {
+      id: req.user.id,
+      email: req.user.email,
+      name: req.user.name,
+      isAdmin: req.user.isAdmin,
+    });
 
     next();
   } catch (error) {

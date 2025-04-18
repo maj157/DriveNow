@@ -6,17 +6,22 @@
     <div class="form-group">
       <label>Rating</label>
       <div class="star-rating">
-        <button 
-          *ngFor="let star of [1,2,3,4,5]" 
-          type="button"
-          (click)="reviewForm.patchValue({ stars: star })"
-          [class.active]="star <= reviewForm.get('stars')?.value"
-          class="star-button"
+        <span 
+          *ngFor="let i of [1,2,3,4,5]" 
+          class="star" 
+          [class.filled]="(hoverRating || currentRating) >= i"
+          [class.active]="currentRating >= i"
+          (click)="setRating(i)"
+          (mouseenter)="setHoverRating(i)"
+          (mouseleave)="resetHoverRating()"
         >
           ★
-        </button>
+        </span>
+        <span class="rating-label">
+          {{ currentRating > 0 ? currentRating + ' out of 5 stars' : 'Click to rate' }}
+        </span>
       </div>
-      <div *ngIf="hasError('stars', 'required')" class="error-message">
+      <div *ngIf="hasError('stars', 'required') && reviewForm.get('stars')?.touched" class="error-message">
         Please select a rating
       </div>
     </div>
@@ -28,7 +33,7 @@
         id="comment"
         formControlName="comment"
         rows="5"
-        placeholder="Share your experience..."
+        placeholder="Share your experience with our rental service..."
       ></textarea>
       <div *ngIf="hasError('comment', 'required')" class="error-message">
         Please write a review
@@ -38,6 +43,9 @@
       </div>
       <div *ngIf="hasError('comment', 'maxlength')" class="error-message">
         Review cannot exceed 500 characters
+      </div>
+      <div class="character-count" [class.error]="reviewForm.get('comment')?.value?.length > 500">
+        {{ reviewForm.get('comment')?.value?.length || 0 }}/500 characters
       </div>
     </div>
 
@@ -52,12 +60,12 @@
 
     <!-- Success Message -->
     <div *ngIf="success" class="success-message">
-      Thank you for your review! Redirecting...
+      <i class="fas fa-check-circle"></i> Thank you for your review! It has been submitted for moderation. Redirecting...
     </div>
 
     <!-- Error Message -->
     <div *ngIf="error" class="error-message">
-      {{ error }}
+      <i class="fas fa-exclamation-circle"></i> {{ error }}
     </div>
   </form>
 </div>

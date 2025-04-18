@@ -1,10 +1,14 @@
 export interface Review {
   id?: string;
   comment: string;
-  rating: number;
+  rating?: number;
+  stars?: number;
   status: 'pending' | 'approved' | 'rejected';
   carId?: string;
   userId?: string;
+  userName?: string;
+  date?: string;
+  profilePic?: string;
   moderationComment?: string;
   car?: {
     id: string;

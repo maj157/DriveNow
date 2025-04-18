@@ -51,7 +51,17 @@ export class ReviewsComponent implements OnInit {
 
     this.reviewService.getReviews()
       .pipe(
-        tap(reviews => this.allReviews = reviews),
+        tap(reviews => {
+          console.log('Reviews response type:', typeof reviews, 'isArray:', Array.isArray(reviews));
+          
+          this.allReviews = reviews;
+          
+          if (this.allReviews.length === 0) {
+            console.warn('No reviews were found or the reviews array is empty');
+          } else {
+            console.log('Successfully loaded reviews:', this.allReviews.length);
+          }
+        }),
         catchError(err => {
           this.error = 'Failed to load reviews. Please try again.';
           console.error('Error loading reviews:', err);
@@ -73,9 +83,17 @@ export class ReviewsComponent implements OnInit {
       return;
     }
 
+    console.log('Loading reviews for user ID:', currentUserId);
     this.reviewService.getUserReviews(currentUserId)
       .pipe(
-        tap(reviews => this.userReviews = reviews),
+        tap(reviews => {
+          console.log('User reviews response:', reviews);
+          if (!Array.isArray(reviews)) {
+            console.error('Expected array for user reviews, but got:', typeof reviews);
+          }
+          this.userReviews = Array.isArray(reviews) ? reviews : [];
+          console.log('User reviews loaded:', this.userReviews);
+        }),
         catchError(err => {
           this.error = 'Failed to load your reviews. Please try again.';
           console.error('Error loading user reviews:', err);

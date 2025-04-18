@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc, deleteDoc, addDoc, orderBy, limit, setDoc } from 'firebase/firestore';
-import { getAuth, Auth, onAuthStateChanged } from 'firebase/auth';
+import { getAuth, Auth, onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
 import { Observable, from, of, throwError } from 'rxjs';
 import { map, catchError, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
@@ -361,14 +361,21 @@ export class FirebaseService {
   }
   
   updateCar(carId: string, carData: any): Observable<any> {
-    const carRef = doc(this.db, 'cars', carId);
-    
-    return from(
-      updateDoc(carRef, {
-        ...carData,
-        updatedAt: new Date().toISOString()
-      })
-    ).pipe(
+    return from(this.ensureAdminAuth()).pipe(
+      switchMap(token => {
+        if (!token) {
+          console.warn("Unauthorized access to update car data");
+          return throwError(() => new Error('Admin access required'));
+        }
+        
+        const carRef = doc(this.db, 'cars', carId);
+        return from(
+          updateDoc(carRef, {
+            ...carData,
+            updatedAt: new Date().toISOString()
+          })
+        );
+      }),
       map(() => ({ id: carId, ...carData })),
       catchError(error => {
         console.error('Error updating car:', error);
@@ -667,27 +674,84 @@ export class FirebaseService {
 
   // Reviews Methods - for user reviews with stars rating
   submitReview(reviewData: any): Observable<string> {
-    return from(this.authService.ensureLoggedIn()).pipe(
-      switchMap(isLoggedIn => {
-        if (!isLoggedIn) {
-          return throwError(() => new Error('You must be logged in to submit a review'));
+    console.log('Starting review submission process...');
+    
+    // Verify Firebase auth state
+    const firebaseUser = this.auth.currentUser;
+    console.log('Current Firebase user:', firebaseUser ? firebaseUser.uid : 'Not authenticated in Firebase');
+    
+    // Verify authenticated user from our service
+    const currentUserId = this.authService.getCurrentUserId();
+    console.log('Current user ID from AuthService:', currentUserId);
+    
+    if (!currentUserId) {
+      console.error('User not logged in when submitting review');
+      return throwError(() => new Error('You must be logged in to submit a review'));
+    }
+    
+    // Always try to synchronize Firebase auth before submitting
+    return this.authService.syncFirebaseAuth().pipe(
+      switchMap(authenticated => {
+        console.log('Firebase authentication synchronization result:', authenticated);
+        
+        // Even if Firebase auth failed, we'll try to submit through the API
+        // which should handle authentication via the token in headers
+        return this.actuallySubmitReview(reviewData, currentUserId);
+      }),
+      catchError(error => {
+        console.error('Error during Firebase authentication sync:', error);
+        // Try submitting directly as a fallback
+        return this.actuallySubmitReview(reviewData, currentUserId);
+      })
+    );
+  }
+  
+  // Helper method to actually submit the review once auth is confirmed
+  private actuallySubmitReview(reviewData: any, currentUserId: string): Observable<string> {
+    // Format the review data to match Firebase schema
+    const formattedReview = {
+      ...reviewData,
+      date: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
+      status: 'pending', // New reviews start as pending for moderation
+      userId: currentUserId,
+      createdAt: new Date().toISOString()
+    };
+    
+    console.log('Submitting review with data:', formattedReview);
+    
+    // First check if the user is authenticated with Firebase
+    const firebaseUser = this.auth.currentUser;
+    if (!firebaseUser) {
+      console.warn('Firebase user not authenticated when trying to submit review');
+      return throwError(() => new Error('Firebase authentication required. Please try logging out and logging back in.'));
+    }
+    
+    // Create a new collection reference each time
+    const reviewsRef = collection(this.db, 'reviews');
+    
+    return from(
+      // Add the document to Firestore
+      addDoc(reviewsRef, formattedReview)
+    ).pipe(
+      map(docRef => {
+        console.log('Review successfully submitted with ID:', docRef.id);
+        return docRef.id;
+      }),
+      catchError(error => {
+        console.error('Error submitting review to Firestore:', error);
+        
+        // Check for specific Firebase permission errors
+        if (error.code === 'permission-denied') {
+          console.error('Firebase permission denied. Review submission requires proper authentication.');
+          return throwError(() => new Error('Unable to submit review. Please try logging out and logging back in.'));
         }
         
-        // Format the review data to match Firebase schema
-        const formattedReview = {
-          ...reviewData,
-          date: new Date().toISOString().split('T')[0], // Format as YYYY-MM-DD
-          status: 'pending', // New reviews start as pending for moderation
-          userId: this.authService.getCurrentUserId()
-        };
+        // More detailed error information
+        const errorMessage = error.message || 'Unknown error';
+        const errorCode = error.code || 'unknown-error';
+        console.error(`Firebase error code: ${errorCode}, message: ${errorMessage}`);
         
-        const reviewsRef = collection(this.db, 'reviews');
-        return from(addDoc(reviewsRef, formattedReview));
-      }),
-      map(docRef => docRef.id),
-      catchError(error => {
-        console.error('Error submitting review:', error);
-        return throwError(() => new Error(`Failed to submit review: ${error.message}`));
+        return throwError(() => new Error(`Failed to submit review: ${errorMessage} (code: ${errorCode})`));
       })
     );
   }
@@ -722,17 +786,18 @@ export class FirebaseService {
   getUserReviews(userId?: string): Observable<any[]> {
     // If no userId provided, use current user
     if (!userId) {
-      userId = this.authService.getCurrentUserId();
-      if (!userId) {
-        return throwError(() => new Error('User not authenticated'));
+      const currentUserId = this.authService.getCurrentUserId();
+      if (!currentUserId) {
+        return of([]);  // Return empty array instead of throwing error
       }
+      userId = currentUserId;
     }
     
     const reviewsRef = collection(this.db, 'reviews');
     const q = query(
       reviewsRef,
       where('userId', '==', userId),
-      orderBy('date', 'desc')
+      orderBy('createdAt', 'desc')  // Updated from 'date' to 'createdAt' to match model
     );
     
     return from(getDocs(q)).pipe(
