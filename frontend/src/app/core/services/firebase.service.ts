@@ -6,6 +6,7 @@ import { getAuth, Auth, onAuthStateChanged, signInWithCustomToken } from 'fireba
 import { Observable, from, of, throwError } from 'rxjs';
 import { map, catchError, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from './auth.service';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,10 @@ export class FirebaseService {
   private isAdmin = false;
   private authInitialized = false;
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient
+  ) {
     this.auth = getAuth(this.app);
     
     // Ensure we're fully initialized before making Firebase calls
@@ -756,28 +760,53 @@ export class FirebaseService {
     );
   }
 
-  // Get all approved reviews
-  getApprovedReviews(): Observable<any[]> {
-    const reviewsRef = collection(this.db, 'reviews');
-    const q = query(
-      reviewsRef,
-      where('status', '==', 'approved'),
-      orderBy('date', 'desc')
-    );
+  // Get random reviews (regardless of status)
+  getApprovedReviews(): Observable<any[] | { success: boolean, data: any[] }> {
+    // Use the random reviews endpoint that already exists
+    const endpoint = `${environment.apiUrl}/reviews/random`;
     
-    return from(getDocs(q)).pipe(
-      map(snapshot => {
-        if ('docs' in snapshot) {
-          return snapshot.docs.map((doc: any) => ({
-            id: doc.id,
-            ...doc.data()
-          }));
+    return this.http.get<any[] | { success: boolean, data: any[] }>(endpoint).pipe(
+      switchMap(response => {
+        // Check if response has data and it's not empty
+        if (response && 
+            typeof response === 'object' && 
+            'data' in response && 
+            Array.isArray(response.data) && 
+            response.data.length === 0) {
+          console.log('Random reviews endpoint returned empty array, trying general reviews endpoint');
+          
+          // If random reviews is empty, fall back to the general reviews endpoint
+          return this.http.get<any>(`${environment.apiUrl}/reviews`).pipe(
+            map(generalResponse => {
+              if (generalResponse && 
+                  typeof generalResponse === 'object' && 
+                  'data' in generalResponse && 
+                  Array.isArray(generalResponse.data)) {
+                // Get 3 random reviews from the general collection
+                const allReviews = generalResponse.data;
+                if (allReviews.length > 0) {
+                  const shuffled = [...allReviews].sort(() => 0.5 - Math.random());
+                  const randomReviews = shuffled.slice(0, Math.min(3, shuffled.length));
+                  return { success: true, data: randomReviews };
+                }
+              }
+              // If we still can't get anything, return the original response
+              return response;
+            }),
+            catchError(error => {
+              console.error('Error getting general reviews:', error);
+              // Return original response if fallback fails
+              return of(response);
+            })
+          );
         }
-        return [];
+        
+        // Return original response if it has data
+        return of(response);
       }),
       catchError(error => {
-        console.error('Error getting approved reviews:', error);
-        return of([]);
+        console.error('Error getting random reviews:', error);
+        return of({ success: true, data: [] });
       })
     );
   }

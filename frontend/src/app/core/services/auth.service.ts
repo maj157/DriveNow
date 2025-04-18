@@ -170,6 +170,20 @@ export class AuthService {
     return null;
   }
 
+  // Get auth headers for HTTP requests
+  getAuthHeaders(): Observable<Record<string, string>> {
+    const token = this.getToken();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json'
+    };
+    
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+    
+    return of(headers);
+  }
+
   // Get user profile
   getUserProfile(): Observable<User> {
     return this.http.get<any>(`${this.apiUrl}/me`)

@@ -181,6 +181,44 @@ router.get("/car/:carId", async (req, res) => {
   }
 });
 
+// Get all approved reviews without requiring an index
+router.get("/approved", async (req, res) => {
+  try {
+    const reviewsRef = db.collection("reviews");
+    // Only filter by status without an orderBy clause
+    const snapshot = await reviewsRef.where("status", "==", "approved").get();
+
+    // Get the reviews
+    const reviews = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // Sort in memory on the server side
+    reviews.sort((a, b) => {
+      const dateA = a.date
+        ? new Date(a.date).getTime()
+        : a.createdAt
+        ? new Date(a.createdAt).getTime()
+        : 0;
+      const dateB = b.date
+        ? new Date(b.date).getTime()
+        : b.createdAt
+        ? new Date(b.createdAt).getTime()
+        : 0;
+      return dateB - dateA; // Sort descending
+    });
+
+    res.json(reviews);
+  } catch (error) {
+    console.error("Error getting approved reviews:", error);
+    res.status(500).json({
+      error: true,
+      message: "Failed to get approved reviews",
+    });
+  }
+});
+
 // Get user's reviews (requires authentication)
 router.get("/user", authenticate, async (req, res) => {
   try {

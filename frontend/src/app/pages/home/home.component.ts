@@ -5,11 +5,13 @@ import { CarService } from '../../core/services/car.service';
 import { StatsService } from '../../core/services/stats.service';
 import { Car } from '../../core/models/car.model';
 import { RentalStats } from '../../core/services/stats.service';
+import { FeaturedReviewsComponent } from '../../shared/components/featured-reviews/featured-reviews.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FeaturedReviewsComponent, MatIconModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })

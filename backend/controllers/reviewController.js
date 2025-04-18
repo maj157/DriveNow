@@ -675,20 +675,51 @@ const reviewController = {
 
   getRandomReviews: async (req, res) => {
     try {
+      // Get all reviews from the collection without any filters
       const reviewsRef = db.collection("reviews");
-      const query = reviewsRef.where("status", "==", "approved").limit(5);
-      const snapshot = await query.get();
+      const snapshot = await reviewsRef.get();
 
-      const reviews = snapshot.docs.map((doc) => ({
+      // Convert to array
+      const allReviews = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
 
+      // If we have no reviews, return empty array
+      if (allReviews.length === 0) {
+        return res.status(200).json({
+          success: true,
+          data: [],
+        });
+      }
+
+      // Shuffle and get 3 random reviews (or all if less than 3)
+      const shuffled = [...allReviews].sort(() => 0.5 - Math.random());
+      const randomReviews = shuffled.slice(0, Math.min(3, shuffled.length));
+
+      // If we still don't have any reviews, use fallback to get reviews from the general API
+      if (randomReviews.length === 0) {
+        // Create a direct database query to get reviews
+        const fallbackReviewsRef = db.collection("reviews");
+        const fallbackSnapshot = await fallbackReviewsRef.limit(3).get();
+
+        const fallbackReviews = fallbackSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+
+        return res.status(200).json({
+          success: true,
+          data: fallbackReviews,
+        });
+      }
+
       res.status(200).json({
         success: true,
-        data: reviews,
+        data: randomReviews,
       });
     } catch (error) {
+      console.error("Error getting random reviews:", error);
       res.status(500).json({
         success: false,
         message: "Error getting random reviews",

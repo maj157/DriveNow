@@ -108,7 +108,7 @@ export class ReviewService {
   }
 
   // Get approved reviews for public display
-  getApprovedReviews(): Observable<any[]> {
+  getApprovedReviews(): Observable<Review[] | { success: boolean, data: Review[] }> {
     return this.firebaseService.getApprovedReviews();
   }
 

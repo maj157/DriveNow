@@ -1,19 +1,23 @@
 <div class="review-card">
   <div class="review-header">
     <div class="user-info">
-      <div class="avatar">
-        <span>{{ review.user?.name?.charAt(0) || '?' }}</span>
+      <div class="avatar" *ngIf="review.profilePic">
+        <img [src]="review.profilePic" alt="{{ review.userName || 'User' }}">
+      </div>
+      <div class="avatar placeholder" *ngIf="!review.profilePic">
+        <div class="initials">{{ (review.userName || 'A')[0] }}</div>
       </div>
       <div class="user-details">
-        <h3 class="user-name">{{ review.user?.name || 'Anonymous' }}</h3>
-        <span class="review-date">{{ review.createdAt ? formatDate(review.createdAt) : 'Unknown date' }}</span>
+        <h3 class="user-name">{{ review.userName || 'Anonymous' }}</h3>
+        <span class="review-date">{{ formatDate(review.date || review.createdAt) }}</span>
       </div>
     </div>
     
     <div class="rating">
-      <span class="star" *ngFor="let star of getStarsArray(review.rating)">
-        <i [class]="star === 1 ? 'filled' : 'empty'">★</i>
-      </span>
+      <mat-icon *ngFor="let star of getStarsArray(review.stars || review.rating)"
+                [class.filled]="star === 1">
+        {{ star === 1 ? 'star' : 'star_border' }}
+      </mat-icon>
     </div>
   </div>
   
@@ -21,16 +25,20 @@
     <p>{{ review.comment }}</p>
   </div>
   
-  <div class="review-car" *ngIf="review.carId">
-    <a [routerLink]="['/cars', review.carId]">View Vehicle</a>
+  <div class="review-car" *ngIf="showCar && review.carId && !hideRouterLink">
+    <a [routerLink]="['/cars', review.carId]" mat-button color="primary">
+      <mat-icon>directions_car</mat-icon> View Vehicle
+    </a>
   </div>
   
   <div class="review-actions" *ngIf="canEdit">
-    <button class="delete-btn" (click)="onDelete()">Delete Review</button>
+    <button mat-raised-button color="warn" (click)="onDelete()">
+      <mat-icon>delete</mat-icon> Delete Review
+    </button>
   </div>
   
   <!-- Add moderation status badge -->
-  <div class="moderation-status" *ngIf="showModeration">
+  <div class="moderation-status" *ngIf="showModeration && review.status">
     <span [class]="getModerationStatusClass()">
       {{ review.status | titlecase }}
     </span>
