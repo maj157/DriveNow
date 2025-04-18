@@ -56,6 +56,7 @@ export interface CarGroup {
   gearbox: string;
   ac: boolean;
   electricWindows: boolean;
+  imageURL?: string; // Add this field for group image
   
   // Keep these for backward compatibility
   name?: string;

@@ -115,7 +115,7 @@ DriveNow is a web-based car rental platform that allows users to browse, filter,
 
 - `checkout/` – Displays cart, allows applying discounts, choosing payment methods, and finalizing/cancelling/saving transaction
 
-- `history/` – Shows user’s past bookings and invoices
+- `history/` – Shows user's past bookings and invoices
 
 - `chat/` – Chat with a live agent
 
@@ -230,3 +230,47 @@ The root component of the Angular app. This usually contains:
 
 - All functionality follows the project specs strictly.
 - This README serves as both a project guide and team documentation.
+
+# Premium Cars Data Import
+
+This repository contains a JSON file with premium car data for the DriveNow application.
+
+## How to Import the Data to Firebase
+
+1. **Access the Firebase Console**
+
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Select your project: `drivenow-de92f`
+
+2. **Navigate to Firestore Database**
+
+   - Click on "Firestore Database" in the left sidebar
+   - Make sure you're in "Data" tab
+
+3. **Import the JSON Data**
+
+   - The file `premium-cars.json` contains the premium car data in Firebase format
+   - In Firebase Console, you can import this data using these steps:
+     1. Click on your "cars" collection (create it if it doesn't exist)
+     2. Use the Firebase import functionality
+
+   **Alternative Method (Using Firebase CLI):**
+
+   - Install Firebase CLI: `npm install -g firebase-tools`
+   - Login to Firebase: `firebase login`
+   - Initialize Firebase in this directory: `firebase init firestore`
+   - Import data: `firebase firestore:import premium-cars.json`
+
+4. **Data Structure**
+   - Each car has the following fields:
+     - `brand`: Car manufacturer (Mercedes, Ferrari, etc.)
+     - `model`: Specific car model
+     - `group`: Car category (SUV, Sedan, Convertible, etc.)
+     - `imageURL`: URL to car image
+     - `pricePerDay`: Rental price per day
+     - `specs`: Car specifications (seats, gearbox, fuelType)
+
+## Notes
+
+- All 24 premium cars are from luxury brands: Mercedes, Ferrari, Lamborghini, Porsche, Rolls Royce, and Bentley
+- Cars are categorized across different groups: SUV, Sedan, Convertible, Electric, and Hybrid

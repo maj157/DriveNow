@@ -61,14 +61,16 @@
   <!-- Extras Card Grid -->
   <div *ngIf="!loading" class="row row-cols-1 row-cols-md-3 g-4 mb-4">
     <div class="col" *ngFor="let extra of extras">
-      <div class="card h-100" [class.selected-card]="extra.selected" (click)="toggleExtra(extra)">
-        <img [src]="extra.imageUrl" class="card-img-top" [alt]="extra.name">
+      <div class="card" [class.selected-card]="extra.selected" (click)="toggleExtra(extra)">
+        <div class="position-relative">
+          <img [src]="extra.imageUrl" class="card-img-top" [alt]="extra.name">
+          <span class="badge bg-primary price-badge">${{ extra.price.toFixed(2) }}/day</span>
+        </div>
         <div class="card-body">
           <h5 class="card-title">{{ extra.name }}</h5>
           <p class="card-text">{{ extra.description }}</p>
-          <span class="badge bg-primary price-badge">${{ extra.price.toFixed(2) }} per day</span>
         </div>
-        <div class="card-footer bg-transparent">
+        <div class="card-footer">
           <div class="form-check">
             <input class="form-check-input" type="checkbox" [id]="'extra-' + extra.id" [checked]="extra.selected" (click)="$event.stopPropagation()">
             <label class="form-check-label" [for]="'extra-' + extra.id">
@@ -87,18 +89,29 @@
 
   <!-- Price Summary and Navigation Buttons -->
   <div class="row mt-4">
-    <div class="col-12 col-md-6">
-      <div class="card mb-3">
-        <div class="card-body">
-          <h5 class="card-title">Summary</h5>
-          <p class="card-text">Extras Subtotal: <strong>${{ subtotal.toFixed(2) }} per day</strong></p>
-          <p class="card-text text-muted small">Final price will be calculated based on your rental duration.</p>
+    <div class="col-12 col-md-5">
+      <div class="summary-card">
+        <div class="summary-header">
+          <h5><i class="fas fa-receipt"></i> Summary</h5>
+        </div>
+        <div class="summary-body">
+          <div class="summary-item">
+            <span>Extras Subtotal:</span>
+            <span class="subtotal-value">${{ subtotal.toFixed(2) }}/day</span>
+          </div>
+          <div class="summary-note">
+            Final price calculated based on rental duration
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-12 col-md-6 d-flex align-items-end justify-content-end">
-      <button type="button" class="btn btn-outline-secondary me-2" (click)="goBack()">Back</button>
-      <button type="button" class="btn btn-primary" (click)="continue()">Continue to Review</button>
+    <div class="col-12 col-md-7 d-flex align-items-center justify-content-end">
+      <button type="button" class="btn btn-outline-secondary me-3" (click)="goBack()">
+        <i class="fas fa-arrow-left me-1"></i> Back
+      </button>
+      <button type="button" class="btn btn-primary" (click)="continue()">
+        Continue <i class="fas fa-arrow-right ms-1"></i>
+      </button>
     </div>
   </div>
 </div> 

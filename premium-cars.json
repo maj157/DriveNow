@@ -1,0 +1,292 @@
+{
+  "cars": [
+    {
+      "brand": "Mercedes",
+      "model": "AMG GT",
+      "group": "Convertible",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fmercedes-amg-gt.jpg?alt=media",
+      "pricePerDay": 850,
+      "specs": {
+        "seats": 2,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Mercedes",
+      "model": "S-Class",
+      "group": "Sedan",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fmercedes-s-class.jpg?alt=media",
+      "pricePerDay": 650,
+      "specs": {
+        "seats": 5,
+        "gearbox": "Automatic",
+        "fuelType": "Hybrid"
+      }
+    },
+    {
+      "brand": "Mercedes",
+      "model": "G-Class",
+      "group": "SUV",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fmercedes-g-class.jpg?alt=media",
+      "pricePerDay": 750,
+      "specs": {
+        "seats": 5,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Mercedes",
+      "model": "EQS",
+      "group": "Electric",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fmercedes-eqs.jpg?alt=media",
+      "pricePerDay": 700,
+      "specs": {
+        "seats": 5,
+        "gearbox": "Automatic",
+        "fuelType": "Electric"
+      }
+    },
+    {
+      "brand": "Ferrari",
+      "model": "Roma",
+      "group": "Convertible",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fferrari-roma.jpg?alt=media",
+      "pricePerDay": 1200,
+      "specs": {
+        "seats": 2,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Ferrari",
+      "model": "SF90 Stradale",
+      "group": "Hybrid",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fferrari-sf90.jpg?alt=media",
+      "pricePerDay": 1500,
+      "specs": {
+        "seats": 2,
+        "gearbox": "Automatic",
+        "fuelType": "Hybrid"
+      }
+    },
+    {
+      "brand": "Ferrari",
+      "model": "F8 Tributo",
+      "group": "Convertible",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fferrari-f8.jpg?alt=media",
+      "pricePerDay": 1300,
+      "specs": {
+        "seats": 2,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Ferrari",
+      "model": "812 Superfast",
+      "group": "Convertible",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fferrari-812.jpg?alt=media",
+      "pricePerDay": 1400,
+      "specs": {
+        "seats": 2,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Lamborghini",
+      "model": "Huracan",
+      "group": "Convertible",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Flamborghini-huracan.jpg?alt=media",
+      "pricePerDay": 1300,
+      "specs": {
+        "seats": 2,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Lamborghini",
+      "model": "Aventador",
+      "group": "Convertible",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Flamborghini-aventador.jpg?alt=media",
+      "pricePerDay": 1600,
+      "specs": {
+        "seats": 2,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Lamborghini",
+      "model": "Urus",
+      "group": "SUV",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Flamborghini-urus.jpg?alt=media",
+      "pricePerDay": 1100,
+      "specs": {
+        "seats": 5,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Lamborghini",
+      "model": "Sian",
+      "group": "Hybrid",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Flamborghini-sian.jpg?alt=media",
+      "pricePerDay": 1800,
+      "specs": {
+        "seats": 2,
+        "gearbox": "Automatic",
+        "fuelType": "Hybrid"
+      }
+    },
+    {
+      "brand": "Porsche",
+      "model": "911 Turbo S",
+      "group": "Convertible",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fporsche-911.jpg?alt=media",
+      "pricePerDay": 950,
+      "specs": {
+        "seats": 4,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Porsche",
+      "model": "Taycan",
+      "group": "Electric",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fporsche-taycan.jpg?alt=media",
+      "pricePerDay": 850,
+      "specs": {
+        "seats": 4,
+        "gearbox": "Automatic",
+        "fuelType": "Electric"
+      }
+    },
+    {
+      "brand": "Porsche",
+      "model": "Panamera",
+      "group": "Sedan",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fporsche-panamera.jpg?alt=media",
+      "pricePerDay": 800,
+      "specs": {
+        "seats": 4,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Porsche",
+      "model": "Cayenne",
+      "group": "SUV",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fporsche-cayenne.jpg?alt=media",
+      "pricePerDay": 750,
+      "specs": {
+        "seats": 5,
+        "gearbox": "Automatic",
+        "fuelType": "Hybrid"
+      }
+    },
+    {
+      "brand": "Rolls Royce",
+      "model": "Phantom",
+      "group": "Sedan",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Frolls-phantom.jpg?alt=media",
+      "pricePerDay": 1800,
+      "specs": {
+        "seats": 5,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Rolls Royce",
+      "model": "Ghost",
+      "group": "Sedan",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Frolls-ghost.jpg?alt=media",
+      "pricePerDay": 1600,
+      "specs": {
+        "seats": 5,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Rolls Royce",
+      "model": "Cullinan",
+      "group": "SUV",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Frolls-cullinan.jpg?alt=media",
+      "pricePerDay": 1700,
+      "specs": {
+        "seats": 5,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Rolls Royce",
+      "model": "Dawn",
+      "group": "Convertible",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Frolls-dawn.jpg?alt=media",
+      "pricePerDay": 1750,
+      "specs": {
+        "seats": 4,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Bentley",
+      "model": "Continental GT",
+      "group": "Convertible",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fbentley-continental.jpg?alt=media",
+      "pricePerDay": 1200,
+      "specs": {
+        "seats": 4,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Bentley",
+      "model": "Flying Spur",
+      "group": "Sedan",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fbentley-flying-spur.jpg?alt=media",
+      "pricePerDay": 1300,
+      "specs": {
+        "seats": 5,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    },
+    {
+      "brand": "Bentley",
+      "model": "Bentayga",
+      "group": "SUV",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fbentley-bentayga.jpg?alt=media",
+      "pricePerDay": 1250,
+      "specs": {
+        "seats": 5,
+        "gearbox": "Automatic",
+        "fuelType": "Hybrid"
+      }
+    },
+    {
+      "brand": "Bentley",
+      "model": "Bacalar",
+      "group": "Convertible",
+      "imageURL": "https://firebasestorage.googleapis.com/v0/b/drivenow-de92f.appspot.com/o/cars%2Fbentley-bacalar.jpg?alt=media",
+      "pricePerDay": 1900,
+      "specs": {
+        "seats": 2,
+        "gearbox": "Automatic",
+        "fuelType": "Petrol"
+      }
+    }
+  ]
+} 

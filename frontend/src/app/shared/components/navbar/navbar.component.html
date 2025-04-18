@@ -62,7 +62,7 @@
                 <a routerLink="/reservation" class="dropdown-item" (click)="closeDropdown()">
                   <i class="fas fa-car"></i> New Reservation
                 </a>
-                <a class="dropdown-item review-item" (click)="navigateToSubmitReview()">
+                <a class="dropdown-item" [class.review-item]="isReviewSubmitActive" (click)="navigateToSubmitReview()">
                   <i class="fas fa-star"></i> Submit Review
                 </a>
                 <a routerLink="/chat" class="dropdown-item" (click)="closeDropdown()">

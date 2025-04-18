@@ -45,42 +45,42 @@ export class ExtraService {
         name: 'GPS Navigation',
         description: 'Stay on the right path with our premium GPS system',
         price: 9.99,
-        imageUrl: 'assets/images/extras/gps.jpg'
+        imageUrl: 'assets/images/extras/gps.png'
       },
       {
         id: 2,
         name: 'Child Seat',
         description: 'Safety first - suitable for children from 9 months to 4 years',
         price: 14.99,
-        imageUrl: 'assets/images/extras/child-seat.jpg'
+        imageUrl: 'assets/images/extras/carseat.png'
       },
       {
         id: 3,
         name: 'Additional Driver',
         description: 'Add another driver to share the journey',
         price: 19.99,
-        imageUrl: 'assets/images/extras/additional-driver.jpg'
+        imageUrl: 'assets/images/extras/driver.png'
       },
       {
         id: 4,
         name: 'Wi-Fi Hotspot',
         description: 'Stay connected wherever you go',
         price: 12.99,
-        imageUrl: 'assets/images/extras/wifi.jpg'
+        imageUrl: 'assets/images/extras/wifi.png'
       },
       {
         id: 5,
         name: 'Full Insurance',
         description: 'Complete coverage with zero deductible',
         price: 29.99,
-        imageUrl: 'assets/images/extras/insurance.jpg'
+        imageUrl: 'assets/images/extras/insurance.png'
       },
       {
         id: 6,
         name: 'Roof Rack',
         description: 'Extra storage for luggage or equipment',
         price: 15.99,
-        imageUrl: 'assets/images/extras/roof-rack.jpg'
+        imageUrl: 'assets/images/extras/roof.png'
       }
     ];
   }

@@ -19,7 +19,7 @@ export class CarsComponent implements OnInit {
   loading = true;
   
   // Car filter component properties
-  availableCategories: string[] = ['Economy', 'Compact', 'Mid-size', 'Full-size', 'SUV', 'Luxury', 'Van'];
+  availableCategories: string[] = ['SUV', 'Sedan', 'Hybrid', 'Electric', 'Convertible'];
   minPrice = 0;
   maxPrice = 500;
   
@@ -136,7 +136,41 @@ export class CarsComponent implements OnInit {
   }
 
   viewGroupDetails(group: CarGroup): void {
-    this.router.navigate(['/cars/groups', group.id]);
+    this.router.navigate(['/vehicles/groups', group.id]);
+  }
+
+  /**
+   * Get an appropriate image for a car group based on its name/type
+   * @param groupName The name of the car group
+   * @returns Path to an image for the group
+   */
+  getGroupImage(groupName: string): string {
+    // Normalize the group name
+    const normalizedName = (groupName || '').toLowerCase().trim();
+
+    // Map group names to image paths - only include files that actually exist
+    const imageMap: {[key: string]: string} = {
+      'suv': 'assets/images/groups/suv.png',
+      'sedan': 'assets/images/groups/sedan.png',
+      'convertible': 'assets/images/groups/convertible.png',
+      'electric': 'assets/images/groups/electric.png',
+      'hybrid': 'assets/images/groups/hybrid.png'
+    };
+
+    // Check if we have an exact match for the group name
+    if (normalizedName in imageMap) {
+      return imageMap[normalizedName];
+    }
+
+    // Check for partial matches
+    for (const key in imageMap) {
+      if (normalizedName.includes(key)) {
+        return imageMap[key];
+      }
+    }
+
+    // If no specific image found, use one of the available images as default
+    return 'assets/images/groups/sedan.png';
   }
 
   clearFilters(): void {

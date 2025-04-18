@@ -27,11 +27,14 @@
     <div class="row mb-5">
       <div class="col-md-4">
         <div class="group-image-container">
-          <img src="assets/images/car-placeholder.jpg" [alt]="group.groupName" class="img-fluid rounded">
+          <img 
+            [src]="group.imageURL || group.imageUrl || getGroupImage(group.groupName || group.name) || 'assets/images/car-placeholder.jpg'" 
+            [alt]="group.groupName || group.name" 
+            class="img-fluid rounded">
         </div>
       </div>
       <div class="col-md-8">
-        <h1 class="group-name">{{ group.groupName }}</h1>
+        <h1 class="group-name">{{ group.groupName || group.name }}</h1>
         <p class="group-description">{{ group.fuel }} Vehicles</p>
         <p class="car-count">{{ cars.length }} vehicles available</p>
       </div>

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AuthService } from '../../../core/services/auth.service';
 import { User } from '../../../core/models/user.model';
 import { ClickOutsideDirective } from '../../directives/click-outside.directive';
@@ -17,6 +18,7 @@ export class NavbarComponent implements OnInit {
   isMenuOpen = false;
   isDropdownOpen = false;
   currentUser$: Observable<User | null>;
+  isReviewSubmitActive = false;
 
   constructor(
     private authService: AuthService,
@@ -26,6 +28,15 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Subscribe to router events to determine the active route
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.isReviewSubmitActive = this.router.url === '/reviews/submit';
+    });
+    
+    // Check initial route
+    this.isReviewSubmitActive = this.router.url === '/reviews/submit';
   }
 
   toggleMenu(): void {

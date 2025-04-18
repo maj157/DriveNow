@@ -80,10 +80,14 @@
         <div class="col-md-6 col-lg-4" *ngFor="let group of carGroups">
           <div class="car-group-card" (click)="viewGroupDetails(group)">
             <div class="car-group-image">
-              <img [src]="'assets/images/car-placeholder.jpg'" [alt]="group.groupName">
+              <!-- Use the group's imageURL if available, else use a category-specific image based on group name, fallback to placeholder -->
+              <img 
+                [src]="group.imageURL || group.imageUrl || getGroupImage(group.groupName) || 'assets/images/car-placeholder.jpg'" 
+                [alt]="group.groupName || group.name"
+                class="img-fluid">
             </div>
             <div class="car-group-info">
-              <h3>{{ group.groupName }}</h3>
+              <h3>{{ group.groupName || group.name }}</h3>
               <p>{{ group.fuel }} Vehicle</p>
               <div class="d-flex justify-content-between align-items-center">
                 <span class="car-count">{{ group.passengers }} passengers</span>
